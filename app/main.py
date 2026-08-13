@@ -8,6 +8,7 @@ import redis.asyncio as redis
 
 from app.core.config import settings
 from app.db.session import get_db, engine
+from app.api.v1.router import api_v1_router
 
 
 @asynccontextmanager
@@ -26,6 +27,8 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+
+app.include_router(api_v1_router)
 
 app.add_middleware(
     CORSMiddleware,
