@@ -28,7 +28,17 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+import os
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
 app.include_router(api_v1_router)
+
+# Mount static directory for Admin Panel
+admin_dir = os.path.join(os.path.dirname(__file__), "static", "admin")
+if os.path.exists(admin_dir):
+    app.mount("/admin", StaticFiles(directory=admin_dir, html=True), name="admin")
+
 
 app.add_middleware(
     CORSMiddleware,

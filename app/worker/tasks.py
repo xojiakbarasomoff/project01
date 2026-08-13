@@ -7,7 +7,7 @@ from arq.connections import RedisSettings
 from app.core.config import settings
 from app.core.security import decrypt_credentials
 from app.db.session import AsyncSessionLocal
-from app.models.domain import Tenant, Channel, User, Conversation, Message
+from app.models.domain import Tenant, Channel, User, Conversation, Message, Appointment
 from app.services.debounce import DebounceService
 from app.services.guardrails import GuardrailService
 from app.services.rag import RAGService
@@ -179,6 +179,26 @@ async def process_debounce_batch(
             meta={"rag_matches_count": len(kb_matches)}
         )
         session.add(out_msg)
+
+        # 12. Check for Appointment Booking Intent & Auto-create Appointment Record
+        booking_keywords = ["qabul", "yozib", "yozing", "ertaga", "bugun", "soat", "bormoqchiman", "yozilish"]
+        if any(kw in combined_text.lower() for kw in booking_keywords):
+            # Create a pending appointment for the operator dashboard
+            patient_name = user_entity.name or f"Bemor ({user_entity.external_id})"
+            patient_phone = user_entity.phone or f"Telegram ID: {user_entity.external_id}"
+            
+            app_rec = Appointment(
+                tenant_id=tenant_id,
+                user_id=user_entity.id,
+                patient_name=patient_name,
+                patient_phone=patient_phone,
+                doctor_name="Stomatolog Shifokor",
+                status="pending",
+                notes=f"Telegram orqali so'rov: {combined_text[:120]}"
+            )
+            session.add(app_rec)
+            logger.info(f"📅 [APPOINTMENT] Auto-created pending appointment for user {user_id}")
+
         await session.commit()
 
         logger.info(f"✅ [WORKER] Successfully responded to user {user_id}.")

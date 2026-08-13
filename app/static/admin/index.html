@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIMED — Klinika Admin Paneli</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-green: #22c55e;
+      --accent-orange: #f97316;
+      --accent-red: #ef4444;
+      --border-color: #334155;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: var(--bg-primary); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; }
+
+    /* Header */
+    header { background: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand h1 { font-size: 20px; font-weight: 700; color: var(--accent-blue); }
+    .status-badge { background: rgba(34, 197, 94, 0.15); color: var(--accent-green); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid var(--accent-green); }
+
+    /* Navigation */
+    .nav-tabs { display: flex; gap: 8px; }
+    .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 8px 16px; font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 8px; transition: all 0.2s; }
+    .tab-btn:hover, .tab-btn.active { color: var(--text-main); background: var(--bg-card-hover); }
+    .tab-btn.active { border-bottom: 2px solid var(--accent-blue); color: var(--accent-blue); }
+
+    /* Main Container */
+    main { flex: 1; padding: 24px 32px; overflow-y: auto; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Cards & Tables */
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 24px; }
+    .stat-card { background: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); }
+    .stat-card h3 { font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+    .stat-card p { font-size: 28px; font-weight: 700; color: var(--text-main); }
+
+    .action-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .btn { background: var(--accent-blue); color: #000; border: none; padding: 10px 18px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .btn:hover { opacity: 0.9; }
+    .btn-danger { background: var(--accent-red); color: white; }
+    .btn-success { background: var(--accent-green); color: white; }
+    .btn-secondary { background: var(--bg-card-hover); color: var(--text-main); }
+
+    table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); }
+    th, td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 14px; }
+    th { background: #162032; color: var(--text-muted); font-weight: 600; }
+    tr:hover { background: var(--bg-card-hover); }
+
+    .badge { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+    .badge-pending { background: rgba(249, 115, 22, 0.2); color: var(--accent-orange); }
+    .badge-confirmed { background: rgba(34, 197, 94, 0.2); color: var(--accent-green); }
+    .badge-cancelled { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+
+    /* Live Chat View */
+    .chat-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; height: 600px; }
+    .chat-sidebar { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); overflow-y: auto; }
+    .conv-item { padding: 16px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; }
+    .conv-item:hover, .conv-item.active { background: var(--bg-card-hover); }
+    .conv-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .conv-preview { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .chat-window { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; }
+    .chat-header { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+    .chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+    .msg-bubble { max-width: 70%; padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.4; }
+    .msg-patient { background: #334155; align-self: flex-start; border-bottom-left-radius: 2px; }
+    .msg-bot { background: #0284c7; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .msg-operator { background: #16a34a; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .chat-footer { padding: 16px; border-top: 1px solid var(--border-color); display: flex; gap: 12px; }
+    .chat-input { flex: 1; background: #0f172a; border: 1px solid var(--border-color); color: var(--text-main); padding: 12px; border-radius: 8px; outline: none; }
+
+    /* Modal */
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100; }
+    .modal.active { display: flex; }
+    .modal-content { background: var(--bg-card); padding: 24px; border-radius: 12px; width: 450px; border: 1px solid var(--border-color); }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; margin-bottom: 6px; font-size: 13px; color: var(--text-muted); }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; background: #0f172a; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; outline: none; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <h1>🏥 AIMED Admin</h1>
+      <span class="status-badge">● TIZIM FAOL</span>
+    </div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('appointments')">📅 Shifokor Qabullari</button>
+      <button class="tab-btn" onclick="switchTab('chats')">💬 Canli Suhbatlar & Operator</button>
+      <button class="tab-btn" onclick="switchTab('faq')">📚 FAQ Bilim Bazasi</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- TAB 1: APPOINTMENTS -->
+    <section id="tab-appointments" class="tab-content active">
+      <div class="stats-row">
+        <div class="stat-card">
+          <h3>Jami Qabullar</h3>
+          <p id="stat-total-appointments">0</p>
+        </div>
+        <div class="stat-card">
+          <h3>Kutilmoqda</h3>
+          <p id="stat-pending-appointments" style="color: var(--accent-orange)">0</p>
+        </div>
+        <div class="stat-card">
+          <h3>Tasdiqlandi</h3>
+          <p id="stat-confirmed-appointments" style="color: var(--accent-green)">0</p>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <h2>Bemorlar Qabuli Ro'yxati</h2>
+        <button class="btn" onclick="openAppointmentModal()">+ Yangi Qabul Qo'shish</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Bemor Ismi</th>
+            <th>Telefon</th>
+            <th>Shifokor</th>
+            <th>Vaqti / Izoh</th>
+            <th>Holat</th>
+            <th>Amallar</th>
+          </tr>
+        </thead>
+        <tbody id="appointments-table-body">
+          <tr><td colspan="7" style="text-align:center;">Yuklanmoqda...</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- TAB 2: LIVE CHATS & OPERATOR CONTROL -->
+    <section id="tab-chats" class="tab-content">
+      <div class="chat-layout">
+        <div class="chat-sidebar" id="conversations-list">
+          <div style="padding: 16px; text-align:center; color: var(--text-muted)">Yuklanmoqda...</div>
+        </div>
+
+        <div class="chat-window">
+          <div class="chat-header">
+            <div>
+              <h3 id="active-chat-name">Suhbatni tanlang</h3>
+              <small id="active-chat-phone" style="color: var(--text-muted)"></small>
+            </div>
+            <div>
+              <button id="toggle-bot-btn" class="btn btn-secondary" onclick="toggleBotControl()" style="display:none;">
+                🤖 Botni O'chirish (Operator Boshqaruvi)
+              </button>
+            </div>
+          </div>
+          <div class="chat-body" id="chat-messages-body">
+            <div style="text-align:center; color: var(--text-muted); margin-auto;">Suhbatlar ro'yxatidan tanlang</div>
+          </div>
+          <div class="chat-footer">
+            <input type="text" id="operator-message-input" class="chat-input" placeholder="Operator xabarini yozing..." disabled>
+            <button class="btn btn-success" id="send-operator-msg-btn" onclick="sendOperatorMessage()" disabled>Yuborish</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: FAQ KNOWLEDGE BASE -->
+    <section id="tab-faq" class="tab-content">
+      <div class="action-bar">
+        <h2>FAQ Bilim Bazasi</h2>
+        <button class="btn" onclick="openFaqModal()">+ Yangi Savol Qo'shish</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Savol</th>
+            <th>Javob</th>
+            <th>Kategoriya</th>
+            <th>Amallar</th>
+          </tr>
+        </thead>
+        <tbody id="faq-table-body">
+          <tr><td colspan="5" style="text-align:center;">Yuklanmoqda...</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- APPOINTMENT MODAL -->
+  <div class="modal" id="appointment-modal">
+    <div class="modal-content">
+      <h3 style="margin-bottom: 16px;">Yangi Qabul Yozish</h3>
+      <div class="form-group">
+        <label>Bemor Ismi</label>
+        <input type="text" id="app-patient-name" placeholder="Masalan: Sardor Alimov">
+      </div>
+      <div class="form-group">
+        <label>Telefon Raqami</label>
+        <input type="text" id="app-patient-phone" placeholder="+998 90 123 45 67">
+      </div>
+      <div class="form-group">
+        <label>Shifokor</label>
+        <input type="text" id="app-doctor-name" value="Stomatolog Shifokor">
+      </div>
+      <div class="form-group">
+        <label>Izoh / Kun</label>
+        <textarea id="app-notes" rows="3" placeholder="Masalan: Ertaga soat 14:00 da breket bo'yicha konsultatsiya"></textarea>
+      </div>
+      <div style="display:flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn btn-secondary" onclick="closeModals()">Bekor qilish</button>
+        <button class="btn" onclick="submitAppointment()">Saqlash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ MODAL -->
+  <div class="modal" id="faq-modal">
+    <div class="modal-content">
+      <h3 style="margin-bottom: 16px;">Yangi FAQ Savoli Qo'shish</h3>
+      <div class="form-group">
+        <label>Savol (Mijoz beradigan savol)</label>
+        <input type="text" id="faq-question" placeholder="Masalan: Breket narxi qancha?">
+      </div>
+      <div class="form-group">
+        <label>Javob</label>
+        <textarea id="faq-answer" rows="4" placeholder="Klinikaning rasmiy javobi..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Kategoriya</label>
+        <input type="text" id="faq-category" value="narxlar">
+      </div>
+      <div style="display:flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn btn-secondary" onclick="closeModals()">Bekor qilish</button>
+        <button class="btn" onclick="submitFaq()">Saqlash</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "/api/v1/admin";
+    let selectedConversationId = null;
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+
+      if (tabId === 'appointments') loadAppointments();
+      if (tabId === 'chats') loadConversations();
+      if (tabId === 'faq') loadFaqs();
+    }
+
+    // 1. APPOINTMENTS
+    async function loadAppointments() {
+      const res = await fetch(`${API_BASE}/appointments?tenant_id=1`);
+      const data = await res.json();
+      
+      document.getElementById('stat-total-appointments').innerText = data.length;
+      document.getElementById('stat-pending-appointments').innerText = data.filter(a => a.status === 'pending').length;
+      document.getElementById('stat-confirmed-appointments').innerText = data.filter(a => a.status === 'confirmed').length;
+
+      const tbody = document.getElementById('appointments-table-body');
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Hozircha qabullar mavjud emas</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = data.map(app => `
+        <tr>
+          <td>#${app.id}</td>
+          <td><b>${app.patient_name}</b></td>
+          <td>${app.patient_phone}</td>
+          <td>${app.doctor_name || 'Stomatolog'}</td>
+          <td>${app.notes || '-'}</td>
+          <td><span class="badge badge-${app.status}">${app.status.toUpperCase()}</span></td>
+          <td>
+            ${app.status === 'pending' ? `<button class="btn btn-success" style="padding:4px 8px; font-size:12px;" onclick="updateAppStatus(${app.id}, 'confirmed')">✓ Tasdiqlash</button>` : ''}
+            ${app.status !== 'cancelled' ? `<button class="btn btn-danger" style="padding:4px 8px; font-size:12px;" onclick="updateAppStatus(${app.id}, 'cancelled')">✕ Bekor qilish</button>` : ''}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function updateAppStatus(id, newStatus) {
+      await fetch(`${API_BASE}/appointments/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      loadAppointments();
+    }
+
+    async function submitAppointment() {
+      const name = document.getElementById('app-patient-name').value;
+      const phone = document.getElementById('app-patient-phone').value;
+      const doctor = document.getElementById('app-doctor-name').value;
+      const notes = document.getElementById('app-notes').value;
+
+      await fetch(`${API_BASE}/appointments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tenant_id: 1, patient_name: name, patient_phone: phone, doctor_name: doctor, notes: notes })
+      });
+      closeModals();
+      loadAppointments();
+    }
+
+    // 2. CONVERSATIONS & OPERATOR
+    async function loadConversations() {
+      const res = await fetch(`${API_BASE}/conversations?tenant_id=1`);
+      const data = await res.json();
+
+      const container = document.getElementById('conversations-list');
+      if (data.length === 0) {
+        container.innerHTML = `<div style="padding:16px; text-align:center; color: var(--text-muted)">Suhbatlar yo'q</div>`;
+        return;
+      }
+
+      container.innerHTML = data.map(c => `
+        <div class="conv-item ${c.id === selectedConversationId ? 'active' : ''}" onclick="selectConversation(${c.id}, '${c.patient_name}', '${c.patient_phone}', ${c.is_bot_enabled})">
+          <div class="conv-name">
+            <span>${c.patient_name}</span>
+            <span style="font-size:11px; color:${c.is_bot_enabled ? 'var(--accent-blue)' : 'var(--accent-green)'}">
+              ${c.is_bot_enabled ? '🤖 AI' : '👤 OPERATOR'}
+            </span>
+          </div>
+          <div class="conv-preview">${c.last_message || 'Suhbat boshlandi'}</div>
+        </div>
+      `).join('');
+    }
+
+    async function selectConversation(id, name, phone, isBotEnabled) {
+      selectedConversationId = id;
+      document.getElementById('active-chat-name').innerText = name;
+      document.getElementById('active-chat-phone').innerText = phone;
+
+      const toggleBtn = document.getElementById('toggle-bot-btn');
+      toggleBtn.style.display = 'block';
+      toggleBtn.innerText = isBotEnabled ? '🤖 Botni O'chirish (Operator Boshqaruvi)' : '✅ Botni Qayta Yoqish';
+      toggleBtn.className = isBotEnabled ? 'btn btn-secondary' : 'btn btn-success';
+
+      document.getElementById('operator-message-input').disabled = false;
+      document.getElementById('send-operator-msg-btn').disabled = false;
+
+      loadMessages(id);
+      loadConversations();
+    }
+
+    async function loadMessages(convId) {
+      const res = await fetch(`${API_BASE}/conversations/${convId}/messages`);
+      const messages = await res.json();
+
+      const body = document.getElementById('chat-messages-body');
+      body.innerHTML = messages.map(m => {
+        let cls = 'msg-patient';
+        if (m.sender === 'bot') cls = 'msg-bot';
+        if (m.sender === 'operator') cls = 'msg-operator';
+        return `<div class="msg-bubble ${cls}"><b>${m.sender.toUpperCase()}:</b><br/>${m.content}</div>`;
+      }).join('');
+      body.scrollTop = body.scrollHeight;
+    }
+
+    async function toggleBotControl() {
+      if (!selectedConversationId) return;
+      const res = await fetch(`${API_BASE}/conversations/${selectedConversationId}/toggle-bot`, { method: 'POST' });
+      const data = await res.json();
+      selectConversation(selectedConversationId, document.getElementById('active-chat-name').innerText, document.getElementById('active-chat-phone').innerText, data.is_bot_enabled);
+    }
+
+    async function sendOperatorMessage() {
+      const text = document.getElementById('operator-message-input').value;
+      if (!text || !selectedConversationId) return;
+
+      await fetch(`${API_BASE}/conversations/${selectedConversationId}/send-message?text=${encodeURIComponent(text)}`, { method: 'POST' });
+      document.getElementById('operator-message-input').value = '';
+      loadMessages(selectedConversationId);
+    }
+
+    // 3. FAQ
+    async function loadFaqs() {
+      const res = await fetch(`${API_BASE}/knowledge-base?tenant_id=1`);
+      const data = await res.json();
+
+      const tbody = document.getElementById('faq-table-body');
+      tbody.innerHTML = data.map(f => `
+        <tr>
+          <td>#${f.id}</td>
+          <td><b>${f.question}</b></td>
+          <td>${f.answer}</td>
+          <td><span class="badge badge-pending">${f.category}</span></td>
+          <td><button class="btn btn-danger" style="padding:4px 8px; font-size:12px;" onclick="deleteFaq(${f.id})">🗑 O'chirish</button></td>
+        </tr>
+      `).join('');
+    }
+
+    async function submitFaq() {
+      const q = document.getElementById('faq-question').value;
+      const a = document.getElementById('faq-answer').value;
+      const c = document.getElementById('faq-category').value;
+
+      await fetch(`${API_BASE}/knowledge-base`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tenant_id: 1, question: q, answer: a, category: c })
+      });
+      closeModals();
+      loadFaqs();
+    }
+
+    async function deleteFaq(id) {
+      await fetch(`${API_BASE}/knowledge-base/${id}`, { method: 'DELETE' });
+      loadFaqs();
+    }
+
+    // Modals
+    function openAppointmentModal() { document.getElementById('appointment-modal').classList.add('active'); }
+    function openFaqModal() { document.getElementById('faq-modal').classList.add('active'); }
+    function closeModals() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
+
+    // Init
+    loadAppointments();
+  </script>
+</body>
+</html>

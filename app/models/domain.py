@@ -128,10 +128,14 @@ class Appointment(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     tenant_id = Column(Integer, ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True)
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    doctor = Column(String(255), nullable=True)
-    datetime = Column(DateTime(timezone=True), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True)
+    patient_name = Column(String(255), nullable=True)
+    patient_phone = Column(String(50), nullable=True)
+    doctor_name = Column(String(255), nullable=True)
+    appointment_time = Column(DateTime(timezone=True), nullable=True)
     status = Column(String(50), nullable=False, default="pending")  # pending, confirmed, cancelled
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     tenant = relationship("Tenant", back_populates="appointments")
     user = relationship("User", back_populates="appointments")
