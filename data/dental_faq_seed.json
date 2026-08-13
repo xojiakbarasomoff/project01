@@ -1,0 +1,127 @@
+[
+  {
+    "category": "ish_vaqti_manzil",
+    "question": "Klinika qaysi kunlari va qanday vaqtda ishlaydi?",
+    "answer": "Klinikamiz dushanbadan shanbagacha soat 08:00 dan 20:00 gacha ishlaydi. Yakshanba — dam olish kuni. Shoshilinch hollarda navbatchi shifokorimiz mavjud."
+  },
+  {
+    "category": "ish_vaqti_manzil",
+    "question": "Klinika manzili qayerda joylashgan?",
+    "answer": "Manzilimiz: Toshkent shahri, Yunusobod tumani, Amir Temur ko'chasi 45-uy. Mo'ljal: Minor metro bekati yaqinida."
+  },
+  {
+    "category": "ish_vaqti_manzil",
+    "question": "Yakshanba kuni ishleysizlarmi?",
+    "answer": "Yakshanba kuni odatiy qabul bo'lmaydi, lekin o'tkir og'riq va shoshilinch holatlar uchun navbatchi shifokorimiz navbatchilik qiladi."
+  },
+  {
+    "category": "narxlar",
+    "question": "Shifokor ko'rigi (konsultatsiya) qancha turadi?",
+    "answer": "Birinchi marta kelgan bemorlar uchun shifokor konsultatsiyasi va diagnostik ko'rik bepul amalga oshiriladi."
+  },
+  {
+    "category": "narxlar",
+    "question": "Tish plomba qildirish narxi qancha?",
+    "answer": "Plomba qo'yish narxi karies chuqurligi va ishlatiladigan kompozit materialga qarab 150 000 so'mdan 400 000 so'mgacha."
+  },
+  {
+    "category": "narxlar",
+    "question": "Tish yuldirish (oldirish) narxi qancha?",
+    "answer": "Oddiy tishni sug'urib olish 100 000 - 200 000 so'm, murakkab va aql tishlarini (vosmerka) sug'urish 300 000 - 600 000 so'm turadi."
+  },
+  {
+    "category": "narxlar",
+    "question": "Breket qo'ydirish narxi qancha?",
+    "answer": "Metall breketlar bitta jag' uchun 2 500 000 so'mdan, keramik breketlar 4 000 000 so'mdan boshlanadi. Muddatli to'lov imkoniyati ham bor."
+  },
+  {
+    "category": "narxlar",
+    "question": "Tish implantatsiyasi narxi qancha?",
+    "answer": "Sifatli implant o'rnatish (koreys/germaniya sistemalari) 2 500 000 so'mdan 5 000 000 so'mgacha. Bunga implant va uni o'rnatish kiradi."
+  },
+  {
+    "category": "narxlar",
+    "question": "Tishlarni ultra-tovush bilan tozalash va toshlarni oldirish qancha?",
+    "answer": "Barcha tishlarni ultratovush va AirFlow apparatida kompleks tozalash 250 000 - 350 000 so'm turadi."
+  },
+  {
+    "category": "narxlar",
+    "question": "Tishlarni oqartirish (otbelivaniye) narxi qancha?",
+    "answer": "Professional Zoom4 / laser oqartirish muolajasi 1 200 000 so'mdan 2 000 000 so'mgacha."
+  },
+  {
+    "category": "narxlar",
+    "question": "Vinerlar qo'yish qancha turadi?",
+    "answer": "Keramik vinerlar bitta tish uchun 1 500 000 so'mdan 3 000 000 so'mgacha."
+  },
+  {
+    "category": "narxlar",
+    "question": "Koronka (tish qoplami) narxlari qanaqa?",
+    "answer": "Metallokeramika koronka 400 000 - 700 000 so'm, Zirkoniy koronka esa 1 000 000 - 1 500 000 so'm turadi."
+  },
+  {
+    "category": "qabulga_yozilish",
+    "question": "Qabulga qanday yozilsam bo'ladi?",
+    "answer": "Qabulga yozilish uchun ismingiz, telefon raqamingiz va sizga qulay sana hamda vaqtni yozib yuborsangiz kifoya. Men sizni ro'yxatga olaman."
+  },
+  {
+    "category": "qabulga_yozilish",
+    "question": "Navbatsiz kirsa bo'ladimi?",
+    "answer": "Shoshilinch o'tkir og'riq bilan kelgan bemorlar navbatsiz qabul qilinadi. Boshqa holatlarda vaqtingiz tejalishi uchun oldindan yozilishni tavsiya etamiz."
+  },
+  {
+    "category": "qabulga_yozilish",
+    "question": "Bugunga bo'sh vaqt bormi?",
+    "answer": "Iltimos, ismingiz va raqamingizni qoldiring, administratorimiz zudlik bilan bo'sh vaqtlarni aniqlab sizga xabar beradi."
+  },
+  {
+    "category": "shoshilinch_xavfsizlik",
+    "question": "Tishim juda qattiq og'riyapti, nima qilsam bo'ladi?",
+    "answer": "Agar kuchli og'riq, shish yoki qon ketish bo'lsa, tezda klinikamizga kelishingizni so'raymiz. Og'riq qoldiruvchi dori ichib, zudlik bilan shifokor ko'rigidan o'ting!"
+  },
+  {
+    "category": "shoshilinch_xavfsizlik",
+    "question": "Qaysi dori ichsam og'riq qoladi?",
+    "answer": "Men sun'iy intellekt bo'lganim sababli dori tavsiya qila olmayman. Iltimos, nojo'ya ta'sirlarning oldini olish uchun zudlik bilan stomatolog ko'rigiga keling."
+  },
+  {
+    "category": "shoshilinch_xavfsizlik",
+    "question": "Jotim shishib ketdi, isitmam bor, nima qilay?",
+    "answer": "Bu o'tkir yallig'lanish belgisi bo'lishi mumkin! Zudlik bilan klinikaga keling yoki 103 tez yordam xizmatiga murojaat qiling."
+  },
+  {
+    "category": "muolajalar",
+    "question": "Tish nervini olish (pulpit) og'ritadimi?",
+    "answer": "Yo'q, zamonaviy og'riqsizlantirish (anesteziya) dori vositalari qo'llaniladi. Muolaja mutlaqo og'riqsiz o'tadi."
+  },
+  {
+    "category": "muolajalar",
+    "question": "Breket necha yoshdan qo'yiladi va qancha muddat taqiladi?",
+    "answer": "Breketlar 12-14 yoshdan boshlab qo'yiladi. Taquv muddati tish holatiga qarab o'rtacha 1 yildan 2 yacha davom etadi."
+  },
+  {
+    "category": "bolalar_stomatologiyasi",
+    "question": "Bolalar tishini ham davolaysizlarmi?",
+    "answer": "Ha, klinikamizda bolalar stomatologi mavjud. Sut tishlarini og'riqsiz va bolaga psixologik travma yetkazmasdan davolaymiz."
+  },
+  {
+    "category": "bolalar_stomatologiyasi",
+    "question": "Bolaning sut tishini yuldirish kerakmi yoki davolashmi?",
+    "answer": "Sut tishlarini imkon qadar vaqtidan oldin sug'urmasdan davolash kerak, chunki u doimiy tishlar to'g'ri chiqishi uchun o'rin saqlaydi."
+  },
+  {
+    "category": "sheva_va_savollar",
+    "question": "Tishimni kurtkida tozalap berasizlarmi?",
+    "answer": "Ha, albatta. Tishlardagi sariq qatlam va toshlarni ultratovush yordamida tozalaymiz."
+  },
+  {
+    "category": "sheva_va_savollar",
+    "question": "Plomba necha yil kafolat beriladi?",
+    "answer": "Klinikamizda qo'yilgan barcha sifatli plombaga 1 yildan 3 yilgacha rasmiy kafolat beriladi."
+  },
+  {
+    "category": "xizmatlar",
+    "question": "Rentgen (tish surati) bormi?",
+    "answer": "Ha, klinikamizda raqamli vivograf va 3D KT rentgen apparatlari mavjud."
+  }
+]
