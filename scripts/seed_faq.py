@@ -44,12 +44,13 @@ async def seed_data():
         result = await session.execute(stmt)
         channel = result.scalar_one_or_none()
 
+        credentials = {
+            "bot_token": settings.TELEGRAM_BOT_TOKEN or "123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ",
+            "bot_username": "stomatologiya_ai_bot"
+        }
+        encrypted_creds = encrypt_credentials(credentials)
+
         if not channel:
-            credentials = {
-                "bot_token": settings.TELEGRAM_BOT_TOKEN or "123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ",
-                "bot_username": "stomatologiya_ai_bot"
-            }
-            encrypted_creds = encrypt_credentials(credentials)
             channel = Channel(
                 tenant_id=tenant.id,
                 type="telegram",
@@ -59,6 +60,10 @@ async def seed_data():
             session.add(channel)
             await session.commit()
             print("✅ Created default Telegram channel with encrypted credentials")
+        else:
+            channel.credentials = encrypted_creds
+            await session.commit()
+            print("🔄 Updated Telegram channel credentials in DB with current token")
 
         # 3. Load seed FAQs from json
         json_path = os.path.join(os.path.dirname(__file__), "..", "data", "dental_faq_seed.json")

@@ -71,11 +71,28 @@ services:
       - APP_NAME=${APP_NAME:-AI Medical Assistant}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aimed_bot
+    restart: always
+    command: python scripts/run_telegram_bot.py
+    volumes:
+      - .:/app
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-aimed_db}
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - web
 
 volumes:
   pgdata:

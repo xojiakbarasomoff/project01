@@ -60,6 +60,9 @@ async def process_debounce_batch(
             elif isinstance(creds, str):
                 bot_token = creds
 
+        if not bot_token or bot_token.startswith("123456789:"):
+            bot_token = settings.TELEGRAM_BOT_TOKEN
+
         # 3. Retrieve User & Conversation status
         stmt = select(User).where(User.id == user_id, User.tenant_id == tenant_id)
         res = await session.execute(stmt)

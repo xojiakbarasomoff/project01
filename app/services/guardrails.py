@@ -23,19 +23,19 @@ class GuardrailService:
     EMERGENCY_RESPONSE_UZ = (
         "⚠️ <b>DIQQAT! SHOSHILINCH HOLAT:</b><br/>"
         "Siz ko'rsatgan alomatlar (shoshilinch yallig'lanish, kuchli qon ketishi yoki shish) "
-        "zudlik bilan tibbiy yordam talab qiladi!<br/>"
+        "zudlik bilan shifokor yordamini talab qiladi!<br/>"
         "Iltimos, zudlik bilan <b>103 Tez Yordam</b> xizmatiga qo'ng'iroq qiling yoki eng yaqin shoshilinch klinikaga murojaat qiling!"
     )
 
     PRESCRIPTION_RESPONSE_UZ = (
-        "Tushunaman, lekin men AI-yordamchiman va tibbiy retsept hamda dori vositalarini tavsiya qila olmayman.<br/>"
+        "Tushunaman, lekin men klinika administratoriman va tibbiy retsept hamda dori vositalarini tavsiya qila olmayman.<br/>"
         "Dori vositalarini nojo'ya ta'sirlarsiz to'g'ri qabul qilish uchun shifokor ko'rigi shart.<br/>"
-        "Sizni malakali stomatologimiz qabuliga yozib qo'yaymi?"
+        "Sizni malakali stomatolog shifokorimiz qabuliga yozib qo'yaymi?"
     )
 
     OPERATOR_ESCALATION_RESPONSE_UZ = (
-        "Tushundim! Chatni klinika operatoriga uzatmoqdaman. Biroz kutishingizni so'raymiz, "
-        "operatorimiz tez orada siz bilan bog'lanadi."
+        "Tushundim! Men klinikamizning katta administratoriga xabaringizni uzatmoqdaman. "
+        "Biroz kutishingizni so'raymiz, siz bilan bog'lanishadi."
     )
 
     @classmethod
