@@ -130,6 +130,43 @@ async def receive_telegram_webhook(
         if cb_id:
             await TelegramService.answer_callback_query(bot_token, cb_id)
 
+        if cb_data == "get_location":
+            t_settings = tenant.settings if tenant and isinstance(tenant.settings, dict) else {}
+            address = t_settings.get("clinic_address", "Toshkent shahri, Amir Temur shoh ko'chasi, 45-uy")
+            landmark = t_settings.get("clinic_landmark", "Markaziy Universitet qarshisida")
+            lat = float(t_settings.get("clinic_latitude", 41.311081))
+            lng = float(t_settings.get("clinic_longitude", 69.240562))
+            hours = t_settings.get("clinic_work_hours", "Har kuni 09:00 - 18:00")
+
+            yandex_url = f"https://yandex.com/maps/?pt={lng},{lat}&z=17&l=map"
+            google_url = f"https://www.google.com/maps?q={lat},{lng}"
+
+            location_text = (
+                f"📍 <b>AIMED Stomatologiya Klinikasi Manzili:</b>\n\n"
+                f"🏢 <b>Manzil:</b> {address}\n"
+                f"📌 <b>Mo'ljal:</b> {landmark}\n"
+                f"🕒 <b>Ish vaqti:</b> {hours}\n\n"
+                f"🗺 <b>Xaritalar va Navigatsiya:</b>\n"
+                f"• <a href=\"{yandex_url}\">🚖 Yandex Go / Yandex Maps da ko'rish</a>\n"
+                f"• <a href=\"{google_url}\">📍 Google Maps da ko'rish</a>"
+            )
+
+            if bot_token:
+                await TelegramService.send_location(
+                    bot_token=bot_token,
+                    chat_id=chat_id,
+                    latitude=lat,
+                    longitude=lng
+                )
+                await TelegramService.send_message(
+                    bot_token=bot_token,
+                    chat_id=chat_id,
+                    text=location_text,
+                    parse_mode="HTML",
+                    reply_markup=TelegramService.build_location_map_keyboard(latitude=lat, longitude=lng)
+                )
+            return {"status": "location_sent"}
+
         if cb_data.startswith("hist_usr_"):
             target_user_id = int(cb_data.replace("hist_usr_", ""))
             stmt_usr = select(User).where(User.id == target_user_id, User.tenant_id == tenant_id)

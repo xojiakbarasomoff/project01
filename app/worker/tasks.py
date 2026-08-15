@@ -39,6 +39,11 @@ _TIME_RE = re.compile(
     re.IGNORECASE,
 )
 
+_LOCATION_KEYWORDS = re.compile(
+    r"\b(qayerda|manzil|lokatsiya|location|xarita|address|qanday boriladi|qaysi ko'chada|qaysi kochada|taksi|yandex)\b",
+    re.IGNORECASE
+)
+
 
 def _extract_phone(text: str) -> str:
     """Extract first phone number from text, or empty string."""
@@ -236,6 +241,64 @@ async def process_debounce_batch(
             await session.commit()
             return True
 
+        # 8b. Check Location Query Intent (Send GPS Pin & Map Links)
+        if _LOCATION_KEYWORDS.search(combined_text):
+            logger.info(f"📍 [LOCATION INTENT] Sending clinic location & maps for user {user_id}")
+            stmt_tenant = select(Tenant).where(Tenant.id == tenant_id)
+            res_tenant = await session.execute(stmt_tenant)
+            tenant_obj = res_tenant.scalar_one_or_none()
+            t_settings = tenant_obj.settings if tenant_obj and isinstance(tenant_obj.settings, dict) else {}
+
+            address = t_settings.get("clinic_address", "Toshkent shahri, Amir Temur shoh ko'chasi, 45-uy")
+            landmark = t_settings.get("clinic_landmark", "Markaziy Universitet qarshisida")
+            lat = float(t_settings.get("clinic_latitude", 41.311081))
+            lng = float(t_settings.get("clinic_longitude", 69.240562))
+            hours = t_settings.get("clinic_work_hours", "Har kuni 09:00 - 18:00")
+
+            yandex_url = f"https://yandex.com/maps/?pt={lng},{lat}&z=17&l=map"
+            google_url = f"https://www.google.com/maps?q={lat},{lng}"
+
+            location_text = (
+                f"📍 <b>AIMED Stomatologiya Klinikasi Manzili:</b>\n\n"
+                f"🏢 <b>Manzil:</b> {address}\n"
+                f"📌 <b>Mo'ljal:</b> {landmark}\n"
+                f"🕒 <b>Ish vaqti:</b> {hours}\n\n"
+                f"🗺 <b>Xaritalar va Navigatsiya:</b>\n"
+                f"• <a href=\"{yandex_url}\">🚖 Yandex Go / Yandex Maps da ko'rish</a>\n"
+                f"• <a href=\"{google_url}\">📍 Google Maps da ko'rish</a>"
+            )
+
+            sent_ok = True
+            if bot_token:
+                # 1. Send Telegram Native GPS Pin
+                await TelegramService.send_location(
+                    bot_token,
+                    external_chat_id,
+                    latitude=lat,
+                    longitude=lng,
+                    business_connection_id=business_connection_id
+                )
+                # 2. Send Formatted Text Message with Navigation Links & Direct Map Keyboard
+                sent_ok = await TelegramService.send_message(
+                    bot_token,
+                    external_chat_id,
+                    location_text,
+                    parse_mode="HTML",
+                    reply_markup=TelegramService.build_location_map_keyboard(latitude=lat, longitude=lng),
+                    business_connection_id=business_connection_id
+                )
+
+            out_msg = Message(
+                conversation_id=conversation.id,
+                sender="bot",
+                content=location_text,
+                channel=channel_type,
+                meta={"intent": "location_query", "send_status": "sent" if sent_ok else "failed"}
+            )
+            session.add(out_msg)
+            await session.commit()
+            return True
+
         # 9. RAG Semantic Search
         kb_matches = await RAGService.search_knowledge_base(
             session=session,
@@ -366,7 +429,7 @@ async def check_appointment_reminders(ctx: Optional[Dict[str, Any]] = None) -> i
                         chat_id=target_chat_id,
                         text=msg_text,
                         parse_mode="HTML",
-                        reply_markup=TelegramService.build_booking_keyboard()
+                        reply_markup=TelegramService.build_location_keyboard()
                     )
                 appt.reminder_24h_sent = True
                 sent_count += 1
@@ -386,7 +449,7 @@ async def check_appointment_reminders(ctx: Optional[Dict[str, Any]] = None) -> i
                         chat_id=target_chat_id,
                         text=msg_text,
                         parse_mode="HTML",
-                        reply_markup=TelegramService.build_booking_keyboard()
+                        reply_markup=TelegramService.build_location_keyboard()
                     )
                 appt.reminder_2h_sent = True
                 sent_count += 1

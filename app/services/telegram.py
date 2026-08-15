@@ -12,12 +12,65 @@ _IS_MOCK_TOKEN = lambda token: not token or token.startswith("123456789:")
 class TelegramService:
     @staticmethod
     def build_booking_keyboard(webapp_url: str = "https://almanac-trembling-tyke.ngrok-free.dev/webapp/booking.html") -> Dict[str, Any]:
-        """Create Inline Keyboard with Telegram Mini App (Web App) booking button."""
+        """Create Inline Keyboard with Booking and Location buttons."""
         return {
             "inline_keyboard": [
                 [
                     {
-                        "text": "📅 Vizual Kalendardan Qabulga Yozilish",
+                        "text": "📅 Qabulga Yozilish",
+                        "web_app": {"url": webapp_url}
+                    },
+                    {
+                        "text": "📍 Klinika Lokatsiyasi",
+                        "callback_data": "get_location"
+                    }
+                ]
+            ]
+        }
+
+    @staticmethod
+    def build_location_keyboard(webapp_url: str = "https://almanac-trembling-tyke.ngrok-free.dev/webapp/booking.html") -> Dict[str, Any]:
+        """Create Inline Keyboard focused on Location for reminders & notifications."""
+        return {
+            "inline_keyboard": [
+                [
+                    {
+                        "text": "📍 Klinika Lokatsiyasi (Xarita)",
+                        "callback_data": "get_location"
+                    },
+                    {
+                        "text": "📅 Qabulga Yozilish",
+                        "web_app": {"url": webapp_url}
+                    }
+                ]
+            ]
+        }
+
+    @staticmethod
+    def build_location_map_keyboard(
+        latitude: float = 41.311081,
+        longitude: float = 69.240562,
+        webapp_url: str = "https://almanac-trembling-tyke.ngrok-free.dev/webapp/booking.html"
+    ) -> Dict[str, Any]:
+        """Create Inline Keyboard with direct Yandex Go, Google Maps, and Booking buttons."""
+        yandex_url = f"https://yandex.com/maps/?pt={longitude},{latitude}&z=17&l=map"
+        google_url = f"https://www.google.com/maps?q={latitude},{longitude}"
+
+        return {
+            "inline_keyboard": [
+                [
+                    {
+                        "text": "🚖 Yandex Go Xarita",
+                        "url": yandex_url
+                    },
+                    {
+                        "text": "📍 Google Maps Xarita",
+                        "url": google_url
+                    }
+                ],
+                [
+                    {
+                        "text": "📅 Qabulga Yozilish (Vizual Kalendar)",
                         "web_app": {"url": webapp_url}
                     }
                 ]
@@ -79,6 +132,49 @@ class TelegramService:
                 return True
             except Exception as e:
                 logger.error(f"Failed to send Telegram message: {str(e)}")
+                return False
+
+    @staticmethod
+    async def send_location(
+        bot_token: str,
+        chat_id: Union[int, str],
+        latitude: float,
+        longitude: float,
+        business_connection_id: Optional[str] = None
+    ) -> bool:
+        """Send native GPS location pin to a Telegram chat."""
+        if _IS_MOCK_TOKEN(bot_token):
+            logger.info(f"[MOCK TELEGRAM LOCATION] Chat {chat_id}: Lat {latitude}, Lon {longitude}")
+            return True
+
+        url = f"{TELEGRAM_API_BASE}{bot_token}/sendLocation"
+        target_chat_id = chat_id
+        if isinstance(chat_id, str):
+            clean_id = chat_id.strip()
+            if clean_id.isdigit() or (clean_id.startswith("-") and clean_id[1:].isdigit()):
+                target_chat_id = int(clean_id)
+
+        payload: Dict[str, Any] = {
+            "chat_id": target_chat_id,
+            "latitude": latitude,
+            "longitude": longitude
+        }
+        if business_connection_id:
+            payload["business_connection_id"] = business_connection_id
+
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            try:
+                response = await client.post(url, json=payload)
+                data = response.json()
+                if not data.get("ok") and business_connection_id and "BUSINESS_PEER_INVALID" in data.get("description", ""):
+                    payload_copy = dict(payload)
+                    payload_copy.pop("business_connection_id", None)
+                    resp_retry = await client.post(url, json=payload_copy)
+                    data_retry = resp_retry.json()
+                    return bool(data_retry.get("ok"))
+                return bool(data.get("ok"))
+            except Exception as e:
+                logger.error(f"Failed to send Telegram location pin: {str(e)}")
                 return False
 
     @staticmethod

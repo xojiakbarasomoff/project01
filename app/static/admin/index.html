@@ -406,22 +406,36 @@ tr:hover td{background:var(--hover)}
     <!-- PAGE: SETTINGS -->
     <div class="page" id="page-settings">
       <div style="display:flex;flex-direction:column;gap:20px;max-width:600px">
-        <!-- Setting 1: Wait Time -->
+        <!-- Setting: Clinic Location & GPS Maps -->
         <div class="card">
           <div class="card-header">
-            <h3>⚙️ Bot Sozlamalari (Wait Time)</h3>
+            <h3>📍 Klinika Manzili va GPS Xarita Sozlamalari</h3>
           </div>
           <div style="padding:20px">
+            <p style="font-size:12px;color:var(--muted);margin-bottom:12px">
+              Bemor "Klinika qayerda?" deb so'raganda bot avtomatik ushbu manzil va GPS nuqtasini yuboradi.
+            </p>
             <div class="fg">
-              <label style="font-weight:600">Bot Javob Berish Kutish Vaqti (Debounce Wait Time, soniyalarda)</label>
-              <p style="font-size:12px;color:var(--muted);margin-bottom:8px">
-                Bemor bir nechta ketma-ket xabar yuborganda, bot ularni bitta xabarga birlashtirish uchun necha soniya kutishini belgilang.
-              </p>
-              <input type="number" id="setting-wait-time" min="1" max="300" placeholder="30" style="font-size:16px;padding:10px">
+              <label style="font-weight:600">🏢 Klinika Manzili (Ko'cha, Uy)</label>
+              <input type="text" id="setting-clinic-address" placeholder="Toshkent shahri, Amir Temur shoh ko'chasi, 45-uy">
             </div>
-            <div style="margin-top:16px;display:flex;align-items:center;gap:12px">
-              <button class="btn btn-green" onclick="saveSettings()">💾 Saqlash</button>
-              <span id="settings-status" style="font-size:13px;color:var(--green);font-weight:600"></span>
+            <div class="fg">
+              <label style="font-weight:600">📌 Mo'ljal (Landmark)</label>
+              <input type="text" id="setting-clinic-landmark" placeholder="Markaziy Universitet qarshisida">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="fg">
+                <label style="font-weight:600">📍 GPS Kenglik (Latitude)</label>
+                <input type="number" step="0.000001" id="setting-clinic-lat" placeholder="41.311081">
+              </div>
+              <div class="fg">
+                <label style="font-weight:600">📍 GPS Uzunlik (Longitude)</label>
+                <input type="number" step="0.000001" id="setting-clinic-lng" placeholder="69.240562">
+              </div>
+            </div>
+            <div class="fg">
+              <label style="font-weight:600">🕒 Ish Vaqti</label>
+              <input type="text" id="setting-clinic-hours" placeholder="Har kuni 09:00 - 18:00">
             </div>
           </div>
         </div>
@@ -656,7 +670,12 @@ async function loadSettings(){
     const r = await authFetch(API + '/settings?tenant_id=1');
     if(!r.ok) return;
     const data = await r.json();
-    document.getElementById('setting-wait-time').value = data.debounce_seconds || 30;
+    if(document.getElementById('setting-wait-time')) document.getElementById('setting-wait-time').value = data.debounce_seconds || 30;
+    if(document.getElementById('setting-clinic-address')) document.getElementById('setting-clinic-address').value = data.clinic_address || '';
+    if(document.getElementById('setting-clinic-landmark')) document.getElementById('setting-clinic-landmark').value = data.clinic_landmark || '';
+    if(document.getElementById('setting-clinic-lat')) document.getElementById('setting-clinic-lat').value = data.clinic_latitude || 41.311081;
+    if(document.getElementById('setting-clinic-lng')) document.getElementById('setting-clinic-lng').value = data.clinic_longitude || 69.240562;
+    if(document.getElementById('setting-clinic-hours')) document.getElementById('setting-clinic-hours').value = data.clinic_work_hours || '';
   } catch(e) { console.error(e); }
 }
 
@@ -666,11 +685,20 @@ async function saveSettings(){
     alert("Iltimos, 1 va 300 soniya orasida qiymat kiriting!");
     return;
   }
+  const payload = {
+    debounce_seconds: secs,
+    clinic_address: document.getElementById('setting-clinic-address')?.value || '',
+    clinic_landmark: document.getElementById('setting-clinic-landmark')?.value || '',
+    clinic_latitude: parseFloat(document.getElementById('setting-clinic-lat')?.value) || 41.311081,
+    clinic_longitude: parseFloat(document.getElementById('setting-clinic-lng')?.value) || 69.240562,
+    clinic_work_hours: document.getElementById('setting-clinic-hours')?.value || ''
+  };
+
   try {
     const r = await authFetch(API + '/settings?tenant_id=1', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({debounce_seconds: secs})
+      body: JSON.stringify(payload)
     });
     const statusEl = document.getElementById('settings-status');
     if(r.ok){
