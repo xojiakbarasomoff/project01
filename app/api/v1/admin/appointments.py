@@ -90,3 +90,11 @@ async def delete_appointment(
     await db.delete(appointment)
     await db.commit()
     return None
+
+
+@router.post("/run-reminders")
+async def run_reminders_now():
+    """Manually trigger appointment reminder checks (24h and 2h reminders)."""
+    from app.worker.tasks import check_appointment_reminders
+    sent = await check_appointment_reminders()
+    return {"status": "success", "reminders_sent": sent}

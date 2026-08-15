@@ -300,7 +300,10 @@ tr:hover td{background:var(--hover)}
       <div class="card">
         <div class="card-header">
           <h3>📅 So'nggi Qabullar</h3>
-          <button class="btn" onclick="openModal('appt-modal')">+ Yangi Qabul</button>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-gray" onclick="triggerRemindersNow()">🔔 Eslatmalarni Yuborish</button>
+            <button class="btn" onclick="openModal('appt-modal')">+ Yangi Qabul</button>
+          </div>
         </div>
         <div class="table-responsive">
           <table>
@@ -530,6 +533,20 @@ async function checkAuth(){
 function logout(){
   removeAuthToken();
   showLoginOverlay();
+}
+
+async function triggerRemindersNow() {
+  if(!confirm("Barcha 24 soatlik va 2 soatlik eslatmalarni yuborishni xohlaysizmi?")) return;
+  try {
+    const res = await apiFetch('/admin/appointments/run-reminders', {method:'POST'});
+    if(res.status === 'success') {
+      alert(`✅ ${res.reminders_sent} ta qabul eslatmasi Telegram orqali yuborildi!`);
+    } else {
+      alert("Xatolik yuz berdi!");
+    }
+  } catch(e) {
+    alert("Xatolik: " + e.message);
+  }
 }
 
 // Clock

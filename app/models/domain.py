@@ -133,6 +133,8 @@ class Appointment(Base):
     appointment_time = Column(DateTime(timezone=True), nullable=True)
     status = Column(String(50), nullable=False, default="pending")  # pending, confirmed, cancelled
     notes = Column(Text, nullable=True)
+    reminder_24h_sent = Column(Boolean, default=False, nullable=False)
+    reminder_2h_sent = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     tenant = relationship("Tenant", back_populates="appointments")

@@ -302,6 +302,102 @@ async def process_debounce_batch(
         return True
 
 
+async def check_appointment_reminders(ctx: Optional[Dict[str, Any]] = None) -> int:
+    """
+    Cron job task that checks upcoming appointments and sends:
+    1. 24-hour reminders (~22-26 hours before appointment_time)
+    2. 2-hour reminders (~1-3 hours before appointment_time)
+    """
+    logger.info("⏰ [CRON] Checking upcoming appointment reminders...")
+    now = datetime.now(UZ_TZ)
+    sent_count = 0
+
+    async with AsyncSessionLocal() as session:
+        stmt = (
+            select(Appointment)
+            .where(
+                Appointment.status != "cancelled",
+                Appointment.appointment_time > now
+            )
+        )
+        res = await session.execute(stmt)
+        appointments = res.scalars().all()
+
+        for appt in appointments:
+            if not appt.appointment_time:
+                continue
+
+            diff_seconds = (appt.appointment_time - now).total_seconds()
+            diff_hours = diff_seconds / 3600.0
+
+            patient_name = appt.patient_name or "Bemor"
+            doctor_name = appt.doctor_name or "Stomatolog Shifokor"
+            formatted_date = appt.appointment_time.strftime("%d-%m-%Y")
+            formatted_time = appt.appointment_time.strftime("%H:%M")
+
+            target_chat_id = None
+            if appt.user_id:
+                u_res = await session.execute(select(User).where(User.id == appt.user_id))
+                u = u_res.scalar_one_or_none()
+                if u and u.external_id:
+                    target_chat_id = u.external_id
+
+            if not target_chat_id:
+                if appt.patient_phone and "Telegram ID:" in appt.patient_phone:
+                    target_chat_id = appt.patient_phone.replace("Telegram ID:", "").strip()
+
+            if not target_chat_id and appt.notes and "telegram_user_id:" in appt.notes:
+                m = re.search(r"telegram_user_id:(\d+)", appt.notes)
+                if m:
+                    target_chat_id = m.group(1)
+
+            # ── 1. Check 24-Hour Reminder (between 22h and 26h away) ───────────
+            if 22.0 <= diff_hours <= 26.0 and not appt.reminder_24h_sent:
+                logger.info(f"🔔 [REMINDER] Sending 24-hour reminder to appointment #{appt.id} ({patient_name})")
+                msg_text = (
+                    f"🔔 <b>Qabul Eslatmasi!</b>\n\n"
+                    f"Hurmatli <b>{patient_name}</b>, ertaga (<b>{formatted_date}</b>) soat <b>{formatted_time}</b> da "
+                    f"<b>{doctor_name}</b> qabulida ko'rikka yozilgansiz! 😊\n\n"
+                    f"Klinikamizda sizni intizorlik bilan kutamiz!"
+                )
+                if target_chat_id and settings.TELEGRAM_BOT_TOKEN:
+                    await TelegramService.send_message(
+                        bot_token=settings.TELEGRAM_BOT_TOKEN,
+                        chat_id=target_chat_id,
+                        text=msg_text,
+                        parse_mode="HTML",
+                        reply_markup=TelegramService.build_booking_keyboard()
+                    )
+                appt.reminder_24h_sent = True
+                sent_count += 1
+
+            # ── 2. Check 2-Hour Reminder (between 1h and 3h away) ─────────────
+            elif 1.0 <= diff_hours <= 3.0 and not appt.reminder_2h_sent:
+                logger.info(f"⏰ [REMINDER] Sending 2-hour reminder to appointment #{appt.id} ({patient_name})")
+                msg_text = (
+                    f"⏰ <b>Bugun Qabulingiz Bor!</b>\n\n"
+                    f"Hurmatli <b>{patient_name}</b>, bugun soat <b>{formatted_time}</b> da "
+                    f"(taxminan 2 soatdan so'ng) <b>{doctor_name}</b> qabulida ko'rikka kutilmoqdasiz! 😊\n\n"
+                    f"Tashrifingizni tasdiqlaysizmi?"
+                )
+                if target_chat_id and settings.TELEGRAM_BOT_TOKEN:
+                    await TelegramService.send_message(
+                        bot_token=settings.TELEGRAM_BOT_TOKEN,
+                        chat_id=target_chat_id,
+                        text=msg_text,
+                        parse_mode="HTML",
+                        reply_markup=TelegramService.build_booking_keyboard()
+                    )
+                appt.reminder_2h_sent = True
+                sent_count += 1
+
+        if sent_count > 0:
+            await session.commit()
+            logger.info(f"✅ [CRON] Sent {sent_count} appointment reminders.")
+
+    return sent_count
+
+
 async def startup(ctx):
     logger.info("🚀 ARQ Worker started successfully")
 
@@ -310,8 +406,13 @@ async def shutdown(ctx):
     logger.info("🛑 ARQ Worker shutting down")
 
 
+from arq import cron
+
+
 class WorkerSettings:
-    functions = [process_debounce_batch]
+    functions = [process_debounce_batch, check_appointment_reminders]
+    cron_jobs = [cron(check_appointment_reminders, minute=set(range(0, 60, 5)))]
     on_startup = startup
     on_shutdown = shutdown
     redis_settings = RedisSettings.from_dsn(settings.REDIS_URL)
+
