@@ -1,24 +1,29 @@
 import base64
 import json
-from typing import Any, Dict, Union
+from typing import Any, Dict, Union, Optional
 
 from cryptography.fernet import Fernet
 from passlib.context import CryptContext
 
 from app.core.config import settings
 
+import bcrypt
+
 # ── Password hashing ──────────────────────────────────────────────────────────
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
 def hash_password(plain: str) -> str:
     """Hash a plain-text password with bcrypt."""
-    return pwd_context.hash(plain)
+    pwd_bytes = plain.encode('utf-8')[:72]
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(pwd_bytes, salt).decode('utf-8')
 
 
 def verify_password(plain: str, hashed: str) -> bool:
     """Verify a plain-text password against its bcrypt hash."""
-    return pwd_context.verify(plain, hashed)
+    try:
+        pwd_bytes = plain.encode('utf-8')[:72]
+        return bcrypt.checkpw(pwd_bytes, hashed.encode('utf-8'))
+    except Exception:
+        return False
 
 
 # ── Credential encryption ─────────────────────────────────────────────────────
@@ -70,3 +75,38 @@ def decrypt_credentials(token: str) -> Union[Dict[str, Any], str]:
         return json.loads(decrypted)
     except Exception:
         return decrypted
+
+
+# ── Admin Auth Tokens ──────────────────────────────────────────────────────────
+import hmac
+import hashlib
+import time
+
+def create_admin_token(username: str, expires_in_seconds: int = 86400 * 7) -> str:
+    """Create a signed admin access token (valid for 7 days by default)."""
+    exp = int(time.time()) + expires_in_seconds
+    payload = f"{username}:{exp}"
+    signature = hmac.new(settings.ENCRYPTION_KEY.encode(), payload.encode(), hashlib.sha256).hexdigest()
+    token_str = f"{payload}:{signature}"
+    return base64.b64encode(token_str.encode()).decode()
+
+
+def verify_admin_token(token: str) -> Optional[str]:
+    """Verify admin access token. Returns username if valid, None otherwise."""
+    if not token:
+        return None
+    try:
+        decoded = base64.b64decode(token.encode()).decode()
+        parts = decoded.split(":")
+        if len(parts) != 3:
+            return None
+        username, exp_str, signature = parts[0], parts[1], parts[2]
+        exp = int(exp_str)
+        if time.time() > exp:
+            return None
+        expected_sig = hmac.new(settings.ENCRYPTION_KEY.encode(), f"{username}:{exp_str}".encode(), hashlib.sha256).hexdigest()
+        if hmac.compare_digest(signature, expected_sig):
+            return username
+        return None
+    except Exception:
+        return None

@@ -22,6 +22,14 @@
 }
 body{background:var(--bg);color:var(--txt);display:flex;height:100vh;height:100dvh;overflow:hidden}
 
+/* LOGIN OVERLAY */
+.login-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.95);backdrop-filter:blur(10px);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;width:100%;max-width:380px;box-shadow:0 20px 40px rgba(0,0,0,0.5)}
+.login-header{text-align:center;margin-bottom:24px}
+.login-header h1{font-size:24px;font-weight:700;color:var(--blue);margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:10px}
+.login-header p{font-size:13px;color:var(--muted)}
+.login-error{background:rgba(239,68,68,0.15);border:1px solid var(--red);color:var(--red);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
+
 /* SIDEBAR BACKDROP FOR MOBILE */
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:99;opacity:0;transition:opacity 0.3s ease}
 .sidebar-overlay.active{display:block;opacity:1}
@@ -57,9 +65,9 @@ body{background:var(--bg);color:var(--txt);display:flex;height:100vh;height:100d
 .sidebar.collapsed .nav-item{justify-content:center;padding:12px 0}
 .sidebar.collapsed .nav-label{display:none}
 
-.sidebar-footer{padding:12px 8px;border-top:1px solid var(--border)}
-.status-dot{display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:12px;color:var(--green);white-space:nowrap;overflow:hidden}
-.sidebar.collapsed .status-dot{justify-content:center;padding:10px 0}
+.sidebar-footer{padding:12px 8px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+.status-dot{display:flex;align-items:center;gap:8px;padding:8px 12px;font-size:12px;color:var(--green);white-space:nowrap;overflow:hidden}
+.sidebar.collapsed .status-dot{justify-content:center;padding:8px 0}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 .sidebar.collapsed .status-dot span{display:none}
@@ -162,7 +170,7 @@ tr:hover td{background:var(--hover)}
   .sidebar.collapsed .nav-item{justify-content:flex-start;padding:12px 14px}
 
   .mobile-menu-btn{display:flex}
-  .topbar-right span:first-child, .topbar-right span:nth-child(2){display:none} /* Hide clock on small mobile header to save space */
+  .topbar-right span:first-child, .topbar-right span:nth-child(2){display:none}
   .topbar{padding:0 14px}
   .content{padding:14px}
 
@@ -170,7 +178,6 @@ tr:hover td{background:var(--hover)}
   .stat-card{padding:14px}
   .stat-card .val{font-size:24px}
 
-  /* Chat mobile slide behavior */
   .chat-wrap{grid-template-columns:1fr;height:calc(100vh - 130px);height:calc(100dvh - 130px)}
   .chat-window{display:none}
   .chat-wrap.mobile-chat-open .chat-list{display:none}
@@ -187,6 +194,28 @@ tr:hover td{background:var(--hover)}
 </style>
 </head>
 <body>
+
+<!-- LOGIN OVERLAY -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-header">
+      <h1>🏥 AIMED Admin</h1>
+      <p>Boshqaruv paneliga kirish</p>
+    </div>
+    <div class="login-error" id="login-error"></div>
+    <form onsubmit="handleLogin(event)">
+      <div class="fg">
+        <label>Login (Foydalanuvchi nomi)</label>
+        <input type="text" id="login-user" placeholder="admin" required autocomplete="username">
+      </div>
+      <div class="fg">
+        <label>Parol</label>
+        <input type="password" id="login-pass" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn" style="width:100%;padding:12px;margin-top:8px;font-size:14px">🔑 Kirish</button>
+    </form>
+  </div>
+</div>
 
 <!-- SIDEBAR OVERLAY FOR MOBILE -->
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeMobileSidebar()"></div>
@@ -220,6 +249,7 @@ tr:hover td{background:var(--hover)}
   </nav>
   <div class="sidebar-footer">
     <div class="status-dot"><span class="dot"></span><span>Tizim faol</span></div>
+    <button class="btn btn-gray btn-sm" onclick="logout()" style="width:100%;margin-top:4px">🚪 Chiqish</button>
   </div>
 </aside>
 
@@ -234,6 +264,8 @@ tr:hover td{background:var(--hover)}
       <span id="topbar-time"></span>
       <span>|</span>
       <span style="color:var(--green)">● Online</span>
+      <span>|</span>
+      <button class="btn btn-gray btn-sm" onclick="logout()">🚪 Chiqish</button>
     </div>
   </div>
 
@@ -330,21 +362,49 @@ tr:hover td{background:var(--hover)}
 
     <!-- PAGE: SETTINGS -->
     <div class="page" id="page-settings">
-      <div class="card" style="max-width:600px">
-        <div class="card-header">
-          <h3>⚙️ Bot Sozlamalari (Wait Time)</h3>
-        </div>
-        <div style="padding:20px">
-          <div class="fg">
-            <label style="font-weight:600">Bot Javob Berish Kutish Vaqti (Debounce Wait Time, soniyalarda)</label>
-            <p style="font-size:12px;color:var(--muted);margin-bottom:8px">
-              Bemor bir nechta ketma-ket xabar yuborganda, bot ularni bitta xabarga birlashtirish uchun necha soniya kutishini belgilang.
-            </p>
-            <input type="number" id="setting-wait-time" min="1" max="300" placeholder="30" style="font-size:16px;padding:10px">
+      <div style="display:flex;flex-direction:column;gap:20px;max-width:600px">
+        <!-- Setting 1: Wait Time -->
+        <div class="card">
+          <div class="card-header">
+            <h3>⚙️ Bot Sozlamalari (Wait Time)</h3>
           </div>
-          <div style="margin-top:16px;display:flex;align-items:center;gap:12px">
-            <button class="btn btn-green" onclick="saveSettings()">💾 Saqlash</button>
-            <span id="settings-status" style="font-size:13px;color:var(--green);font-weight:600"></span>
+          <div style="padding:20px">
+            <div class="fg">
+              <label style="font-weight:600">Bot Javob Berish Kutish Vaqti (Debounce Wait Time, soniyalarda)</label>
+              <p style="font-size:12px;color:var(--muted);margin-bottom:8px">
+                Bemor bir nechta ketma-ket xabar yuborganda, bot ularni bitta xabarga birlashtirish uchun necha soniya kutishini belgilang.
+              </p>
+              <input type="number" id="setting-wait-time" min="1" max="300" placeholder="30" style="font-size:16px;padding:10px">
+            </div>
+            <div style="margin-top:16px;display:flex;align-items:center;gap:12px">
+              <button class="btn btn-green" onclick="saveSettings()">💾 Saqlash</button>
+              <span id="settings-status" style="font-size:13px;color:var(--green);font-weight:600"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Setting 2: Change Password -->
+        <div class="card">
+          <div class="card-header">
+            <h3>🔐 Admin Parolini O'zgartirish</h3>
+          </div>
+          <div style="padding:20px">
+            <div class="fg">
+              <label style="font-weight:600">Joriy (eski) Parol</label>
+              <input type="password" id="pass-old" placeholder="••••••••">
+            </div>
+            <div class="fg">
+              <label style="font-weight:600">Yangi Parol</label>
+              <input type="password" id="pass-new" placeholder="••••••••">
+            </div>
+            <div class="fg">
+              <label style="font-weight:600">Yangi Parolni Takrorlang</label>
+              <input type="password" id="pass-confirm" placeholder="••••••••">
+            </div>
+            <div style="margin-top:16px;display:flex;align-items:center;gap:12px">
+              <button class="btn btn-green" onclick="changeAdminPassword()">🔑 Parolni Yangilash</button>
+              <span id="pass-status" style="font-size:13px;font-weight:600"></span>
+            </div>
           </div>
         </div>
       </div>
@@ -386,6 +446,91 @@ tr:hover td{background:var(--hover)}
 const API = '/api/v1/admin';
 let activeCid = null;
 let botEnabled = true;
+
+// Auth Token Helper
+function getAuthToken(){ return localStorage.getItem('admin_token'); }
+function setAuthToken(t){ localStorage.setItem('admin_token', t); }
+function removeAuthToken(){ localStorage.removeItem('admin_token'); }
+
+async function authFetch(url, options = {}) {
+  const token = getAuthToken();
+  const headers = options.headers || {};
+  if(token) {
+    headers['Authorization'] = 'Bearer ' + token;
+  }
+  options.headers = headers;
+  const res = await fetch(url, options);
+  if(res.status === 401) {
+    removeAuthToken();
+    showLoginOverlay();
+  }
+  return res;
+}
+
+function showLoginOverlay(){
+  document.getElementById('login-overlay').style.display = 'flex';
+}
+
+function hideLoginOverlay(){
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('login-error').style.display = 'none';
+}
+
+async function handleLogin(e){
+  e.preventDefault();
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value.trim();
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+
+  try {
+    const r = await fetch(API + '/auth/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({username: u, password: p})
+    });
+    const data = await r.json();
+    if(!r.ok) {
+      errEl.textContent = data.detail || "Login yoki parol noto'g'ri!";
+      errEl.style.display = 'block';
+      return;
+    }
+    setAuthToken(data.access_token);
+    hideLoginOverlay();
+    loadDashboard();
+  } catch(err) {
+    errEl.textContent = "Server bilan bog'lanishda xatolik!";
+    errEl.style.display = 'block';
+  }
+}
+
+async function checkAuth(){
+  const token = getAuthToken();
+  if(!token) {
+    showLoginOverlay();
+    return false;
+  }
+  try {
+    const r = await fetch(API + '/auth/me', {
+      headers: {'Authorization': 'Bearer ' + token}
+    });
+    if(!r.ok) {
+      removeAuthToken();
+      showLoginOverlay();
+      return false;
+    }
+    hideLoginOverlay();
+    return true;
+  } catch(e) {
+    showLoginOverlay();
+    return false;
+  }
+}
+
+function logout(){
+  removeAuthToken();
+  showLoginOverlay();
+}
 
 // Clock
 function tick(){
@@ -436,7 +581,8 @@ function goTo(page, el){
 // SETTINGS
 async function loadSettings(){
   try {
-    const r = await fetch('/api/v1/admin/settings?tenant_id=1');
+    const r = await authFetch(API + '/settings?tenant_id=1');
+    if(!r.ok) return;
     const data = await r.json();
     document.getElementById('setting-wait-time').value = data.debounce_seconds || 30;
   } catch(e) { console.error(e); }
@@ -449,28 +595,82 @@ async function saveSettings(){
     return;
   }
   try {
-    const r = await fetch('/api/v1/admin/settings?tenant_id=1', {
+    const r = await authFetch(API + '/settings?tenant_id=1', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({debounce_seconds: secs})
     });
-    const data = await r.json();
     const statusEl = document.getElementById('settings-status');
-    statusEl.textContent = '✅ Muvaffaqiyatli saqlandi!';
+    if(r.ok){
+      statusEl.style.color = 'var(--green)';
+      statusEl.textContent = '✅ Muvaffaqiyatli saqlandi!';
+    } else {
+      statusEl.style.color = 'var(--red)';
+      statusEl.textContent = '❌ Saqlashda xatolik!';
+    }
     setTimeout(() => statusEl.textContent = '', 3000);
   } catch(e) {
     alert("Xatolik yuz berdi!");
   }
 }
 
+async function changeAdminPassword(){
+  const oldP = document.getElementById('pass-old').value;
+  const newP = document.getElementById('pass-new').value;
+  const confirmP = document.getElementById('pass-confirm').value;
+  const statusEl = document.getElementById('pass-status');
+  statusEl.textContent = '';
+
+  if(!oldP || !newP || !confirmP) {
+    statusEl.style.color = 'var(--red)';
+    statusEl.textContent = '❌ Barcha maydonlarni to\'ldiring!';
+    return;
+  }
+  if(newP !== confirmP) {
+    statusEl.style.color = 'var(--red)';
+    statusEl.textContent = '❌ Yangi parollar bir-biriga mos kelmadi!';
+    return;
+  }
+  if(newP.length < 4) {
+    statusEl.style.color = 'var(--red)';
+    statusEl.textContent = '❌ Yangi parol kamida 4 belgidan iborat bo\'lsin!';
+    return;
+  }
+
+  try {
+    const r = await authFetch(API + '/auth/change-password', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({old_password: oldP, new_password: newP})
+    });
+    const data = await r.json();
+    if(r.ok) {
+      statusEl.style.color = 'var(--green)';
+      statusEl.textContent = '✅ Parol muvaffaqiyatli yangilandi!';
+      document.getElementById('pass-old').value = '';
+      document.getElementById('pass-new').value = '';
+      document.getElementById('pass-confirm').value = '';
+    } else {
+      statusEl.style.color = 'var(--red)';
+      statusEl.textContent = '❌ ' + (data.detail || "Xatolik yuz berdi!");
+    }
+    setTimeout(() => statusEl.textContent = '', 4000);
+  } catch(e) {
+    statusEl.style.color = 'var(--red)';
+    statusEl.textContent = '❌ Xatolik yuz berdi!';
+  }
+}
+
 // DASHBOARD
 async function loadDashboard(){
+  if(!getAuthToken()) return;
   try{
     const [convR,apptR,faqR]=await Promise.all([
-      fetch(API+'/conversations?tenant_id=1'),
-      fetch(API+'/appointments?tenant_id=1'),
-      fetch(API+'/knowledge-base?tenant_id=1')
+      authFetch(API+'/conversations?tenant_id=1'),
+      authFetch(API+'/appointments?tenant_id=1'),
+      authFetch(API+'/knowledge-base?tenant_id=1')
     ]);
+    if(!convR.ok || !apptR.ok || !faqR.ok) return;
     const convs=await convR.json(), appts=await apptR.json(), faqs=await faqR.json();
     document.getElementById('s-convs').textContent=convs.length;
     document.getElementById('s-appts').textContent=appts.filter(a=>a.status==='pending').length;
@@ -504,7 +704,7 @@ function renderAppts(data){
 }
 
 async function updAppt(id,status){
-  await fetch(API+'/appointments/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
+  await authFetch(API+'/appointments/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
   loadDashboard();
 }
 
@@ -518,13 +718,14 @@ async function saveAppt(){
     appointment_time: tVal ? new Date(tVal).toISOString() : null,
     notes:document.getElementById('a-notes').value
   };
-  await fetch(API+'/appointments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  await authFetch(API+'/appointments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
   closeModal('appt-modal'); loadDashboard();
 }
 
 // KNOWLEDGE BASE
 async function loadFaq(){
-  const r=await fetch(API+'/knowledge-base?tenant_id=1');
+  const r=await authFetch(API+'/knowledge-base?tenant_id=1');
+  if(!r.ok) return;
   const faqs=await r.json();
   const tb=document.getElementById('faq-tbody');
   if(!faqs.length){tb.innerHTML='<tr><td colspan="5" class="empty">FAQ mavjud emas</td></tr>';return;}
@@ -537,19 +738,20 @@ async function loadFaq(){
 
 async function saveFaq(){
   const body={tenant_id:1,question:document.getElementById('f-q').value,answer:document.getElementById('f-a').value,category:document.getElementById('f-c').value};
-  await fetch(API+'/knowledge-base',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  await authFetch(API+'/knowledge-base',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
   closeModal('faq-modal'); loadFaq();
 }
 
 async function delFaq(id){
   if(!confirm('O\'chirishni tasdiqlaysizmi?')) return;
-  await fetch(API+'/knowledge-base/'+id,{method:'DELETE'});
+  await authFetch(API+'/knowledge-base/'+id,{method:'DELETE'});
   loadFaq();
 }
 
 // CHAT HISTORY
 async function loadConvs(){
-  const r=await fetch(API+'/conversations?tenant_id=1');
+  const r=await authFetch(API+'/conversations?tenant_id=1');
+  if(!r.ok) return;
   const data=await r.json();
   const el=document.getElementById('conv-list');
   if(!data.length){el.innerHTML='<div class="empty"><div class="empty-icon">💬</div>Suhbatlar yo\'q</div>';return;}
@@ -583,7 +785,8 @@ async function selectConv(id,name,phone,isBotOn){
 }
 
 async function loadMsgs(id){
-  const r=await fetch(API+'/conversations/'+id+'/messages');
+  const r=await authFetch(API+'/conversations/'+id+'/messages');
+  if(!r.ok) return;
   const msgs=await r.json();
   const body=document.getElementById('chat-body');
   if(!msgs.length){body.innerHTML='<div class="empty">Xabarlar yo\'q</div>';return;}
@@ -598,7 +801,8 @@ async function loadMsgs(id){
 
 async function toggleBot(){
   if(!activeCid) return;
-  const r=await fetch(API+'/conversations/'+activeCid+'/toggle-bot',{method:'POST'});
+  const r=await authFetch(API+'/conversations/'+activeCid+'/toggle-bot',{method:'POST'});
+  if(!r.ok) return;
   const d=await r.json();
   selectConv(activeCid,document.getElementById('ch-name').textContent,document.getElementById('ch-phone').textContent,d.is_bot_enabled);
 }
@@ -606,7 +810,7 @@ async function toggleBot(){
 async function sendOp(){
   const txt=document.getElementById('op-input').value.trim();
   if(!txt||!activeCid) return;
-  await fetch(API+'/conversations/'+activeCid+'/send-message?text='+encodeURIComponent(txt),{method:'POST'});
+  await authFetch(API+'/conversations/'+activeCid+'/send-message?text='+encodeURIComponent(txt),{method:'POST'});
   document.getElementById('op-input').value='';
   loadMsgs(activeCid);
 }
@@ -620,6 +824,7 @@ function escHtml(s){return (s||'').replace(/'/g,"\\'");}
 
 // Auto refresh
 setInterval(()=>{
+  if(!getAuthToken()) return;
   const p=document.querySelector('.page.active');
   if(!p) return;
   if(p.id==='page-dashboard') loadDashboard();
@@ -627,7 +832,9 @@ setInterval(()=>{
 },10000);
 
 // Init
-loadDashboard();
+checkAuth().then(authed => {
+  if(authed) loadDashboard();
+});
 </script>
 </body>
 </html>
