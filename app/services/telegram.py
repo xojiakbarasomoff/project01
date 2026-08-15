@@ -11,6 +11,20 @@ _IS_MOCK_TOKEN = lambda token: not token or token.startswith("123456789:")
 
 class TelegramService:
     @staticmethod
+    def build_booking_keyboard(webapp_url: str = "https://almanac-trembling-tyke.ngrok-free.dev/webapp/booking.html") -> Dict[str, Any]:
+        """Create Inline Keyboard with Telegram Mini App (Web App) booking button."""
+        return {
+            "inline_keyboard": [
+                [
+                    {
+                        "text": "📅 Vizual Kalendardan Qabulga Yozilish",
+                        "web_app": {"url": webapp_url}
+                    }
+                ]
+            ]
+        }
+
+    @staticmethod
     async def send_message(
         bot_token: str,
         chat_id: Union[int, str],

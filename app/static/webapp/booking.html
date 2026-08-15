@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AIMED — Qabulga Yozilish</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0f172a;
+  --card:#1e293b;
+  --hover:#334155;
+  --txt:#f8fafc;
+  --muted:#94a3b8;
+  --blue:#38bdf8;
+  --green:#22c55e;
+  --orange:#f97316;
+  --border:#334155;
+}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  padding:16px;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+.header{
+  text-align:center;
+  margin-bottom:20px;
+}
+.header h1{
+  font-size:20px;
+  font-weight:700;
+  color:var(--blue);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.header p{
+  font-size:13px;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+/* SECTION TITLES */
+.sec-title{
+  font-size:14px;
+  font-weight:600;
+  color:var(--txt);
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+/* DOCTORS GRID */
+.doctor-grid{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:10px;
+  margin-bottom:20px;
+}
+.doc-card{
+  background:var(--card);
+  border:1.5px solid var(--border);
+  border-radius:12px;
+  padding:12px;
+  cursor:pointer;
+  transition:all 0.2s ease;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+}
+.doc-card:hover, .doc-card.selected{
+  border-color:var(--blue);
+  background:rgba(56, 189, 248, 0.1);
+}
+.doc-avatar{
+  font-size:28px;
+  margin-bottom:6px;
+}
+.doc-name{
+  font-weight:600;
+  font-size:13px;
+  color:var(--txt);
+}
+.doc-spec{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:2px;
+}
+
+/* DATE PICKER SCROLL */
+.date-scroll{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding-bottom:8px;
+  margin-bottom:20px;
+  -webkit-overflow-scrolling:touch;
+}
+.date-scroll::-webkit-scrollbar{display:none}
+.date-pill{
+  flex:0 0 auto;
+  width:72px;
+  background:var(--card);
+  border:1.5px solid var(--border);
+  border-radius:12px;
+  padding:10px 0;
+  text-align:center;
+  cursor:pointer;
+  transition:all 0.2s ease;
+}
+.date-pill.selected{
+  border-color:var(--blue);
+  background:rgba(56, 189, 248, 0.15);
+}
+.date-pill .day-name{
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  font-weight:600;
+}
+.date-pill .day-num{
+  font-size:18px;
+  font-weight:700;
+  color:var(--txt);
+  margin-top:2px;
+}
+.date-pill.selected .day-num{
+  color:var(--blue);
+}
+
+/* TIME GRID */
+.time-grid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:8px;
+  margin-bottom:20px;
+}
+.time-slot{
+  background:var(--card);
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  padding:10px 0;
+  text-align:center;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.2s ease;
+}
+.time-slot:hover, .time-slot.selected{
+  border-color:var(--blue);
+  background:var(--blue);
+  color:#000;
+}
+.time-slot.disabled{
+  opacity:0.4;
+  cursor:not-allowed;
+  border-color:transparent;
+  background:#1e293b;
+  text-decoration:line-through;
+}
+
+/* FORM FIELDS */
+.form-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:20px;
+}
+.fg{
+  margin-bottom:12px;
+}
+.fg:last-child{margin-bottom:0}
+.fg label{
+  display:block;
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:4px;
+  font-weight:500;
+}
+.fg input, .fg textarea{
+  width:100%;
+  background:#0f172a;
+  border:1px solid var(--border);
+  color:var(--txt);
+  padding:10px 12px;
+  border-radius:8px;
+  font-size:13px;
+  outline:none;
+}
+.fg input:focus, .fg textarea:focus{
+  border-color:var(--blue);
+}
+
+/* SUBMIT BUTTON */
+.submit-btn{
+  background:var(--blue);
+  color:#000;
+  border:none;
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  transition:opacity 0.2s;
+  margin-top:auto;
+  box-shadow:0 4px 14px rgba(56, 189, 248, 0.3);
+}
+.submit-btn:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+
+/* SUCCESS MODAL */
+.success-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,0.95);
+  backdrop-filter:blur(10px);
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  text-align:center;
+  z-index:99;
+}
+.success-icon{
+  font-size:64px;
+  margin-bottom:12px;
+  animation:pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+.success-overlay h2{
+  font-size:22px;
+  color:var(--green);
+  margin-bottom:8px;
+}
+.success-overlay p{
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:20px;
+  line-height:1.5;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🏥 AIMED Stomatologiya</h1>
+  <p>Shifokor va qabul vaqtini tanlang</p>
+</div>
+
+<!-- STEP 1: DOCTORS -->
+<div class="sec-title">👨‍⚕️ 1. Shifokorni tanlang</div>
+<div class="doctor-grid" id="doctor-grid">
+  <div class="doc-card selected" onclick="selectDoctor(this, 'Stomatolog Shifokor')">
+    <div class="doc-avatar">🦷</div>
+    <div class="doc-name">Stomatolog</div>
+    <div class="doc-spec">Umumiy ko'rik va davolash</div>
+  </div>
+  <div class="doc-card" onclick="selectDoctor(this, 'Ortodont Shifokor')">
+    <div class="doc-avatar">😁</div>
+    <div class="doc-name">Ortodont</div>
+    <div class="doc-spec">Breket va tish to'g'rilash</div>
+  </div>
+  <div class="doc-card" onclick="selectDoctor(this, 'Implantolog Shifokor')">
+    <div class="doc-avatar">🛠️</div>
+    <div class="doc-name">Implantolog</div>
+    <div class="doc-spec">Implantatsiyalar va operatsiyalar</div>
+  </div>
+  <div class="doc-card" onclick="selectDoctor(this, 'Bolalar Stomatologi')">
+    <div class="doc-avatar">👶</div>
+    <div class="doc-name">Bolalar shifokori</div>
+    <div class="doc-spec">Kichkintoylar uchun ko'rik</div>
+  </div>
+</div>
+
+<!-- STEP 2: DATES -->
+<div class="sec-title">📅 2. Kunning tanlang</div>
+<div class="date-scroll" id="date-scroll">
+  <!-- Dynamic Date Pills -->
+</div>
+
+<!-- STEP 3: TIMES -->
+<div class="sec-title">⏰ 3. Soatni tanlang</div>
+<div class="time-grid" id="time-grid">
+  <!-- Dynamic Time Slots -->
+</div>
+
+<!-- STEP 4: PATIENT INFO -->
+<div class="sec-title">👤 4. Bemor ma'lumotlari</div>
+<div class="form-card">
+  <div class="fg">
+    <label>Ism va Familiya</label>
+    <input type="text" id="p-name" placeholder="Ismingizni kiriting" required>
+  </div>
+  <div class="fg">
+    <label>Telefon raqam</label>
+    <input type="tel" id="p-phone" placeholder="+998 90 123 45 67" required>
+  </div>
+  <div class="fg">
+    <label>Qo'shimcha izoh / Shikoyat (ixtiyoriy)</label>
+    <textarea id="p-notes" rows="2" placeholder="Masalan: Tish og'rig'i bor..."></textarea>
+  </div>
+</div>
+
+<!-- ACTION BUTTON -->
+<button class="submit-btn" id="submit-btn" onclick="submitBooking()">📅 QABULNI TASDIQLASH</button>
+
+<!-- SUCCESS MODAL -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-icon">✅</div>
+  <h2>Qabul Muvaffaqiyatli Belgilandi!</h2>
+  <p id="success-details">Sizning qabulingiz ro'yxatga olindi. Eslatma xabari Telegramingizga yuborildi.</p>
+  <button class="submit-btn" style="background:var(--green);color:#fff" onclick="closeWebApp()">Yopish</button>
+</div>
+
+<script>
+let tg = window.Telegram?.WebApp;
+if(tg) {
+  tg.ready();
+  tg.expand();
+}
+
+let selectedDoctor = "Stomatolog Shifokor";
+let selectedDateStr = "";
+let selectedTimeStr = "";
+
+const defaultSlots = ["09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00"];
+
+// Pre-fill patient name/phone from Telegram user object
+if(tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+  const u = tg.initDataUnsafe.user;
+  const fullName = (u.first_name || '') + ' ' + (u.last_name || '');
+  if(fullName.trim()) document.getElementById('p-name').value = fullName.trim();
+}
+
+function initDates() {
+  const dateScroll = document.getElementById('date-scroll');
+  dateScroll.innerHTML = '';
+  const now = new Date();
+
+  for(let i=0; i<7; i++) {
+    const d = new Date(now);
+    d.setDate(now.getDate() + i);
+
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const isoDate = `${year}-${month}-${day}`;
+
+    const dayNameUz = i === 0 ? "Bugun" : i === 1 ? "Ertaga" : d.toLocaleDateString('uz-UZ', {weekday: 'short'});
+    const dayNum = d.getDate();
+
+    const pill = document.createElement('div');
+    pill.className = `date-pill ${i===0 ? 'selected' : ''}`;
+    pill.onclick = () => selectDate(pill, isoDate);
+    pill.innerHTML = `<div class="day-name">${dayNameUz}</div><div class="day-num">${dayNum}</div>`;
+    dateScroll.appendChild(pill);
+
+    if(i===0) selectedDateStr = isoDate;
+  }
+  renderTimeSlots();
+}
+
+function selectDoctor(el, docName) {
+  document.querySelectorAll('.doc-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedDoctor = docName;
+}
+
+function selectDate(el, dateStr) {
+  document.querySelectorAll('.date-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedDateStr = dateStr;
+  renderTimeSlots();
+}
+
+function renderTimeSlots() {
+  const timeGrid = document.getElementById('time-grid');
+  timeGrid.innerHTML = '';
+  selectedTimeStr = "";
+
+  defaultSlots.forEach((slot, idx) => {
+    const btn = document.createElement('div');
+    btn.className = `time-slot ${idx === 0 ? 'selected' : ''}`;
+    btn.textContent = slot;
+    btn.onclick = () => {
+      document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedTimeStr = slot;
+    };
+    timeGrid.appendChild(btn);
+    if(idx === 0) selectedTimeStr = slot;
+  });
+}
+
+async function submitBooking() {
+  const name = document.getElementById('p-name').value.trim();
+  const phone = document.getElementById('p-phone').value.trim();
+  const notes = document.getElementById('p-notes').value.trim();
+
+  if(!name) {
+    alert("Iltimos, ismingizni kiriting!");
+    return;
+  }
+  if(!phone) {
+    alert("Iltimos, telefon raqamingizni kiriting!");
+    return;
+  }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = "⏳ Saqlanmoqda...";
+
+  const telegramUserId = tg?.initDataUnsafe?.user?.id || null;
+
+  const payload = {
+    tenant_id: 1,
+    doctor_name: selectedDoctor,
+    date: selectedDateStr,
+    time: selectedTimeStr,
+    patient_name: name,
+    patient_phone: phone,
+    notes: notes,
+    telegram_user_id: telegramUserId
+  };
+
+  try {
+    const res = await fetch('/api/v1/webapp/book', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if(res.ok) {
+      document.getElementById('success-details').innerHTML = 
+        `<b>${name}</b>, siz <b>${selectedDateStr}</b> kuni soat <b>${selectedTimeStr}</b> ga <b>${selectedDoctor}</b> ko'rigiga muvaffaqiyatli yozildingiz!`;
+      document.getElementById('success-overlay').style.display = 'flex';
+      
+      // If inside Telegram WebApp, send data back to bot
+      if(tg && tg.sendData) {
+        try {
+          tg.sendData(JSON.stringify(payload));
+        } catch(e) {}
+      }
+    } else {
+      alert(data.detail || "Xatolik yuz berdi!");
+      btn.disabled = false;
+      btn.textContent = "📅 QABULNI TASDIQLASH";
+    }
+  } catch(e) {
+    alert("Server bilan bog'lanishda xatolik yuz berdi!");
+    btn.disabled = false;
+    btn.textContent = "📅 QABULNI TASDIQLASH";
+  }
+}
+
+function closeWebApp() {
+  if(tg && tg.close) {
+    tg.close();
+  } else {
+    document.getElementById('success-overlay').style.display = 'none';
+  }
+}
+
+// Initialize
+initDates();
+</script>
+</body>
+</html>

@@ -220,6 +220,7 @@ async def process_debounce_batch(
                 bot_token,
                 external_chat_id,
                 ai_response,
+                reply_markup=TelegramService.build_booking_keyboard(),
                 business_connection_id=business_connection_id
             )
 

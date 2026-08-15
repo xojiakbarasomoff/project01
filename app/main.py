@@ -68,6 +68,11 @@ admin_dir = os.path.join(os.path.dirname(__file__), "static", "admin")
 if os.path.exists(admin_dir):
     app.mount("/admin", StaticFiles(directory=admin_dir, html=True), name="admin")
 
+# ── Static WebApp (Telegram Mini App) ─────────────────────────────────────────
+webapp_dir = os.path.join(os.path.dirname(__file__), "static", "webapp")
+if os.path.exists(webapp_dir):
+    app.mount("/webapp", StaticFiles(directory=webapp_dir, html=True), name="webapp")
+
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 @app.get("/", tags=["General"])
