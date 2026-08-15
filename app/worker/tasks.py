@@ -1,55 +1,15 @@
 import asyncio
 import logging
 import re
-from datetime import datetime, timedelta
-from typing import Dict, Any, Optional
+from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import select
-
-from arq.connections import RedisSettings
-from app.core.config import settings
-from app.core.security import decrypt_credentials
-from app.db.session import AsyncSessionLocal
-from app.models.domain import Tenant, Channel, User, Conversation, Message, Appointment
-from app.services.debounce import DebounceService
-from app.services.guardrails import GuardrailService
-from app.services.rag import RAGService
-from app.services.llm import LLMService
-from app.services.telegram import TelegramService
-
-logger = logging.getLogger(__name__)
-
-# ── Appointment intent detection ───────────────────────────────────────────────
-# Require at least one meaningful booking keyword AND a phone number or explicit
-# time expression to avoid false positives from single-word messages like "ha".
-_BOOKING_KEYWORDS = re.compile(
-    r"\b(qabul|yozib|yozing|yozilish|bormoqchiman|shifokor|konsultatsiya)\b",
-    re.IGNORECASE,
-)
-_PHONE_RE = re.compile(
-    r"(\+998[\s\-]?\d{2}[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}"  # +998 XX XXX XX XX
-    r"|\b9\d{8}\b)",                                                # 9XXXXXXXXX
-    re.IGNORECASE,
-)
-_TIME_RE = re.compile(
-    r"(\b\d{1,2}:\d{2}\b"          # 14:00
-    r"|\bsoat\s+\d"                 # soat 14
-    r"|\bertaga\b|\bbugun\b"
-    r"|\b\d{1,2}-?\s*(avgust|sentabr|oktyabr|noyabr|dekabr|yanvar|fevral|mart|aprel|may|iyun|iyul)\b)",
-    re.IGNORECASE,
-)
-
-
-def _extract_phone(text: str) -> str:
-    """Extract first phone number from text, or empty string."""
-    m = _PHONE_RE.search(text)
-    return m.group(0) if m else ""
+UZ_TZ = timezone(timedelta(hours=5))
 
 
 def _parse_appointment_time(text: str) -> Optional[datetime]:
-    """Parse requested appointment date and time from patient text if possible."""
+    """Parse requested appointment date and time from patient text if possible (in local UTC+5 timezone)."""
     try:
-        now = datetime.now()
+        now = datetime.now(UZ_TZ)
         text_lower = text.lower()
 
         day_offset = 0
@@ -72,7 +32,7 @@ def _parse_appointment_time(text: str) -> Optional[datetime]:
                 minute = 0
 
         if hour is not None and minute is not None and 0 <= hour <= 23 and 0 <= minute <= 59:
-            return datetime(target_date.year, target_date.month, target_date.day, hour, minute)
+            return datetime(target_date.year, target_date.month, target_date.day, hour, minute, tzinfo=UZ_TZ)
     except Exception as e:
         logger.warning(f"Failed to parse appointment time from text '{text}': {e}")
     return None
