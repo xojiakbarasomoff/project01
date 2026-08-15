@@ -1,21 +1,87 @@
 import logging
-from typing import Dict, Any
-from fastapi import APIRouter, Depends, HTTPException, status, Request
-from sqlalchemy import select
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Header
+from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Optional
 
 from app.db.session import get_db
-from app.models.domain import Tenant, Channel, User
+from app.models.domain import Tenant, Channel, User, Conversation, Message, Appointment
 from app.services.debounce import DebounceService
 from app.services.telegram import TelegramService
 from app.core.security import decrypt_credentials
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/telegram", tags=["Telegram Integration"])
 
 
-@router.post("/webhook/{tenant_id}")
+def _verify_webhook_secret(
+    x_telegram_bot_api_secret_token: Optional[str] = Header(None)
+) -> None:
+    """
+    Verify the Telegram webhook secret token.
+
+    When a webhook secret is configured (TELEGRAM_WEBHOOK_SECRET in .env),
+    every incoming update must carry the matching X-Telegram-Bot-Api-Secret-Token
+    header.  Requests that are missing or have the wrong token are rejected with
+    401 so that only Telegram can call this endpoint.
+
+    In development (secret not set) the check is skipped.
+    """
+    expected = settings.TELEGRAM_WEBHOOK_SECRET
+    if not expected:
+        # Secret not configured — skip verification (development mode)
+        return
+    if x_telegram_bot_api_secret_token != expected:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid webhook secret token"
+        )
+
+
+async def send_history_user_list(
+    db: AsyncSession,
+    tenant_id: int,
+    bot_token: str,
+    chat_id: str,
+    business_connection_id: Optional[str] = None
+):
+    """Sends an inline keyboard listing recent user conversations for selecting chat history."""
+    stmt = (
+        select(User)
+        .where(User.tenant_id == tenant_id)
+        .order_by(desc(User.id))
+        .limit(10)
+    )
+    res = await db.execute(stmt)
+    users = res.scalars().all()
+
+    if not users:
+        resp_text = "💬 Hozircha hech qanday foydalanuvchi suhbat tarixi topilmadi."
+        await TelegramService.send_message(
+            bot_token, chat_id, resp_text, parse_mode="HTML", business_connection_id=business_connection_id
+        )
+        return
+
+    inline_keyboard = []
+    for u in users:
+        label = f"👤 {u.name}"
+        if u.phone:
+            label += f" ({u.phone})"
+        elif u.external_id:
+            label += f" (ID: {u.external_id})"
+        inline_keyboard.append([{"text": label, "callback_data": f"hist_usr_{u.id}"}])
+
+    reply_markup = {"inline_keyboard": inline_keyboard}
+    resp_text = "💬 <b>Qaysi muloqot (bemor) suhbat tarixini ko'rmoqchisiz?</b>\n\nQuyidagi ro'yxatdan birini tanlang:"
+
+    await TelegramService.send_message(
+        bot_token, chat_id, resp_text, parse_mode="HTML", reply_markup=reply_markup, business_connection_id=business_connection_id
+    )
+
+
+@router.post("/webhook/{tenant_id}", dependencies=[Depends(_verify_webhook_secret)])
 async def receive_telegram_webhook(
     tenant_id: int,
     request: Request,
@@ -26,11 +92,128 @@ async def receive_telegram_webhook(
     and enqueues the message into the Redis debounce pipeline.
     """
     data = await request.json()
-    logger.info(f"Received Telegram webhook for tenant {tenant_id}: {data}")
+    logger.info(f"RAW TELEGRAM UPDATE: {data}")
+    # Log only update_id and tenant to avoid leaking user PII into logs
+    update_id = data.get("update_id", "?")
+    logger.debug(f"Telegram webhook update #{update_id} for tenant {tenant_id}")
 
-    message = data.get("message") or data.get("edited_message")
+    # Handle Callback Queries (Inline Keyboard Buttons)
+    callback_query = data.get("callback_query")
+    if callback_query:
+        cb_id = callback_query.get("id")
+        cb_data = callback_query.get("data", "")
+        from_user = callback_query.get("from", {})
+        cb_message = callback_query.get("message", {})
+        chat_id = str(cb_message.get("chat", {}).get("id") or from_user.get("id"))
+
+        # Verify tenant & channel
+        stmt = select(Tenant).where(Tenant.id == tenant_id, Tenant.status == "active")
+        res = await db.execute(stmt)
+        tenant = res.scalar_one_or_none()
+        if not tenant:
+            raise HTTPException(status_code=404, detail="Tenant not found or inactive")
+
+        stmt = select(Channel).where(
+            Channel.tenant_id == tenant_id,
+            Channel.type == "telegram",
+            Channel.is_active.is_(True)
+        )
+        res = await db.execute(stmt)
+        channel = res.scalar_one_or_none()
+        creds = decrypt_credentials(channel.credentials) if channel else None
+        bot_token = (
+            creds.get("bot_token")
+            if isinstance(creds, dict)
+            else (str(creds) if creds else settings.TELEGRAM_BOT_TOKEN)
+        )
+
+        if cb_id:
+            await TelegramService.answer_callback_query(bot_token, cb_id)
+
+        if cb_data.startswith("hist_usr_"):
+            target_user_id = int(cb_data.replace("hist_usr_", ""))
+            stmt_usr = select(User).where(User.id == target_user_id, User.tenant_id == tenant_id)
+            res_usr = await db.execute(stmt_usr)
+            target_user = res_usr.scalar_one_or_none()
+
+            if not target_user:
+                await TelegramService.send_message(bot_token, chat_id, "⚠️ Foydalanuvchi topilmadi.")
+                return {"status": "callback_processed"}
+
+            # Query conversations & messages for target_user
+            stmt_convs = (
+                select(Conversation)
+                .where(Conversation.tenant_id == tenant_id, Conversation.user_id == target_user.id)
+                .order_by(desc(Conversation.id))
+            )
+            res_convs = await db.execute(stmt_convs)
+            convs = res_convs.scalars().all()
+            conv_ids = [c.id for c in convs]
+
+            if not conv_ids:
+                resp_text = f"💬 <b>{target_user.name}</b> bilan suhbat tarixi mavjud emas."
+            else:
+                stmt_msgs = (
+                    select(Message)
+                    .where(Message.conversation_id.in_(conv_ids))
+                    .order_by(desc(Message.id))
+                    .limit(20)
+                )
+                res_msgs = await db.execute(stmt_msgs)
+                msgs = list(reversed(res_msgs.scalars().all()))
+
+                if not msgs:
+                    resp_text = f"💬 <b>{target_user.name}</b> bilan suhbat tarixi bo'sh."
+                else:
+                    phone_info = f" ({target_user.phone})" if target_user.phone else ""
+                    lines = [f"📋 <b>{target_user.name}</b>{phone_info} bilan suhbat tarixi:\n"]
+                    for m in msgs:
+                        role_icon = "👤 Bemor" if m.sender == "patient" else ("🤖 Bot" if m.sender == "bot" else "👨‍⚕️ Operator")
+                        time_str = f" <i>[{m.created_at.strftime('%H:%M %d.%m')}]</i>" if m.created_at else ""
+                        lines.append(f"{time_str} <b>{role_icon}:</b> {m.content}")
+                    resp_text = "\n".join(lines)
+
+            back_keyboard = {
+                "inline_keyboard": [
+                    [{"text": "⬅️ Barcha lichkalar ro'yxatiga qaytish", "callback_data": "hist_list"}]
+                ]
+            }
+            await TelegramService.send_message(
+                bot_token, chat_id, resp_text, parse_mode="HTML", reply_markup=back_keyboard
+            )
+            return {"status": "callback_processed", "user_id": target_user_id}
+
+        elif cb_data == "hist_list":
+            await send_history_user_list(db, tenant_id, bot_token, chat_id)
+            return {"status": "callback_processed"}
+
+        return {"status": "callback_ignored"}
+
+    # Handle business_connection update (e.g. when bot is connected/disconnected or permissions updated)
+    business_conn_update = data.get("business_connection")
+    if business_conn_update:
+        bc_id = business_conn_update.get("id")
+        can_reply = business_conn_update.get("can_reply", False)
+        is_enabled = business_conn_update.get("is_enabled", False)
+        user_info = business_conn_update.get("user", {})
+        logger.info(f"🔗 [TELEGRAM BUSINESS CONNECTION] ID: {bc_id}, User: {user_info.get('first_name')} (ID: {user_info.get('id')}), can_reply: {can_reply}, is_enabled: {is_enabled}")
+        if not can_reply:
+            logger.warning(f"⚠️ [TELEGRAM BUSINESS CONNECTION] 'can_reply' is FALSE for connection {bc_id}. Bot cannot reply until 'Reply to messages' permission is enabled in Telegram settings!")
+        return {"status": "business_connection_updated", "can_reply": can_reply, "is_enabled": is_enabled}
+
+    message = (
+        data.get("message")
+        or data.get("edited_message")
+        or data.get("business_message")
+        or data.get("edited_business_message")
+    )
     if not message:
         return {"status": "ignored", "reason": "No message object"}
+
+    business_connection_id = (
+        message.get("business_connection_id")
+        or data.get("business_connection", {}).get("id")
+    )
 
     chat = message.get("chat", {})
     from_user = message.get("from", {})
@@ -43,7 +226,8 @@ async def receive_telegram_webhook(
         else:
             return {"status": "ignored", "reason": "Non-text message"}
 
-    external_id = str(from_user.get("id") or chat.get("id"))
+    customer_id = str(chat.get("id") or from_user.get("id"))
+    sender_id = str(from_user.get("id") or "")
     user_name = f"{from_user.get('first_name', '')} {from_user.get('last_name', '')}".strip() or "Bemor"
 
     # 1. Verify tenant exists
@@ -54,15 +238,19 @@ async def receive_telegram_webhook(
     if not tenant:
         raise HTTPException(status_code=404, detail="Tenant not found or inactive")
 
-    # 2. Find or create channel
-    stmt = select(Channel).where(Channel.tenant_id == tenant_id, Channel.type == "telegram")
+    # 2. Find active telegram channel for tenant
+    stmt = select(Channel).where(
+        Channel.tenant_id == tenant_id,
+        Channel.type == "telegram",
+        Channel.is_active.is_(True)
+    )
     res = await db.execute(stmt)
     channel = res.scalar_one_or_none()
 
     channel_id = channel.id if channel else None
 
-    # 3. Find or create user entity
-    stmt = select(User).where(User.tenant_id == tenant_id, User.external_id == external_id)
+    # 3. Find or create user entity for customer
+    stmt = select(User).where(User.tenant_id == tenant_id, User.external_id == customer_id)
     res = await db.execute(stmt)
     user_entity = res.scalar_one_or_none()
 
@@ -70,12 +258,127 @@ async def receive_telegram_webhook(
         user_entity = User(
             tenant_id=tenant_id,
             channel_id=channel_id,
-            external_id=external_id,
+            external_id=customer_id,
             name=user_name
         )
         db.add(user_entity)
         await db.commit()
         await db.refresh(user_entity)
+
+    # Detect if this message was typed by the business account owner (operator) on their personal account
+    is_operator_reply = bool(business_connection_id and sender_id and customer_id != sender_id)
+    if is_operator_reply:
+        # Find or create active conversation
+        stmt_conv = (
+            select(Conversation)
+            .where(
+                Conversation.tenant_id == tenant_id,
+                Conversation.user_id == user_entity.id,
+                Conversation.status != "closed"
+            )
+            .order_by(desc(Conversation.id))
+        )
+        res_conv = await db.execute(stmt_conv)
+        conv = res_conv.scalar_one_or_none()
+        if not conv:
+            conv = Conversation(tenant_id=tenant_id, user_id=user_entity.id, status="active")
+            db.add(conv)
+            await db.commit()
+            await db.refresh(conv)
+
+        # Record operator message to database
+        op_msg = Message(
+            conversation_id=conv.id,
+            sender="operator",
+            content=text,
+            channel="telegram"
+        )
+        db.add(op_msg)
+        await db.commit()
+        return {"status": "operator_message_recorded", "conversation_id": conv.id}
+
+    # Check for Bot Commands (e.g. /start, /waittime, /history, /qabul)
+    if text.startswith("/"):
+        parts = text.strip().split()
+        cmd = parts[0].lower().split("@")[0]  # strip @botusername if present
+        arg = parts[1] if len(parts) > 1 else None
+
+        creds = decrypt_credentials(channel.credentials) if channel else None
+        bot_token = (
+            creds.get("bot_token")
+            if isinstance(creds, dict)
+            else (str(creds) if creds else settings.TELEGRAM_BOT_TOKEN)
+        )
+
+        chat_id = str(chat.get("id"))
+
+        if cmd in ["/start", "/help"]:
+            help_msg = (
+                "🏥 <b>AIMED Tibbiy AI Yordamchi</b>\n\n"
+                "<b>Boshqaruv buyruqlari:</b>\n"
+                "⏱️ /waittime [soniya] — Javob berish kutish vaqtini ko'rish yoki o'zgartirish (masalan: <code>/waittime 10</code>)\n"
+                "💬 /history — Chatlar tarixini ko'rish\n"
+                "📋 /qabul — Bron qilingan qabullar ro'yxati"
+            )
+            await TelegramService.send_message(
+                bot_token, chat_id, help_msg, parse_mode="HTML", business_connection_id=business_connection_id
+            )
+            return {"status": "command_processed", "command": cmd}
+
+        elif cmd in ["/waittime", "/wait", "/set_waittime"]:
+            current_settings = dict(tenant.settings) if isinstance(tenant.settings, dict) else {}
+            current_wait = current_settings.get("debounce_seconds", 30)
+
+            if arg and arg.isdigit():
+                new_wait = int(arg)
+                if 1 <= new_wait <= 300:
+                    current_settings["debounce_seconds"] = new_wait
+                    tenant.settings = current_settings
+                    await db.commit()
+                    resp_text = f"✅ Javob berish kutish vaqti <b>{new_wait} soniya</b>ga o'zgartirildi!"
+                else:
+                    resp_text = "⚠️ Kutish vaqti 1 va 300 soniya orasida bo'lishi kerak."
+            else:
+                resp_text = (
+                    f"⏱️ Hozirgi javob kutish vaqti: <b>{current_wait} soniya</b>.\n\n"
+                    f"O'zgartirish uchun: <code>/waittime 10</code> (masalan: 10 soniya deb belgilash)"
+                )
+
+            await TelegramService.send_message(
+                bot_token, chat_id, resp_text, parse_mode="HTML", business_connection_id=business_connection_id
+            )
+            return {"status": "command_processed", "command": cmd}
+
+        elif cmd in ["/history", "/tarix", "/myhistory"]:
+            await send_history_user_list(db, tenant_id, bot_token, chat_id, business_connection_id=business_connection_id)
+            return {"status": "command_processed", "command": cmd}
+
+        elif cmd in ["/qabul", "/qabullar", "/appointments"]:
+            stmt_appts = (
+                select(Appointment)
+                .where(Appointment.tenant_id == tenant_id)
+                .order_by(desc(Appointment.id))
+                .limit(5)
+            )
+            res_appts = await db.execute(stmt_appts)
+            appts = res_appts.scalars().all()
+
+            if not appts:
+                resp_text = "📋 Hozircha bron qilingan qabullar mavjud emas."
+            else:
+                lines = ["📋 <b>Qabullar Ro'yxati:</b>\n"]
+                for idx, a in enumerate(appts, 1):
+                    status_icon = "⏳" if a.status == "pending" else ("✅" if a.status == "confirmed" else "❌")
+                    lines.append(
+                        f"<b>{idx}. {a.patient_name}</b> ({a.patient_phone})\n"
+                        f"   Holat: {status_icon} <i>{a.status}</i> | Shifokor: {a.doctor_name}\n"
+                    )
+                resp_text = "\n".join(lines)
+
+            await TelegramService.send_message(
+                bot_token, chat_id, resp_text, parse_mode="HTML", business_connection_id=business_connection_id
+            )
+            return {"status": "command_processed", "command": cmd}
 
     # 4. Read tenant debounce_seconds setting (default 30s)
     debounce_seconds = 30
@@ -89,7 +392,8 @@ async def receive_telegram_webhook(
         external_chat_id=str(chat.get("id")),
         message_text=text,
         channel_type="telegram",
-        debounce_seconds=debounce_seconds
+        debounce_seconds=debounce_seconds,
+        business_connection_id=business_connection_id
     )
 
     return {
@@ -104,9 +408,23 @@ async def receive_telegram_webhook(
 async def set_telegram_webhook(
     tenant_id: int,
     webhook_url: str,
+    admin_token: str,  # simple shared-secret guard for the management endpoint
     db: AsyncSession = Depends(get_db)
 ):
-    """Sets the Telegram webhook URL for a tenant's registered bot token."""
+    """
+    Sets the Telegram webhook URL for a tenant's registered bot token.
+
+    Requires ``admin_token`` query parameter matching TELEGRAM_WEBHOOK_SECRET
+    to prevent unauthorized redirection of a tenant's bot.
+    """
+    # Guard the management endpoint
+    expected = settings.TELEGRAM_WEBHOOK_SECRET
+    if expected and admin_token != expected:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid admin token"
+        )
+
     stmt = select(Channel).where(Channel.tenant_id == tenant_id, Channel.type == "telegram")
     res = await db.execute(stmt)
     channel = res.scalar_one_or_none()
@@ -120,7 +438,7 @@ async def set_telegram_webhook(
     if not bot_token:
         raise HTTPException(status_code=400, detail="Bot token missing in credentials")
 
-    ok = await TelegramService.set_webhook(bot_token, webhook_url)
+    ok = await TelegramService.set_webhook(bot_token, webhook_url, settings.TELEGRAM_WEBHOOK_SECRET)
     if not ok:
         raise HTTPException(status_code=500, detail="Failed to set Telegram webhook")
 

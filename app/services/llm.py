@@ -1,7 +1,7 @@
 import logging
 from typing import List, Dict, Any, Optional
-from openai import AsyncOpenAI
 
+from app.core.clients import get_openai_client
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
@@ -34,7 +34,6 @@ class LLMService:
         """Generates AI response using GPT-4o mini given user message and retrieved RAG context."""
 
         # Construct Context block from RAG Knowledge Base matches
-        context_str = ""
         if kb_context:
             context_str = "\n".join([
                 f"- Savol: {item['question']}\n  Javob: {item['answer']}"
@@ -51,7 +50,7 @@ class LLMService:
             }
         ]
 
-        # Append prior conversation history if present
+        # Append prior conversation history if present (last 6 messages only)
         if conversation_history:
             for msg in conversation_history[-6:]:
                 prompt_messages.append({
@@ -67,9 +66,16 @@ class LLMService:
             return cls._dev_fallback_response(user_message, kb_context)
 
         try:
-            client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+            client = get_openai_client()  # singleton — no new connection pool per call
+            model_name = settings.OPENAI_MODEL
+            if (
+                settings.OPENAI_API_KEY.startswith("AQ.")
+                or settings.OPENAI_API_KEY.startswith("AIza")
+            ) and model_name == "gpt-4o-mini":
+                model_name = "gemini-3.5-flash-lite"
+
             response = await client.chat.completions.create(
-                model=settings.OPENAI_MODEL,
+                model=model_name,
                 messages=prompt_messages,
                 temperature=0.3,
                 max_tokens=450
@@ -82,6 +88,18 @@ class LLMService:
     @staticmethod
     def _dev_fallback_response(user_message: str, kb_context: List[Dict[str, Any]]) -> str:
         """Provides realistic administrator response in dev mode when OpenAI API key is missing."""
+        msg_lower = user_message.lower()
+
+        # Check if user is confirming or providing contact details / time
+        booking_confirm_keywords = ["ha", "yozing", "yozib", "ism", "tel", "raqam", "+998", "soat", "ertaga", "bugun", "bormoqchiman"]
+        has_number = any(char.isdigit() for char in user_message)
+
+        if any(kw in msg_lower for kw in booking_confirm_keywords) or has_number:
+            return (
+                "Katta rahmat! Ma'lumotlaringizni qabul qildim va sizni shifokorimiz qabuliga yozib qo'ydim! "
+                "Qabulingiz Admin Panelimizda aks etdi. Tez orada siz bilan qayta bog'lanib, shifokor va vaqtni tasdiqlaymiz!"
+            )
+
         if kb_context:
             best_match = kb_context[0]
             return (

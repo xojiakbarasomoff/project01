@@ -1,5 +1,5 @@
 import re
-from typing import Dict, Any, Optional, Tuple
+from typing import Optional, Tuple
 
 
 class GuardrailService:
@@ -20,16 +20,20 @@ class GuardrailService:
         "odam bormi"
     ]
 
+    # Plain-text versions of responses (no HTML tags in business logic).
+    # Callers are responsible for formatting / escaping before sending.
     EMERGENCY_RESPONSE_UZ = (
-        "⚠️ <b>DIQQAT! SHOSHILINCH HOLAT:</b><br/>"
+        "⚠️ DIQQAT! SHOSHILINCH HOLAT:\n"
         "Siz ko'rsatgan alomatlar (shoshilinch yallig'lanish, kuchli qon ketishi yoki shish) "
-        "zudlik bilan shifokor yordamini talab qiladi!<br/>"
-        "Iltimos, zudlik bilan <b>103 Tez Yordam</b> xizmatiga qo'ng'iroq qiling yoki eng yaqin shoshilinch klinikaga murojaat qiling!"
+        "zudlik bilan shifokor yordamini talab qiladi!\n"
+        "Iltimos, zudlik bilan 103 Tez Yordam xizmatiga qo'ng'iroq qiling yoki "
+        "eng yaqin shoshilinch klinikaga murojaat qiling!"
     )
 
     PRESCRIPTION_RESPONSE_UZ = (
-        "Tushunaman, lekin men klinika administratoriman va tibbiy retsept hamda dori vositalarini tavsiya qila olmayman.<br/>"
-        "Dori vositalarini nojo'ya ta'sirlarsiz to'g'ri qabul qilish uchun shifokor ko'rigi shart.<br/>"
+        "Tushunaman, lekin men klinika administratoriman va tibbiy retsept hamda "
+        "dori vositalarini tavsiya qila olmayman.\n"
+        "Dori vositalarini nojo'ya ta'sirlarsiz to'g'ri qabul qilish uchun shifokor ko'rigi shart.\n"
         "Sizni malakali stomatolog shifokorimiz qabuliga yozib qo'yaymi?"
     )
 
@@ -42,8 +46,8 @@ class GuardrailService:
     def check_guardrails(cls, text: str) -> Tuple[Optional[str], Optional[str]]:
         """
         Scans text for safety filters.
-        Returns Tuple[Action, CustomResponse]
-        Action can be: 'EMERGENCY', 'PRESCRIPTION_BLOCK', 'OPERATOR_ESCALATION', or None
+        Returns Tuple[Action, PlainTextResponse].
+        Action can be: 'EMERGENCY', 'PRESCRIPTION_BLOCK', 'OPERATOR_ESCALATION', or None.
         """
         clean_text = text.lower().strip()
 

@@ -1,9 +1,10 @@
 import logging
 from typing import List, Dict, Any, Optional
-from sqlalchemy import select, text
-from sqlalchemy.ext.asyncio import AsyncSession
-from openai import AsyncOpenAI
 
+from sqlalchemy import select, or_
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.clients import get_openai_client
 from app.core.config import settings
 from app.models.domain import KnowledgeBase
 
@@ -22,9 +23,16 @@ class RAGService:
             return [x / norm for x in dummy]
 
         try:
-            client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+            client = get_openai_client()  # singleton — no new connection pool per call
+            emb_model = settings.EMBEDDING_MODEL
+            if (
+                settings.OPENAI_API_KEY.startswith("AQ.")
+                or settings.OPENAI_API_KEY.startswith("AIza")
+            ) and emb_model == "text-embedding-3-small":
+                emb_model = "gemini-embedding-2"
+
             response = await client.embeddings.create(
-                model=settings.EMBEDDING_MODEL,
+                model=emb_model,
                 input=text_content.replace("\n", " ")
             )
             return response.data[0].embedding
@@ -42,10 +50,10 @@ class RAGService:
     ) -> List[Dict[str, Any]]:
         """
         Performs semantic vector search against tenant's knowledge_base in pgvector.
-        Fallback to text ILIKE matching if vector search returns no results or embedding fails.
+        Fallback to SQL ILIKE matching if vector search returns no results or embedding fails.
         """
         embedding = await cls.get_embedding(query)
-        results = []
+        results: List[Dict[str, Any]] = []
 
         if embedding:
             try:
@@ -54,7 +62,7 @@ class RAGService:
                     select(KnowledgeBase)
                     .where(
                         KnowledgeBase.tenant_id == tenant_id,
-                        KnowledgeBase.is_active == True,
+                        KnowledgeBase.is_active.is_(True),
                         KnowledgeBase.embedding.isnot(None)
                     )
                     .order_by(KnowledgeBase.embedding.cosine_distance(embedding))
@@ -75,25 +83,36 @@ class RAGService:
         if len(results) < top_k:
             query_words = [w for w in query.lower().split() if len(w) > 3]
             if query_words:
+                # Push ILIKE filtering to the database — no full table scan in Python
+                ilike_conditions = [
+                    or_(
+                        KnowledgeBase.question.ilike(f"%{w}%"),
+                        KnowledgeBase.answer.ilike(f"%{w}%")
+                    )
+                    for w in query_words
+                ]
                 stmt = (
                     select(KnowledgeBase)
                     .where(
                         KnowledgeBase.tenant_id == tenant_id,
-                        KnowledgeBase.is_active == True
+                        KnowledgeBase.is_active.is_(True),
+                        or_(*ilike_conditions)
                     )
+                    .limit(top_k)
                 )
                 res = await session.execute(stmt)
                 all_kb = res.scalars().all()
 
+                existing_questions = {r["question"] for r in results}
                 for kb in all_kb:
-                    if any(w in kb.question.lower() or w in kb.answer.lower() for w in query_words):
-                        if not any(r["question"] == kb.question for r in results):
-                            results.append({
-                                "question": kb.question,
-                                "answer": kb.answer,
-                                "category": kb.category
-                            })
-                            if len(results) >= top_k:
-                                break
+                    if kb.question not in existing_questions:
+                        results.append({
+                            "question": kb.question,
+                            "answer": kb.answer,
+                            "category": kb.category
+                        })
+                        existing_questions.add(kb.question)
+                        if len(results) >= top_k:
+                            break
 
         return results
