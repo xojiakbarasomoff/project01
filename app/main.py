@@ -15,6 +15,7 @@ from arq.connections import create_pool, RedisSettings
 
 from app.core.config import settings
 from app.db.session import get_db, engine
+from app.db.init_db import init_db_schema
 from app.api.v1.router import api_v1_router
 
 logger = logging.getLogger(__name__)
@@ -24,6 +25,9 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     # ── Startup ────────────────────────────────────────────────────────────────
     logger.info(f"Starting {settings.APP_NAME} ({settings.APP_ENV})...")
+
+    # Ensure dynamic database tables are initialized
+    await init_db_schema()
 
     # Shared OpenAI client (one HTTP connection pool for the whole process)
     app.state.openai_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)

@@ -6,6 +6,9 @@ from app.api.v1.admin.appointments import router as appointments_router
 from app.api.v1.admin.conversations import router as conversations_router
 from app.api.v1.admin.knowledge_base import router as kb_router
 from app.api.v1.admin.settings import router as settings_router
+from app.api.v1.admin.analytics import router as analytics_router
+from app.api.v1.admin.doctors import router as doctors_router
+from app.api.v1.admin.export import router as export_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
 
@@ -22,5 +25,8 @@ admin_protected_router.include_router(appointments_router)
 admin_protected_router.include_router(conversations_router)
 admin_protected_router.include_router(kb_router)
 admin_protected_router.include_router(settings_router)
+admin_protected_router.include_router(analytics_router)
+admin_protected_router.include_router(doctors_router)
+admin_protected_router.include_router(export_router)
 
 api_v1_router.include_router(admin_protected_router)

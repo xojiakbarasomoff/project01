@@ -139,3 +139,17 @@ class Appointment(Base):
 
     tenant = relationship("Tenant", back_populates="appointments")
     user = relationship("User", back_populates="appointments")
+
+
+class Doctor(Base):
+    __tablename__ = "doctors"
+
+    id = Column(Integer, primary_key=True, index=True)
+    tenant_id = Column(Integer, ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True)
+    name = Column(String(255), nullable=False)
+    specialty = Column(String(255), nullable=False, default="Stomatolog")
+    phone = Column(String(50), nullable=True)
+    working_hours = Column(String(255), nullable=False, default="09:00 - 18:00")
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
