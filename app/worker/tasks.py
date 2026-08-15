@@ -2,8 +2,48 @@ import asyncio
 import logging
 import re
 from datetime import datetime, timedelta, timezone
+from typing import Dict, Any, Optional
+
+from sqlalchemy import select
+from arq.connections import RedisSettings
+
+from app.core.config import settings
+from app.core.security import decrypt_credentials
+from app.db.session import AsyncSessionLocal
+from app.models.domain import Tenant, Channel, User, Conversation, Message, Appointment
+from app.services.debounce import DebounceService
+from app.services.guardrails import GuardrailService
+from app.services.rag import RAGService
+from app.services.llm import LLMService
+from app.services.telegram import TelegramService
+
+logger = logging.getLogger(__name__)
 
 UZ_TZ = timezone(timedelta(hours=5))
+
+# ── Appointment intent detection ───────────────────────────────────────────────
+_BOOKING_KEYWORDS = re.compile(
+    r"\b(qabul|yozib|yozing|yozilish|bormoqchiman|shifokor|konsultatsiya)\b",
+    re.IGNORECASE,
+)
+_PHONE_RE = re.compile(
+    r"(\+998[\s\-]?\d{2}[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}"
+    r"|\b9\d{8}\b)",
+    re.IGNORECASE,
+)
+_TIME_RE = re.compile(
+    r"(\b\d{1,2}:\d{2}\b"
+    r"|\bsoat\s+\d"
+    r"|\bertaga\b|\bbugun\b"
+    r"|\b\d{1,2}-?\s*(avgust|sentabr|oktyabr|noyabr|dekabr|yanvar|fevral|mart|aprel|may|iyun|iyul)\b)",
+    re.IGNORECASE,
+)
+
+
+def _extract_phone(text: str) -> str:
+    """Extract first phone number from text, or empty string."""
+    m = _PHONE_RE.search(text)
+    return m.group(0) if m else ""
 
 
 def _parse_appointment_time(text: str) -> Optional[datetime]:
@@ -43,8 +83,6 @@ def _has_booking_intent(text: str) -> bool:
     has_phone = bool(_PHONE_RE.search(text))
     has_keyword = bool(_BOOKING_KEYWORDS.search(text))
     has_time = bool(_TIME_RE.search(text))
-    # Phone alone = appointment request
-    # Keyword + time = appointment request
     return has_phone or (has_keyword and has_time)
 
 
@@ -83,7 +121,7 @@ async def process_debounce_batch(
         stmt = select(Channel).where(
             Channel.tenant_id == tenant_id,
             Channel.type == channel_type,
-            Channel.is_active.is_(True)   # fix #21: use is_(True) not == True
+            Channel.is_active.is_(True)
         )
         res = await session.execute(stmt)
         channel = res.scalar_one_or_none()
@@ -143,7 +181,6 @@ async def process_debounce_batch(
             )
 
         # 6. Fetch recent conversation history BEFORE persisting the new message
-        #    so the current user turn is not duplicated in the LLM prompt.
         stmt = (
             select(Message)
             .where(Message.conversation_id == conversation.id)
@@ -184,6 +221,7 @@ async def process_debounce_batch(
                     bot_token,
                     external_chat_id,
                     custom_reply,
+                    reply_markup=TelegramService.build_booking_keyboard(),
                     business_connection_id=business_connection_id
                 )
 
@@ -235,9 +273,7 @@ async def process_debounce_batch(
         session.add(out_msg)
 
         # 13. Appointment Booking Intent Detection
-        #     Triggers when: phone number present OR (keyword + time expression)
         if _has_booking_intent(combined_text):
-            # Extract phone from message if available, update user record
             detected_phone = _extract_phone(combined_text)
             if detected_phone and not user_entity.phone:
                 user_entity.phone = detected_phone
