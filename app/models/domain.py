@@ -30,6 +30,7 @@ class Tenant(Base):
     knowledge_base = relationship("KnowledgeBase", back_populates="tenant", cascade="all, delete-orphan")
     operators = relationship("Operator", back_populates="tenant", cascade="all, delete-orphan")
     appointments = relationship("Appointment", back_populates="tenant", cascade="all, delete-orphan")
+    leads = relationship("Lead", back_populates="tenant", cascade="all, delete-orphan")
 
 
 class Channel(Base):
@@ -61,6 +62,7 @@ class User(Base):
     channel = relationship("Channel", back_populates="users")
     conversations = relationship("Conversation", back_populates="user", cascade="all, delete-orphan")
     appointments = relationship("Appointment", back_populates="user", cascade="all, delete-orphan")
+    leads = relationship("Lead", back_populates="user", cascade="all, delete-orphan")
 
 
 class Conversation(Base):
@@ -152,4 +154,24 @@ class Doctor(Base):
     working_hours = Column(String(255), nullable=False, default="09:00 - 18:00")
     is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class Lead(Base):
+    __tablename__ = "leads"
+
+    id = Column(Integer, primary_key=True, index=True)
+    tenant_id = Column(Integer, ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    patient_name = Column(String(255), nullable=True)
+    phone = Column(String(50), nullable=True)
+    topic = Column(String(255), nullable=True)
+    convenient_time = Column(String(255), nullable=True)
+    status = Column(String(50), nullable=False, default="yangi")  # yangi, bog_lanildi, qabulga_yozildi, bekor_qilindi
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=True)
+
+    tenant = relationship("Tenant", back_populates="leads")
+    user = relationship("User", back_populates="leads")
+
 

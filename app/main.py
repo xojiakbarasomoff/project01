@@ -4,7 +4,7 @@ import time
 from contextlib import asynccontextmanager
 
 import redis.asyncio as redis
-from fastapi import FastAPI, Depends, status
+from fastapi import FastAPI, Depends, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -56,6 +56,20 @@ app = FastAPI(
 )
 
 # ── Middleware (must be added BEFORE routers) ─────────────────────────────────
+@app.middleware("http")
+async def add_telegram_webapp_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["ngrok-skip-browser-warning"] = "true"
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    if request.url.path.startswith("/webapp") or request.url.path.startswith("/api/v1/webapp"):
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    if "x-frame-options" in response.headers:
+        del response.headers["x-frame-options"]
+    response.headers["Content-Security-Policy"] = "frame-ancestors 'self' https://web.telegram.org https://*.telegram.org telegram:;"
+    return response
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.get_cors_origins(),

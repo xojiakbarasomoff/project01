@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from pydantic import BaseModel, Field
 from app.db.session import get_db
-from app.models.domain import KnowledgeBase
+from app.models.domain import KnowledgeBase, Tenant
 from app.schemas.knowledge_base import KBCreate, KBUpdate, KBResponse
 from app.services.rag import RAGService
 
@@ -97,3 +98,42 @@ async def delete_kb_item(
     await db.delete(kb)
     await db.commit()
     return None
+
+
+class ClinicDocPayload(BaseModel):
+    content: str = Field(..., description="Clinic knowledge document in .txt or .md format")
+
+
+@router.get("/document")
+async def get_clinic_document(
+    tenant_id: int = Query(1, description="Tenant ID"),
+    db: AsyncSession = Depends(get_db)
+):
+    """Fetches the clinic's master knowledge base document (.txt/.md)."""
+    doc_content = await RAGService.get_clinic_doc(session=db, tenant_id=tenant_id)
+    return {"tenant_id": tenant_id, "content": doc_content}
+
+
+@router.post("/document")
+async def update_clinic_document(
+    payload: ClinicDocPayload,
+    tenant_id: int = Query(1, description="Tenant ID"),
+    db: AsyncSession = Depends(get_db)
+):
+    """Updates the clinic's master knowledge base document (.txt/.md) in Tenant settings."""
+    stmt = select(Tenant).where(Tenant.id == tenant_id)
+    res = await db.execute(stmt)
+    tenant = res.scalar_one_or_none()
+
+    if not tenant:
+        raise HTTPException(status_code=404, detail="Klinika topilmadi")
+
+    current_settings = dict(tenant.settings) if isinstance(tenant.settings, dict) else {}
+    current_settings["clinic_doc"] = payload.content
+    tenant.settings = current_settings
+
+    await db.commit()
+    await db.refresh(tenant)
+
+    logger.info(f"📚 Clinic document updated for tenant {tenant_id} ({len(payload.content)} chars)")
+    return {"status": "success", "tenant_id": tenant_id, "content": payload.content}

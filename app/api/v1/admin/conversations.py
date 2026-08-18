@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import List, Dict, Any, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy import select, desc
@@ -14,12 +15,48 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/admin/conversations", tags=["Admin — Live Conversations & Operator Control"])
 
 
+def _format_phone(raw_phone: Optional[str]) -> Optional[str]:
+    if not raw_phone or raw_phone == "-":
+        return None
+    cleaned = re.sub(r'[^\d+]', '', str(raw_phone))
+    if not cleaned:
+        return None
+    if cleaned.startswith("+998") and len(cleaned) == 13:
+        return cleaned
+    if cleaned.startswith("998") and len(cleaned) == 12:
+        return "+" + cleaned
+    if len(cleaned) == 9 and not cleaned.startswith("+"):
+        return "+998" + cleaned
+    if not cleaned.startswith("+"):
+        return "+" + cleaned
+    return cleaned
+
+
+def _extract_phone_from_text(text: str) -> Optional[str]:
+    if not text:
+        return None
+    cleaned = re.sub(r'[^\d+]', '', text)
+    m1 = re.search(r'\+998\d{9}', cleaned)
+    if m1:
+        return m1.group(0)
+    m2 = re.search(r'998\d{9}', cleaned)
+    if m2:
+        return '+' + m2.group(0)
+    m3 = re.search(r'\b(9\d|33|88|77|55|20)\d{7}\b', cleaned)
+    if m3:
+        return '+998' + m3.group(0)
+    return None
+
+
 @router.get("")
 async def list_conversations(
     tenant_id: int = Query(1, description="Tenant ID"),
     db: AsyncSession = Depends(get_db)
 ):
     """Lists all active and ongoing patient conversations."""
+    from app.models.domain import Lead
+    from sqlalchemy import or_
+
     stmt = (
         select(Conversation, User)
         .join(User, Conversation.user_id == User.id)
@@ -31,6 +68,56 @@ async def list_conversations(
 
     result = []
     for conv, user_entity in rows:
+        phone_num = _format_phone(user_entity.phone)
+        patient_name = user_entity.name if (user_entity.name and user_entity.name != "-") else None
+
+        # Fallback to Lead table for phone or name
+        stmt_lead = (
+            select(Lead)
+            .where(
+                or_(Lead.user_id == user_entity.id, Lead.patient_name == user_entity.name)
+            )
+            .limit(1)
+        )
+        res_lead = await db.execute(stmt_lead)
+        lead_obj = res_lead.scalar_one_or_none()
+
+        if lead_obj:
+            if not phone_num and lead_obj.phone:
+                phone_num = _format_phone(lead_obj.phone)
+                if phone_num:
+                    user_entity.phone = phone_num
+                    db.add(user_entity)
+            if not patient_name and lead_obj.patient_name and lead_obj.patient_name != "-":
+                patient_name = lead_obj.patient_name
+                user_entity.name = patient_name
+                db.add(user_entity)
+
+        # Fallback to scanning past messages sent by patient
+        if not phone_num:
+            stmt_msgs = (
+                select(Message.content)
+                .where(
+                    Message.conversation_id == conv.id,
+                    Message.sender == "patient"
+                )
+                .order_by(Message.id)
+            )
+            res_msgs = await db.execute(stmt_msgs)
+            msg_contents = res_msgs.scalars().all()
+            for content in msg_contents:
+                extracted = _extract_phone_from_text(content)
+                if extracted:
+                    phone_num = extracted
+                    user_entity.phone = phone_num
+                    db.add(user_entity)
+                    break
+
+        try:
+            await db.commit()
+        except Exception:
+            await db.rollback()
+
         # Fetch last message
         stmt_last = (
             select(Message)
@@ -41,12 +128,14 @@ async def list_conversations(
         res_last = await db.execute(stmt_last)
         last_msg = res_last.scalar_one_or_none()
 
+        final_name = patient_name or ("Bemor" if not phone_num else f"Bemor ({phone_num})")
+
         result.append({
             "id": conv.id,
             "tenant_id": conv.tenant_id,
             "user_id": conv.user_id,
-            "patient_name": user_entity.name or "Bemor",
-            "patient_phone": user_entity.phone or "-",
+            "patient_name": final_name,
+            "patient_phone": phone_num or "-",
             "external_id": user_entity.external_id,
             "status": conv.status,
             "is_bot_enabled": conv.is_bot_enabled,

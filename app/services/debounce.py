@@ -131,3 +131,22 @@ class DebounceService:
         except Exception as e:
             logger.error(f"Error retrieving batched messages: {str(e)}")
             return []
+
+    @classmethod
+    async def is_update_processed(cls, tenant_id: int, update_id: int) -> bool:
+        """
+        Check whether a Telegram update_id has already been processed.
+
+        Uses a Redis SET with 1-hour TTL for cheap, distributed deduplication.
+        Returns True if the update was *already* seen (caller should skip).
+        """
+        r = await get_redis_client()
+        key = f"tg_update:{tenant_id}:{update_id}"
+        try:
+            # SET NX returns True only when the key was newly created
+            was_new = await r.set(key, "1", ex=3600, nx=True)
+            return not was_new  # already existed → duplicate
+        except Exception as e:
+            logger.warning(f"Redis dedup check failed: {e}")
+            return False  # fail-open: process the update
+

@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     OPENAI_MODEL: str = "gpt-4o-mini"
     EMBEDDING_MODEL: str = "text-embedding-3-small"
 
+    # ── WebApp URL ──
+    WEBAPP_URL: str = "https://almanac-trembling-tyke.ngrok-free.dev/webapp/booking.html"
+
     # ── Database ──
     POSTGRES_SERVER: str = "db"
     POSTGRES_PORT: int = 5432

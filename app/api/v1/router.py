@@ -9,6 +9,8 @@ from app.api.v1.admin.settings import router as settings_router
 from app.api.v1.admin.analytics import router as analytics_router
 from app.api.v1.admin.doctors import router as doctors_router
 from app.api.v1.admin.export import router as export_router
+from app.api.v1.admin.leads import router as leads_router
+from app.api.v1.admin.strict_rules import router as strict_rules_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
 
@@ -28,5 +30,8 @@ admin_protected_router.include_router(settings_router)
 admin_protected_router.include_router(analytics_router)
 admin_protected_router.include_router(doctors_router)
 admin_protected_router.include_router(export_router)
+admin_protected_router.include_router(leads_router)
+admin_protected_router.include_router(strict_rules_router)
 
 api_v1_router.include_router(admin_protected_router)
+

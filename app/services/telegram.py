@@ -2,6 +2,8 @@ import logging
 from typing import Any, Dict, Optional, Union
 import httpx
 
+from app.core.config import settings
+
 logger = logging.getLogger(__name__)
 
 TELEGRAM_API_BASE = "https://api.telegram.org/bot"
@@ -11,14 +13,22 @@ _IS_MOCK_TOKEN = lambda token: not token or token.startswith("123456789:")
 
 class TelegramService:
     @staticmethod
-    def build_booking_keyboard(webapp_url: str = "https://almanac-trembling-tyke.ngrok-free.dev/webapp/booking.html") -> Dict[str, Any]:
+    def get_webapp_url() -> str:
+        url = getattr(settings, "WEBAPP_URL", "") or "https://almanac-trembling-tyke.ngrok-free.dev/webapp/booking.html"
+        if "?" not in url:
+            url = f"{url}?v=1.0.1"
+        return url
+
+    @classmethod
+    def build_booking_keyboard(cls, webapp_url: Optional[str] = None) -> Dict[str, Any]:
         """Create Inline Keyboard with Booking and Location buttons."""
+        url = webapp_url or cls.get_webapp_url()
         return {
             "inline_keyboard": [
                 [
                     {
                         "text": "📅 Qabulga Yozilish",
-                        "web_app": {"url": webapp_url}
+                        "web_app": {"url": url}
                     },
                     {
                         "text": "📍 Klinika Lokatsiyasi",
@@ -28,9 +38,10 @@ class TelegramService:
             ]
         }
 
-    @staticmethod
-    def build_location_keyboard(webapp_url: str = "https://almanac-trembling-tyke.ngrok-free.dev/webapp/booking.html") -> Dict[str, Any]:
+    @classmethod
+    def build_location_keyboard(cls, webapp_url: Optional[str] = None) -> Dict[str, Any]:
         """Create Inline Keyboard focused on Location for reminders & notifications."""
+        url = webapp_url or cls.get_webapp_url()
         return {
             "inline_keyboard": [
                 [
@@ -40,19 +51,21 @@ class TelegramService:
                     },
                     {
                         "text": "📅 Qabulga Yozilish",
-                        "web_app": {"url": webapp_url}
+                        "web_app": {"url": url}
                     }
                 ]
             ]
         }
 
-    @staticmethod
+    @classmethod
     def build_location_map_keyboard(
+        cls,
         latitude: float = 41.311081,
         longitude: float = 69.240562,
-        webapp_url: str = "https://almanac-trembling-tyke.ngrok-free.dev/webapp/booking.html"
+        webapp_url: Optional[str] = None
     ) -> Dict[str, Any]:
         """Create Inline Keyboard with direct Yandex Go, Google Maps, and Booking buttons."""
+        url = webapp_url or cls.get_webapp_url()
         yandex_url = f"https://yandex.com/maps/?pt={longitude},{latitude}&z=17&l=map"
         google_url = f"https://www.google.com/maps?q={latitude},{longitude}"
 
@@ -71,7 +84,7 @@ class TelegramService:
                 [
                     {
                         "text": "📅 Qabulga Yozilish (Vizual Kalendar)",
-                        "web_app": {"url": webapp_url}
+                        "web_app": {"url": url}
                     }
                 ]
             ]

@@ -1,15 +1,21 @@
 import logging
+import re
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, status, Request, Header
 from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Optional
 
-from app.db.session import get_db
-from app.models.domain import Tenant, Channel, User, Conversation, Message, Appointment
-from app.services.debounce import DebounceService
-from app.services.telegram import TelegramService
-from app.core.security import decrypt_credentials
 from app.core.config import settings
+from app.core.security import decrypt_credentials
+from app.db.session import get_db
+from app.models.domain import Tenant, Channel, User, Conversation, Message, Appointment, Lead
+from app.services.debounce import DebounceService
+from app.services.rag import RAGService
+from app.services.telegram import TelegramService
+from app.utils.phone import extract_phone_from_text
+from app.utils.telegram_helpers import get_bot_token
+from app.utils.constants import LeadStatus
 
 logger = logging.getLogger(__name__)
 
@@ -92,10 +98,12 @@ async def receive_telegram_webhook(
     and enqueues the message into the Redis debounce pipeline.
     """
     data = await request.json()
-    logger.info(f"RAW TELEGRAM UPDATE: {data}")
-    # Log only update_id and tenant to avoid leaking user PII into logs
-    update_id = data.get("update_id", "?")
-    logger.debug(f"Telegram webhook update #{update_id} for tenant {tenant_id}")
+    update_id = data.get("update_id")
+    logger.debug("Telegram webhook update #%s for tenant %s", update_id, tenant_id)
+
+    # Fix #7: Idempotency guard — skip duplicate Telegram webhook retries
+    if update_id and await DebounceService.is_update_processed(tenant_id, update_id):
+        return {"status": "duplicate_skipped", "update_id": update_id}
 
     # Handle Callback Queries (Inline Keyboard Buttons)
     callback_query = data.get("callback_query")
@@ -120,12 +128,7 @@ async def receive_telegram_webhook(
         )
         res = await db.execute(stmt)
         channel = res.scalar_one_or_none()
-        creds = decrypt_credentials(channel.credentials) if channel else None
-        bot_token = (
-            creds.get("bot_token")
-            if isinstance(creds, dict)
-            else (str(creds) if creds else settings.TELEGRAM_BOT_TOKEN)
-        )
+        bot_token = get_bot_token(channel)
 
         if cb_id:
             await TelegramService.answer_callback_query(bot_token, cb_id)
@@ -255,8 +258,9 @@ async def receive_telegram_webhook(
     chat = message.get("chat", {})
     from_user = message.get("from", {})
     text = message.get("text", "")
+    contact_data = message.get("contact")
 
-    if not text:
+    if not text and not contact_data:
         # Handle non-text messages (e.g. voice messages in Phase 2)
         if "voice" in message or "audio" in message:
             text = "[Ovozli xabar]"
@@ -302,6 +306,71 @@ async def receive_telegram_webhook(
         await db.commit()
         await db.refresh(user_entity)
 
+    # Handle Contact Sharing event
+    if contact_data:
+        phone_number = str(contact_data.get("phone_number", "")).strip()
+        if phone_number and not phone_number.startswith("+"):
+            phone_number = "+" + phone_number
+
+        user_entity.phone = phone_number
+        c_first = contact_data.get("first_name", "")
+        c_last = contact_data.get("last_name", "")
+        if c_first:
+            user_entity.name = f"{c_first} {c_last}".strip()
+
+        # Update or Create Lead
+        stmt_lead = select(Lead).where(Lead.tenant_id == tenant_id, Lead.user_id == user_entity.id)
+        res_lead = await db.execute(stmt_lead)
+        lead_obj = res_lead.scalar_one_or_none()
+
+        if lead_obj:
+            lead_obj.phone = phone_number
+            lead_obj.patient_name = user_entity.name
+        else:
+            lead_obj = Lead(
+                tenant_id=tenant_id,
+                user_id=user_entity.id,
+                patient_name=user_entity.name,
+                phone=phone_number,
+                status="yangi",
+                notes="Telegram bot orqali kontakt ulashildi"
+            )
+            db.add(lead_obj)
+
+        await db.commit()
+        await db.refresh(user_entity)
+
+        chat_id = str(chat.get("id"))
+        bot_token = get_bot_token(channel)
+
+        confirm_text = (
+            f"✅ <b>Rahmat, {user_entity.name}!</b>\n"
+            f"Telefon raqamingiz (<b>{phone_number}</b>) muvaffaqiyatli qabul qilindi.\n\n"
+            f"Endi klinika yordamchisiga o'zingizni qiziqtirgan savolingizni berishingiz yoki qabulga yozilishingiz mumkin. Qanday yordam bera olaman?"
+        )
+        # 1. First send confirmation and explicit remove_keyboard to close the contact request reply keyboard in Telegram app UI
+        await TelegramService.send_message(
+            bot_token=bot_token,
+            chat_id=chat_id,
+            text=confirm_text,
+            parse_mode="HTML",
+            reply_markup={"remove_keyboard": True},
+            business_connection_id=business_connection_id
+        )
+
+        # 2. Next send inline booking action keyboard
+        await TelegramService.send_message(
+            bot_token=bot_token,
+            chat_id=chat_id,
+            text="👇 Quyidagi tugmalar orqali xizmatlar bilan tanishishingiz yoki qabulga yozilishingiz mumkin:",
+            parse_mode="HTML",
+            reply_markup=TelegramService.build_booking_keyboard(),
+            business_connection_id=business_connection_id
+        )
+
+        if not text or text.strip() == "📱 Kontaktni ulashish":
+            return {"status": "contact_received", "phone": phone_number}
+
     # Detect if this message was typed by the business account owner (operator) on their personal account
     is_operator_reply = bool(business_connection_id and sender_id and customer_id != sender_id)
     if is_operator_reply:
@@ -334,31 +403,83 @@ async def receive_telegram_webhook(
         await db.commit()
         return {"status": "operator_message_recorded", "conversation_id": conv.id}
 
-    # Check for Bot Commands (e.g. /start, /waittime, /history, /qabul)
+    # Helper contact keyboard for unverified users
+    contact_keyboard = {
+        "keyboard": [
+            [{"text": "📱 Kontaktni ulashish", "request_contact": True}]
+        ],
+        "resize_keyboard": True,
+        "one_time_keyboard": True
+    }
+
+    # Check for Bot Commands (e.g. /start, /rules, /waittime, /history, /qabul)
     if text.startswith("/"):
         parts = text.strip().split()
         cmd = parts[0].lower().split("@")[0]  # strip @botusername if present
         arg = parts[1] if len(parts) > 1 else None
 
-        creds = decrypt_credentials(channel.credentials) if channel else None
-        bot_token = (
-            creds.get("bot_token")
-            if isinstance(creds, dict)
-            else (str(creds) if creds else settings.TELEGRAM_BOT_TOKEN)
-        )
+        bot_token = get_bot_token(channel)
 
         chat_id = str(chat.get("id"))
 
         if cmd in ["/start", "/help"]:
+            if not user_entity.phone or not str(user_entity.phone).strip():
+                start_msg = (
+                    "🏥 <b>AIMED Tibbiy AI Yordamchisiga xush kelibsiz!</b>\n\n"
+                    "Klinika haqida ma'lumot olish va shifokorlar qabuliga yozilish uchun "
+                    "iltimos pastdagi <b>«📱 Kontaktni ulashish»</b> tugmasini bosing:"
+                )
+                await TelegramService.send_message(
+                    bot_token, chat_id, start_msg, parse_mode="HTML", reply_markup=contact_keyboard, business_connection_id=business_connection_id
+                )
+                return {"status": "contact_requested", "command": cmd}
+
             help_msg = (
                 "🏥 <b>AIMED Tibbiy AI Yordamchi</b>\n\n"
                 "<b>Boshqaruv buyruqlari:</b>\n"
                 "⏱️ /waittime [soniya] — Javob berish kutish vaqtini ko'rish yoki o'zgartirish (masalan: <code>/waittime 10</code>)\n"
+                "🛡️ /rules — Tizim qat'iy qoidalari (Strict Guardrails) ko'rish va o'zgartirish\n"
                 "💬 /history — Chatlar tarixini ko'rish\n"
                 "📋 /qabul — Bron qilingan qabullar ro'yxati"
             )
             await TelegramService.send_message(
-                bot_token, chat_id, help_msg, parse_mode="HTML", business_connection_id=business_connection_id
+                bot_token, chat_id, help_msg, parse_mode="HTML", reply_markup=TelegramService.build_booking_keyboard(), business_connection_id=business_connection_id
+            )
+            return {"status": "command_processed", "command": cmd}
+
+        elif cmd in ["/rules", "/qoidalar", "/strict_rules", "/qoida"]:
+            raw_args = text[len(parts[0]):].strip()
+            if not raw_args:
+                rules = await RAGService.get_strict_rules(db, tenant_id)
+                rules_formatted = "\n\n".join(rules)
+                resp_text = (
+                    "🛡️ <b>Sun'iy Intellekt Qat'iy Qoidalari (Strict Guardrails):</b>\n\n"
+                    f"{rules_formatted}\n\n"
+                    "✏️ <b>Qoidalarni o'zgartirish uchun:</b>\n"
+                    "<code>/rules 1. Birinchi qoida | 2. Ikkinchi qoida</code>\n"
+                    "yoki qoidalarni yangi qatordan yozib yuboring:\n"
+                    "<code>/rules\n"
+                    "1. Birinchi qoida\n"
+                    "2. Ikkinchi qoida</code>"
+                )
+            else:
+                if "\n" in raw_args:
+                    new_rules = [r.strip() for r in raw_args.split("\n") if r.strip()]
+                elif "|" in raw_args:
+                    new_rules = [r.strip() for r in raw_args.split("|") if r.strip()]
+                else:
+                    new_rules = [raw_args.strip()]
+
+                updated_rules = await RAGService.update_strict_rules(db, tenant_id, new_rules)
+                updated_formatted = "\n".join([f"• {r}" if not r.strip()[0].isdigit() else r for r in updated_rules])
+                resp_text = (
+                    "✅ <b>Qat'iy qoidalar muvaffaqiyatli saqlandi va faollashtirildi!</b>\n\n"
+                    "🛡️ <b>Yangi qoidalar:</b>\n"
+                    f"{updated_formatted}"
+                )
+
+            await TelegramService.send_message(
+                bot_token, chat_id, resp_text, parse_mode="HTML", business_connection_id=business_connection_id
             )
             return {"status": "command_processed", "command": cmd}
 
@@ -416,6 +537,71 @@ async def receive_telegram_webhook(
                 bot_token, chat_id, resp_text, parse_mode="HTML", business_connection_id=business_connection_id
             )
             return {"status": "command_processed", "command": cmd}
+
+    # Enforce mandatory contact for standard user text interaction
+    if not user_entity.phone or not str(user_entity.phone).strip():
+        typed_phone = extract_phone_from_text(text)
+        if typed_phone:
+            user_entity.phone = typed_phone
+            stmt_lead = select(Lead).where(Lead.tenant_id == tenant_id, Lead.user_id == user_entity.id)
+            res_lead = await db.execute(stmt_lead)
+            lead_obj = res_lead.scalar_one_or_none()
+            if lead_obj:
+                lead_obj.phone = typed_phone
+                lead_obj.patient_name = user_entity.name
+            else:
+                lead_obj = Lead(
+                    tenant_id=tenant_id,
+                    user_id=user_entity.id,
+                    patient_name=user_entity.name,
+                    phone=typed_phone,
+                    status="yangi",
+                    notes="Telegram bot chat orqali telefon raqam yozib qoldirildi"
+                )
+                db.add(lead_obj)
+
+            await db.commit()
+            await db.refresh(user_entity)
+
+            bot_token = get_bot_token(channel)
+            chat_id = str(chat.get("id"))
+            confirm_text = (
+                f"✅ <b>Rahmat, {user_entity.name}!</b>\n"
+                f"Telefon raqamingiz (<b>{typed_phone}</b>) muvaffaqiyatli saqlandi.\n\n"
+                f"Endi klinika yordamchisiga o'zingizni qiziqtirgan savolingizni berishingiz yoki qabulga yozilishingiz mumkin. Qanday yordam bera olaman?"
+            )
+            await TelegramService.send_message(
+                bot_token=bot_token,
+                chat_id=chat_id,
+                text=confirm_text,
+                parse_mode="HTML",
+                reply_markup={"remove_keyboard": True},
+                business_connection_id=business_connection_id
+            )
+            await TelegramService.send_message(
+                bot_token=bot_token,
+                chat_id=chat_id,
+                text="👇 Quyidagi tugmalar orqali xizmatlar bilan tanishishingiz yoki qabulga yozilishingiz mumkin:",
+                parse_mode="HTML",
+                reply_markup=TelegramService.build_booking_keyboard(),
+                business_connection_id=business_connection_id
+            )
+            # If the user only sent a phone number, finish here.
+            cleaned_text = re.sub(r"[\d\+\s\-\(\)]", "", text or "").strip()
+            if not cleaned_text:
+                return {"status": "contact_received", "phone": typed_phone}
+
+        else:
+            bot_token = get_bot_token(channel)
+            chat_id = str(chat.get("id"))
+            req_msg = (
+                "⚠️ <b>Muloqotni davom ettirish va savolingizga javob olish uchun kontakt ulashish majburiy!</b>\n\n"
+                "Iltimos, pastdagi <b>«📱 Kontaktni ulashish»</b> tugmasini bosib telefon raqamingizni yuboring:"
+            )
+            await TelegramService.send_message(
+                bot_token, chat_id, req_msg, parse_mode="HTML", reply_markup=contact_keyboard, business_connection_id=business_connection_id
+            )
+            return {"status": "contact_required"}
 
     # 4. Read tenant debounce_seconds setting (default 30s)
     debounce_seconds = 30

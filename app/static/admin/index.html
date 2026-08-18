@@ -235,9 +235,17 @@ tr:hover td{background:var(--hover)}
       <span class="nav-icon">📊</span>
       <span class="nav-label">Dashboard</span>
     </div>
+    <div class="nav-item" onclick="goTo('leads',this)">
+      <span class="nav-icon">📋</span>
+      <span class="nav-label">Lidlar</span>
+    </div>
     <div class="nav-item" onclick="goTo('knowledge',this)">
       <span class="nav-icon">📚</span>
       <span class="nav-label">Bilim Bazasi</span>
+    </div>
+    <div class="nav-item" onclick="goTo('strict-rules',this)">
+      <span class="nav-icon">🛡️</span>
+      <span class="nav-label">Qat'iy Qoidalar</span>
     </div>
     <div class="nav-item" onclick="goTo('doctors',this)">
       <span class="nav-icon">👨‍⚕️</span>
@@ -338,6 +346,31 @@ tr:hover td{background:var(--hover)}
       </div>
     </div>
 
+    <!-- PAGE: LEADS -->
+    <div class="page" id="page-leads">
+      <div class="card">
+        <div class="card-header" style="flex-wrap:wrap;gap:12px">
+          <h3>📋 Lidlar va Murojaatlar Boshqaruvi</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <input type="text" id="lead-search" placeholder="🔍 Bemor ismi yoki tel..." oninput="loadLeads()" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--txt);font-size:13px;width:180px">
+            <select id="lead-status-filter" onchange="loadLeads()" style="padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--txt);font-size:13px">
+              <option value="">Barcha Holatlar</option>
+              <option value="yangi">Yangi</option>
+              <option value="aloqada">Aloqada</option>
+              <option value="bekor">Bekor qilingan</option>
+            </select>
+            <button class="btn btn-gray" onclick="exportLeadsExcel()">📥 Excel Yuklab Olish</button>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table>
+            <thead><tr><th>ID</th><th>Bemor</th><th>Telefon</th><th>Murojaat/Mavzu</th><th>Qulay Vaqt</th><th>Holat</th><th>Vaqt</th><th>Amal</th></tr></thead>
+            <tbody id="leads-tbody"><tr><td colspan="8" class="empty">Yuklanmoqda...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- PAGE: DOCTORS -->
     <div class="page" id="page-doctors">
       <div class="card">
@@ -356,9 +389,25 @@ tr:hover td{background:var(--hover)}
 
     <!-- PAGE: KNOWLEDGE BASE -->
     <div class="page" id="page-knowledge">
+      <!-- Section 1: Clinic Knowledge Document (.txt/.md) Editor -->
+      <div class="card" style="margin-bottom:24px">
+        <div class="card-header">
+          <div>
+            <h3>📄 Klinika Haqida Asosiy Hujjat (.txt / .md)</h3>
+            <p style="font-size:12px;color:var(--muted);margin-top:2px">AI Assistant ushbu matndan javob hosil qiladi (faqat klinika haqidagi ma'lumotlar).</p>
+          </div>
+          <button class="btn btn-green" onclick="saveClinicDoc()">💾 Hujjatni Saqlash</button>
+        </div>
+        <div style="padding:16px">
+          <textarea id="clinic-doc-text" rows="10" placeholder="Klinika nomi, xizmatlar, narxlar, shifokorlar, ish tartibi haqida batafsil matn kiriting..." style="width:100%;background:#0f172a;border:1px solid var(--border);color:var(--txt);padding:14px;border-radius:10px;font-family:monospace;font-size:13px;line-height:1.6;outline:none"></textarea>
+          <div id="doc-status" style="font-size:13px;font-weight:600;margin-top:8px"></div>
+        </div>
+      </div>
+
+      <!-- Section 2: Vector FAQ Table -->
       <div class="card">
         <div class="card-header">
-          <h3>📚 Bilim Bazasi (Bot Javoblar)</h3>
+          <h3>📚 Qo'shimcha FAQ (Vektor Qidiruv)</h3>
           <button class="btn" onclick="openModal('faq-modal')">+ Yangi Savol</button>
         </div>
         <div class="table-responsive">
@@ -366,6 +415,27 @@ tr:hover td{background:var(--hover)}
             <thead><tr><th>ID</th><th>Savol</th><th>Javob</th><th>Kategoriya</th><th>Amal</th></tr></thead>
             <tbody id="faq-tbody"><tr><td colspan="5" class="empty">Yuklanmoqda...</td></tr></tbody>
           </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: STRICT RULES -->
+    <div class="page" id="page-strict-rules">
+      <div class="card">
+        <div class="card-header">
+          <h3>🛡️ Sun'iy Intellekt Qat'iy Qoidalari (AI Guardrails)</h3>
+          <button class="btn" onclick="saveStrictRules()">💾 Qoidalarni Saqlash</button>
+        </div>
+        <div style="padding: 16px 20px;">
+          <p style="color:var(--txt-sec);font-size:14px;margin-bottom:16px;">
+            Ushbu bo'limda AI (tibbiy bot) amal qilishi <strong>shart bo'lgan qat'iy qoidalarni</strong> belgilashingiz mumkin.
+            Bot har bir mijozga javob berayotganda ushbu qoidalardan zarracha ham chetga chiqmaydi.
+          </p>
+          <div style="margin-bottom: 16px;">
+            <label style="display:block;font-weight:600;margin-bottom:8px;font-size:13px">Qoidalar Ro'yxati (Har bir qoida yangi qatorda bo'lsin):</label>
+            <textarea id="strict-rules-text" rows="12" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--txt);font-family:inherit;font-size:14px;line-height:1.6;resize:vertical;" placeholder="1. RETSEPT VA DORI TAQIQLANADI: Dori-darmon tavsiya qilish taqiqlanadi..."></textarea>
+          </div>
+          <div id="strict-rules-status" style="font-size:13px;font-weight:500;min-height:20px;"></div>
         </div>
       </div>
     </div>
@@ -649,7 +719,7 @@ function backToConvList(){
 }
 
 // Navigation
-const titles={'dashboard':'📊 Dashboard','knowledge':'📚 Bilim Bazasi','doctors':'👨‍⚕️ Shifokorlar','history':'💬 Chat Tarixi','settings':'⚙️ Sozlamalar'};
+const titles={'dashboard':'📊 Dashboard','leads':'📋 Lidlar','knowledge':'📚 Bilim Bazasi','strict-rules':'🛡️ Qat\'iy Qoidalar','doctors':'👨‍⚕️ Shifokorlar','history':'💬 Chat Tarixi','settings':'⚙️ Sozlamalar'};
 function goTo(page, el){
   closeMobileSidebar();
   document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
@@ -658,10 +728,55 @@ function goTo(page, el){
   document.getElementById('page-'+page).classList.add('active');
   document.getElementById('page-title').textContent = titles[page]||page;
   if(page==='dashboard'){loadDashboard();}
-  if(page==='knowledge'){loadFaq();}
+  if(page==='leads'){loadLeads();}
+  if(page==='knowledge'){loadClinicDoc();loadFaq();}
+  if(page==='strict-rules'){loadStrictRules();}
   if(page==='doctors'){loadDoctors();}
   if(page==='history'){loadConvs();}
   if(page==='settings'){loadSettings();}
+}
+
+// STRICT RULES (GUARDRAILS)
+async function loadStrictRules() {
+  const statusEl = document.getElementById('strict-rules-status');
+  statusEl.style.color = 'var(--txt-sec)';
+  statusEl.textContent = 'Yuklanmoqda...';
+  try {
+    const res = await authFetch(API + '/strict-rules?tenant_id=1');
+    if (!res.ok) throw new Error('Yuklashda xatolik');
+    const data = await res.json();
+    document.getElementById('strict-rules-text').value = (data.rules || []).join('\n');
+    statusEl.textContent = '';
+  } catch (err) {
+    statusEl.style.color = 'var(--danger)';
+    statusEl.textContent = '⚠️ Qoidalarni yuklashda xatolik yuz berdi: ' + err.message;
+  }
+}
+
+async function saveStrictRules() {
+  const statusEl = document.getElementById('strict-rules-status');
+  const text = document.getElementById('strict-rules-text').value;
+  const rules = text.split('\n').map(r => r.trim()).filter(r => r.length > 0);
+
+  statusEl.style.color = 'var(--txt-sec)';
+  statusEl.textContent = 'Saqlanmoqda...';
+
+  try {
+    const res = await authFetch(API + '/strict-rules?tenant_id=1', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rules })
+    });
+    if (!res.ok) throw new Error('Saqlashda xatolik');
+    const data = await res.json();
+    document.getElementById('strict-rules-text').value = (data.rules || []).join('\n');
+    statusEl.style.color = 'var(--success, #10b981)';
+    statusEl.textContent = '✅ Qat\'iy qoidalar muvaffaqiyatli saqlandi va faollashtirildi!';
+    setTimeout(() => { statusEl.textContent = ''; }, 4000);
+  } catch (err) {
+    statusEl.style.color = 'var(--danger)';
+    statusEl.textContent = '⚠️ Saqlashda xatolik: ' + err.message;
+  }
 }
 
 // SETTINGS
@@ -1015,6 +1130,123 @@ async function delFaq(id){
   loadFaq();
 }
 
+// LEADS MANAGEMENT
+async function loadLeads() {
+  const q = document.getElementById('lead-search') ? document.getElementById('lead-search').value.trim() : '';
+  const status = document.getElementById('lead-status-filter') ? document.getElementById('lead-status-filter').value : '';
+  let url = API + '/leads?tenant_id=1';
+  if(q) url += '&search=' + encodeURIComponent(q);
+  if(status) url += '&status=' + encodeURIComponent(status);
+  
+  const tb = document.getElementById('leads-tbody');
+  try {
+    const r = await authFetch(url);
+    if(!r.ok) return;
+    const leads = await r.json();
+    if(!leads.length) {
+      tb.innerHTML = '<tr><td colspan="8" class="empty">Lidlar topilmadi</td></tr>';
+      return;
+    }
+    tb.innerHTML = leads.map(l => {
+      const dt = l.created_at ? new Date(l.created_at).toLocaleString('uz-UZ') : '-';
+      const name = l.patient_name || l.name || 'Bemor';
+      const rawPhone = l.patient_phone || l.phone || '';
+      const hasPhone = rawPhone && rawPhone !== 'Telefon kiritilmagan' && rawPhone !== '-';
+      const phoneHtml = hasPhone 
+        ? `<a href="tel:${rawPhone}" style="color:var(--primary);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:4px">📞 ${escHtml(rawPhone)}</a>` 
+        : `<span style="color:var(--muted);font-size:12px">📞 Telefon kiritilmagan</span>`;
+      const topic = l.topic || l.subject || l.message || '-';
+      const convenientTime = l.convenient_time || l.preferred_time || '-';
+
+      return `<tr>
+        <td>#${l.id}</td>
+        <td><b>${escHtml(name)}</b></td>
+        <td>${phoneHtml}</td>
+        <td>${escHtml(topic)}</td>
+        <td>${escHtml(convenientTime)}</td>
+        <td>
+          <select onchange="updLeadStatus(${l.id}, this.value)" style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card-bg);color:var(--txt);font-size:12px">
+            <option value="yangi" ${l.status==='yangi'?'selected':''}>Yangi</option>
+            <option value="aloqada" ${l.status==='aloqada'?'selected':''}>Aloqada</option>
+            <option value="bekor" ${l.status==='bekor'?'selected':''}>Bekor qilingan</option>
+          </select>
+        </td>
+        <td style="font-size:12px;color:var(--muted)">${dt}</td>
+        <td>
+          <button class="btn btn-red btn-sm" onclick="delLead(${l.id})">🗑</button>
+        </td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    console.error(e);
+    tb.innerHTML = '<tr><td colspan="8" class="empty" style="color:var(--red)">Xatolik yuz berdi</td></tr>';
+  }
+}
+
+async function updLeadStatus(id, status) {
+  await authFetch(API + '/leads/' + id, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ status })
+  });
+  loadLeads();
+}
+
+async function delLead(id) {
+  if(!confirm('Lidni o\'chirishni tasdiqlaysizmi?')) return;
+  await authFetch(API + '/leads/' + id, { method: 'DELETE' });
+  loadLeads();
+}
+
+function exportLeadsExcel() {
+  const token = localStorage.getItem('admin_token');
+  window.open(API + '/export/leads?tenant_id=1&token=' + encodeURIComponent(token || ''), '_blank');
+}
+
+// CLINIC KNOWLEDGE DOCUMENT (.TXT / .MD)
+async function loadClinicDoc() {
+  const area = document.getElementById('clinic-doc-text');
+  const statusEl = document.getElementById('doc-status');
+  if(!area) return;
+  statusEl.textContent = "Yuklanmoqda...";
+  statusEl.style.color = "var(--muted)";
+  try {
+    const r = await authFetch(API + '/knowledge-base/document?tenant_id=1');
+    if(!r.ok) throw new Error("Yuklab bo'lmadi");
+    const data = await r.json();
+    area.value = data.content || '';
+    statusEl.textContent = "Hujjat yuklandi.";
+    statusEl.style.color = "var(--green)";
+  } catch(e) {
+    console.error(e);
+    statusEl.textContent = "Hujjatni yuklashda xatolik";
+    statusEl.style.color = "var(--red)";
+  }
+}
+
+async function saveClinicDoc() {
+  const area = document.getElementById('clinic-doc-text');
+  const statusEl = document.getElementById('doc-status');
+  if(!area) return;
+  statusEl.textContent = "Saqlanmoqda...";
+  statusEl.style.color = "var(--yellow)";
+  try {
+    const r = await authFetch(API + '/knowledge-base/document?tenant_id=1', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ content: area.value })
+    });
+    if(!r.ok) throw new Error("Saqlab bo'lmadi");
+    statusEl.textContent = "✅ Hujjat muvaffaqiyatli saqlandi va AI bilimi yangilandi!";
+    statusEl.style.color = "var(--green)";
+    setTimeout(() => { statusEl.textContent = ""; }, 4000);
+  } catch(e) {
+    console.error(e);
+    statusEl.textContent = "❌ Saqlashda xatolik yuz berdi";
+    statusEl.style.color = "var(--red)";
+  }
+}
+
 // CHAT HISTORY
 async function loadConvs(){
   const r=await authFetch(API+'/conversations?tenant_id=1');
@@ -1025,17 +1257,20 @@ async function loadConvs(){
   el.innerHTML=data.map(c=>`
     <div class="conv-item ${c.id===activeCid?'active':''}" onclick="selectConv(${c.id},'${escHtml(c.patient_name)}','${escHtml(c.patient_phone)}',${c.is_bot_enabled})">
       <div class="conv-name">
-        <span>${c.patient_name}</span>
-        <span style="font-size:10px;color:${c.is_bot_enabled?'var(--blue)':'var(--green)'}">${c.is_bot_enabled?'🤖':'👤'}</span>
+        <span>${escHtml(c.patient_name)}</span>
+        <span style="font-size:10px;padding:2px 6px;border-radius:4px;background:${c.is_bot_enabled?'rgba(2,132,199,0.15)':'rgba(34,197,94,0.15)'};color:${c.is_bot_enabled?'var(--blue)':'var(--green)'}">${c.is_bot_enabled?'🤖 AI':'👤 Operator'}</span>
       </div>
-      <div class="conv-preview">${c.last_message||'Suhbat boshlandi'}</div>
+      <div style="font-size:11px;color:${c.patient_phone && c.patient_phone !== '-' ? 'var(--green)' : 'var(--muted)'};font-weight:500;margin-bottom:4px">
+        📞 ${escHtml(c.patient_phone && c.patient_phone !== '-' ? c.patient_phone : 'Telefon kiritilmagan')}
+      </div>
+      <div class="conv-preview">${escHtml(c.last_message||'Suhbat boshlandi')}</div>
     </div>`).join('');
 }
 
 async function selectConv(id,name,phone,isBotOn){
   activeCid=id; botEnabled=isBotOn;
   document.getElementById('ch-name').textContent=name;
-  document.getElementById('ch-phone').textContent=phone;
+  document.getElementById('ch-phone').textContent=(phone && phone !== '-') ? '📞 ' + phone : '📞 Telefon kiritilmagan';
   const tb=document.getElementById('toggle-bot-btn');
   tb.style.display='inline-block';
   tb.textContent=isBotOn?"🤖 Botni O'chirish":"✅ Botni Yoqish";

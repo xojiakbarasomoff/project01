@@ -10,12 +10,14 @@ from arq.connections import RedisSettings
 from app.core.config import settings
 from app.core.security import decrypt_credentials
 from app.db.session import AsyncSessionLocal
-from app.models.domain import Tenant, Channel, User, Conversation, Message, Appointment
+from app.models.domain import Tenant, Channel, User, Conversation, Message, Appointment, Lead
 from app.services.debounce import DebounceService
 from app.services.guardrails import GuardrailService
 from app.services.rag import RAGService
 from app.services.llm import LLMService
 from app.services.telegram import TelegramService
+from app.utils.telegram_helpers import get_bot_token
+from app.utils.constants import LeadStatus
 
 logger = logging.getLogger(__name__)
 
@@ -131,16 +133,7 @@ async def process_debounce_batch(
         res = await session.execute(stmt)
         channel = res.scalar_one_or_none()
 
-        bot_token = ""
-        if channel:
-            creds = decrypt_credentials(channel.credentials)
-            if isinstance(creds, dict):
-                bot_token = creds.get("bot_token", "")
-            elif isinstance(creds, str):
-                bot_token = creds
-
-        if not bot_token or bot_token.startswith("123456789:"):
-            bot_token = settings.TELEGRAM_BOT_TOKEN
+        bot_token = get_bot_token(channel)
 
         # 3. Retrieve User
         stmt = select(User).where(User.id == user_id, User.tenant_id == tenant_id)
@@ -299,20 +292,23 @@ async def process_debounce_batch(
             await session.commit()
             return True
 
-        # 9. RAG Semantic Search
+        # 9. RAG Semantic Search & Strict Rules Retrieval
         kb_matches = await RAGService.search_knowledge_base(
             session=session,
             tenant_id=tenant_id,
             query=combined_text,
             top_k=4
         )
+        strict_rules = await RAGService.get_strict_rules(session, tenant_id)
 
-        # 10. LLM Response Generation
+        # 10. LLM Response Generation with Strict Guardrail Rules
         ai_response = await LLMService.generate_response(
             user_message=combined_text,
             kb_context=kb_matches,
-            conversation_history=history_formatted
+            conversation_history=history_formatted,
+            strict_rules=strict_rules
         )
+
 
         # 11. Send AI Response to Telegram
         sent_ok = True
@@ -335,15 +331,52 @@ async def process_debounce_batch(
         )
         session.add(out_msg)
 
-        # 13. Appointment Booking Intent Detection
-        if _has_booking_intent(combined_text):
-            detected_phone = _extract_phone(combined_text)
+        # 13. LLM-based Inquiry Topic Extraction & Lead Management
+        try:
+            extracted_topic = await LLMService.extract_lead_topic(combined_text, history_formatted)
+        except Exception as ex:
+            logger.warning(f"Failed to extract lead topic: {ex}")
+            extracted_topic = combined_text[:100]
+
+        patient_name = user_entity.name or f"Bemor ({user_entity.external_id})"
+        patient_phone = user_entity.phone or f"Telegram ID: {user_entity.external_id}"
+
+        # Find or create Lead record
+        stmt_lead = select(Lead).where(Lead.tenant_id == tenant_id, Lead.user_id == user_entity.id)
+        res_lead = await session.execute(stmt_lead)
+        lead_rec = res_lead.scalar_one_or_none()
+
+        if lead_rec:
+            lead_rec.topic = extracted_topic
+            lead_rec.notes = f"Asosiy maqsad: {extracted_topic}"
+            if user_entity.phone:
+                lead_rec.phone = user_entity.phone
+            if user_entity.name:
+                lead_rec.patient_name = user_entity.name
+            logger.debug("Lead updated for user %s: %s", user_id, extracted_topic)
+        else:
+            lead_rec = Lead(
+                tenant_id=tenant_id,
+                user_id=user_entity.id,
+                patient_name=patient_name,
+                phone=patient_phone if patient_phone and not patient_phone.startswith("Telegram ID:") else None,
+                topic=extracted_topic,
+                convenient_time=None,
+                status=LeadStatus.YANGI,
+                notes=f"Asosiy maqsad: {extracted_topic}",
+            )
+            session.add(lead_rec)
+            logger.debug("Lead created for user %s: %s", user_id, extracted_topic)
+
+        # 14. Appointment Booking Intent & Operator Notification
+        detected_phone = _extract_phone(combined_text)
+        if _has_booking_intent(combined_text) or detected_phone:
             if detected_phone and not user_entity.phone:
                 user_entity.phone = detected_phone
+                if lead_rec:
+                    lead_rec.phone = detected_phone
                 logger.info(f"📱 [USER] Saved phone {detected_phone} for user {user_id}")
 
-            patient_name = user_entity.name or f"Bemor ({user_entity.external_id})"
-            patient_phone = detected_phone or user_entity.phone or f"Telegram ID: {user_entity.external_id}"
             parsed_appt_time = _parse_appointment_time(combined_text)
 
             app_rec = Appointment(
@@ -354,10 +387,29 @@ async def process_debounce_batch(
                 doctor_name="Stomatolog Shifokor",
                 appointment_time=parsed_appt_time,
                 status="pending",
-                notes=f"Telegram orqali so'rov: {combined_text[:200]}"
+                notes=f"Telegram orqali so'rov: {extracted_topic}"
             )
             session.add(app_rec)
-            logger.info(f"📅 [APPOINTMENT] Auto-created pending appointment for user {user_id}: {patient_phone}, time: {parsed_appt_time}")
+            logger.debug("Auto-created pending appointment for user %s", user_id)
+
+            # Notify Operator Bot / Channel if configured
+            if bot_token and settings.TELEGRAM_OPERATOR_CHANNEL_ID:
+                try:
+                    lead_alert = (
+                        f"📋 <b>YANGI BRO'N / QABUL SO'ROVI</b>\n\n"
+                        f"👤 <b>Bemor:</b> {patient_name}\n"
+                        f"📞 <b>Tel:</b> {patient_phone}\n"
+                        f"💬 <b>Asosiy maqsad:</b> {extracted_topic}\n"
+                        f"⏰ <b>Taxminiy vaqt:</b> {parsed_appt_time.strftime('%Y-%m-%d %H:%M') if parsed_appt_time else 'Belgilanmagan'}"
+                    )
+                    await TelegramService.send_message(
+                        bot_token,
+                        settings.TELEGRAM_OPERATOR_CHANNEL_ID,
+                        lead_alert,
+                        parse_mode="HTML"
+                    )
+                except Exception as ex:
+                    logger.warning(f"Failed to send lead alert to operator channel: {ex}")
 
         await session.commit()
 
