@@ -56,6 +56,7 @@ class User(Base):
     external_id = Column(String(255), nullable=False, index=True)  # telegram chat_id / insta user_id
     name = Column(String(255), nullable=True)
     phone = Column(String(50), nullable=True)
+    is_admin = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     tenant = relationship("Tenant", back_populates="users")

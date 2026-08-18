@@ -22,6 +22,24 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/telegram", tags=["Telegram Integration"])
 
 
+def check_is_admin(tenant: Tenant, user_entity: Optional[User], sender_id: str) -> bool:
+    """Checks whether a Telegram user has admin rights for the tenant."""
+    if user_entity and getattr(user_entity, "is_admin", False):
+        return True
+    t_settings = tenant.settings if tenant and isinstance(tenant.settings, dict) else {}
+    admin_ids_raw = t_settings.get("admin_telegram_ids") or ""
+    if isinstance(admin_ids_raw, list):
+        admin_ids = [str(x).strip() for x in admin_ids_raw if str(x).strip()]
+    else:
+        admin_ids = [x.strip() for x in str(admin_ids_raw).replace(";", ",").split(",") if x.strip()]
+
+    if sender_id and sender_id in admin_ids:
+        return True
+    if user_entity and user_entity.external_id and str(user_entity.external_id) in admin_ids:
+        return True
+    return False
+
+
 def _verify_webhook_secret(
     x_telegram_bot_api_secret_token: Optional[str] = Header(None)
 ) -> None:
@@ -93,13 +111,24 @@ async def receive_telegram_webhook(
     request: Request,
     db: AsyncSession = Depends(get_db)
 ):
+    try:
+        return await _process_telegram_webhook(tenant_id, request, db)
+    except Exception as e:
+        logger.exception(f"Error in receive_telegram_webhook for tenant {tenant_id}: {e}")
+        raise
+
+async def _process_telegram_webhook(
+    tenant_id: int,
+    request: Request,
+    db: AsyncSession
+):
     """
     Receives incoming Telegram update webhooks, extracts tenant & user info,
     and enqueues the message into the Redis debounce pipeline.
     """
     data = await request.json()
     update_id = data.get("update_id")
-    logger.debug("Telegram webhook update #%s for tenant %s", update_id, tenant_id)
+    logger.info("Telegram webhook update #%s for tenant %s: %s", update_id, tenant_id, data)
 
     # Fix #7: Idempotency guard — skip duplicate Telegram webhook retries
     if update_id and await DebounceService.is_update_processed(tenant_id, update_id):
@@ -421,21 +450,32 @@ async def receive_telegram_webhook(
         bot_token = get_bot_token(channel)
 
         chat_id = str(chat.get("id"))
+        is_admin_user = check_is_admin(tenant, user_entity, sender_id)
 
         if cmd in ["/start", "/help"]:
-            if not user_entity.phone or not str(user_entity.phone).strip():
-                start_msg = (
-                    "🏥 <b>AIMED Tibbiy AI Yordamchisiga xush kelibsiz!</b>\n\n"
-                    "Klinika haqida ma'lumot olish va shifokorlar qabuliga yozilish uchun "
-                    "iltimos pastdagi <b>«📱 Kontaktni ulashish»</b> tugmasini bosing:"
-                )
-                await TelegramService.send_message(
-                    bot_token, chat_id, start_msg, parse_mode="HTML", reply_markup=contact_keyboard, business_connection_id=business_connection_id
-                )
-                return {"status": "contact_requested", "command": cmd}
+            if not is_admin_user:
+                if not user_entity.phone or not str(user_entity.phone).strip():
+                    start_msg = (
+                        "🏥 <b>AIMED Tibbiy AI Yordamchisiga xush kelibsiz!</b>\n\n"
+                        "Klinika haqida ma'lumot olish va shifokorlar qabuliga yozilish uchun "
+                        "iltimos pastdagi <b>«📱 Kontaktni ulashish»</b> tugmasini bosing:"
+                    )
+                    await TelegramService.send_message(
+                        bot_token, chat_id, start_msg, parse_mode="HTML", reply_markup=contact_keyboard, business_connection_id=business_connection_id
+                    )
+                    return {"status": "contact_requested", "command": cmd}
+                else:
+                    welcome_msg = (
+                        "🏥 <b>AIMED Tibbiy AI Yordamchisiga xush kelibsiz!</b>\n\n"
+                        "👇 Quyidagi tugmalar orqali xizmatlar bilan tanishishingiz yoki qabulga yozilishingiz mumkin:"
+                    )
+                    await TelegramService.send_message(
+                        bot_token, chat_id, welcome_msg, parse_mode="HTML", reply_markup=TelegramService.build_booking_keyboard(), business_connection_id=business_connection_id
+                    )
+                    return {"status": "command_processed", "command": cmd}
 
             help_msg = (
-                "🏥 <b>AIMED Tibbiy AI Yordamchi</b>\n\n"
+                "🏥 <b>AIMED Tibbiy AI Yordamchi (Admin)</b>\n\n"
                 "<b>Boshqaruv buyruqlari:</b>\n"
                 "⏱️ /waittime [soniya] — Javob berish kutish vaqtini ko'rish yoki o'zgartirish (masalan: <code>/waittime 10</code>)\n"
                 "🛡️ /rules — Tizim qat'iy qoidalari (Strict Guardrails) ko'rish va o'zgartirish\n"
@@ -447,7 +487,17 @@ async def receive_telegram_webhook(
             )
             return {"status": "command_processed", "command": cmd}
 
-        elif cmd in ["/rules", "/qoidalar", "/strict_rules", "/qoida"]:
+        if not is_admin_user:
+            denied_msg = (
+                "⚠️ <b>Ruxsat berilmadi:</b> Ushbu buyruq faqat bot administratorlari uchun mo'ljallangan.\n\n"
+                "Agar siz bot admini bo'lsangiz, Telegram ID ingizni boshqaruv panelidan kiriting."
+            )
+            await TelegramService.send_message(
+                bot_token, chat_id, denied_msg, parse_mode="HTML", business_connection_id=business_connection_id
+            )
+            return {"status": "access_denied", "command": cmd}
+
+        if cmd in ["/rules", "/qoidalar", "/strict_rules", "/qoida"]:
             raw_args = text[len(parts[0]):].strip()
             if not raw_args:
                 rules = await RAGService.get_strict_rules(db, tenant_id)

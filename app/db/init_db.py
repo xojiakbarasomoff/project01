@@ -20,6 +20,7 @@ async def init_db_schema():
                     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
                 );
             """))
+            await conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE;"))
 
             res = await conn.execute(text("SELECT COUNT(*) FROM doctors;"))
             count = res.scalar()

@@ -100,6 +100,7 @@ class TelegramService:
         business_connection_id: Optional[str] = None
     ) -> bool:
         """Send text message to a Telegram chat, optionally via Telegram Business connection."""
+        bot_token = (bot_token or "").strip().strip('"').strip("'")
         if _IS_MOCK_TOKEN(bot_token):
             logger.info(f"[MOCK TELEGRAM OUT] Chat {chat_id}: {text[:80]}...")
             return True
@@ -156,9 +157,11 @@ class TelegramService:
         business_connection_id: Optional[str] = None
     ) -> bool:
         """Send native GPS location pin to a Telegram chat."""
+        bot_token = (bot_token or "").strip().strip('"').strip("'")
         if _IS_MOCK_TOKEN(bot_token):
             logger.info(f"[MOCK TELEGRAM LOCATION] Chat {chat_id}: Lat {latitude}, Lon {longitude}")
             return True
+
 
         url = f"{TELEGRAM_API_BASE}{bot_token}/sendLocation"
         target_chat_id = chat_id

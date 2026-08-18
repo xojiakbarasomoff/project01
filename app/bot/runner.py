@@ -27,9 +27,10 @@ async def run_bot_polling():
     async with httpx.AsyncClient(timeout=30.0) as client:
         # Delete webhook first so polling works
         try:
-            await client.post(f"{TELEGRAM_API_BASE}{token}/deleteWebhook")
-        except Exception:
-            pass
+            res_del = await client.post(f"{TELEGRAM_API_BASE}{token}/deleteWebhook", json={"drop_pending_updates": False})
+            logger.info(f"deleteWebhook result: {res_del.json()}")
+        except Exception as e:
+            logger.warning(f"deleteWebhook failed: {e}")
 
         offset = 0
         while True:
@@ -47,10 +48,17 @@ async def run_bot_polling():
                         # Forward to local webhook endpoint
                         webhook_target = "http://web:8000/api/v1/telegram/webhook/1"
                         try:
-                            await client.post(webhook_target, json=update)
+                            resp = await client.post(webhook_target, json=update)
+                            logger.info(f"Forward status: {resp.status_code} - {resp.text[:100]}")
                         except Exception as err:
-                            # Fallback local URL if running outside docker
-                            await client.post("http://localhost:8001/api/v1/telegram/webhook/1", json=update)
+                            logger.error(f"Failed forwarding update to web: {err}")
+                            try:
+                                await client.post("http://localhost:8001/api/v1/telegram/webhook/1", json=update)
+                            except Exception:
+                                pass
+                else:
+                    logger.error(f"Telegram getUpdates error: {data}")
+                    await asyncio.sleep(3)
 
             except asyncio.CancelledError:
                 break
@@ -61,3 +69,4 @@ async def run_bot_polling():
 
 if __name__ == "__main__":
     asyncio.run(run_bot_polling())
+

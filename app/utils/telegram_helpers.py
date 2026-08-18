@@ -15,8 +15,9 @@ def get_bot_token(channel) -> str:
     Falls back to the global ``TELEGRAM_BOT_TOKEN`` setting when the
     channel is None or its credentials are missing / placeholder.
     """
+    env_token = (settings.TELEGRAM_BOT_TOKEN or "").strip().strip('"').strip("'")
     if not channel:
-        return settings.TELEGRAM_BOT_TOKEN
+        return env_token
 
     creds = decrypt_credentials(channel.credentials)
 
@@ -27,8 +28,11 @@ def get_bot_token(channel) -> str:
     else:
         token = ""
 
+    token = str(token).strip().strip('"').strip("'")
+
     # Guard against placeholder tokens left over from dev fixtures
     if not token or token.startswith("123456789:"):
-        return settings.TELEGRAM_BOT_TOKEN
+        return env_token
 
     return token
+

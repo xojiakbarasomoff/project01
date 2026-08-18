@@ -510,6 +510,22 @@ tr:hover td{background:var(--hover)}
           </div>
         </div>
 
+        <!-- Setting: Telegram Bot Admin IDs -->
+        <div class="card">
+          <div class="card-header">
+            <h3>🤖 Telegram Bot Administrator Sozlamalari</h3>
+          </div>
+          <div style="padding:20px">
+            <p style="font-size:12px;color:var(--muted);margin-bottom:12px">
+              Telegram botida <code>/</code> bilan boshlanuvchi buyruqlarni (masalan: <code>/rules</code>, <code>/waittime</code>, <code>/history</code>, <code>/qabul</code>) faqat ushbu Telegram ID egalari ishlatishi mumkin.
+            </p>
+            <div class="fg">
+              <label style="font-weight:600">🆔 Admin Telegram User ID (bir nechta bo'lsa vergul bilan ajrating)</label>
+              <input type="text" id="setting-admin-telegram-ids" placeholder="Masalan: 123456789, 987654321">
+            </div>
+          </div>
+        </div>
+
         <!-- Setting 2: Change Password -->
         <div class="card">
           <div class="card-header">
@@ -791,6 +807,7 @@ async function loadSettings(){
     if(document.getElementById('setting-clinic-lat')) document.getElementById('setting-clinic-lat').value = data.clinic_latitude || 41.311081;
     if(document.getElementById('setting-clinic-lng')) document.getElementById('setting-clinic-lng').value = data.clinic_longitude || 69.240562;
     if(document.getElementById('setting-clinic-hours')) document.getElementById('setting-clinic-hours').value = data.clinic_work_hours || '';
+    if(document.getElementById('setting-admin-telegram-ids')) document.getElementById('setting-admin-telegram-ids').value = data.admin_telegram_ids || '';
   } catch(e) { console.error(e); }
 }
 
@@ -806,7 +823,8 @@ async function saveSettings(){
     clinic_landmark: document.getElementById('setting-clinic-landmark')?.value || '',
     clinic_latitude: parseFloat(document.getElementById('setting-clinic-lat')?.value) || 41.311081,
     clinic_longitude: parseFloat(document.getElementById('setting-clinic-lng')?.value) || 69.240562,
-    clinic_work_hours: document.getElementById('setting-clinic-hours')?.value || ''
+    clinic_work_hours: document.getElementById('setting-clinic-hours')?.value || '',
+    admin_telegram_ids: document.getElementById('setting-admin-telegram-ids')?.value || ''
   };
 
   try {

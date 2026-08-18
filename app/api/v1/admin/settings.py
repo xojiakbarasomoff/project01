@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
-from app.models.domain import Tenant
+from app.models.domain import Tenant, User
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +20,7 @@ class TenantSettingsUpdate(BaseModel):
     clinic_latitude: Optional[float] = Field(None, description="Clinic GPS latitude")
     clinic_longitude: Optional[float] = Field(None, description="Clinic GPS longitude")
     clinic_work_hours: Optional[str] = Field(None, description="Clinic working hours")
+    admin_telegram_ids: Optional[str] = Field(None, description="Comma-separated Telegram User IDs of bot administrators")
 
 
 @router.get("")
@@ -45,6 +46,7 @@ async def get_tenant_settings(
         "clinic_latitude": float(settings_dict.get("clinic_latitude", 41.311081)),
         "clinic_longitude": float(settings_dict.get("clinic_longitude", 69.240562)),
         "clinic_work_hours": settings_dict.get("clinic_work_hours", "Har kuni 09:00 - 18:00"),
+        "admin_telegram_ids": settings_dict.get("admin_telegram_ids", ""),
         "settings": settings_dict
     }
 
@@ -55,7 +57,7 @@ async def update_tenant_settings(
     tenant_id: int = 1,
     db: AsyncSession = Depends(get_db)
 ):
-    """Updates tenant settings (including location, coordinates, and debounce)."""
+    """Updates tenant settings (including location, coordinates, debounce, and admin IDs)."""
     stmt = select(Tenant).where(Tenant.id == tenant_id)
     res = await db.execute(stmt)
     tenant = res.scalar_one_or_none()
@@ -77,6 +79,16 @@ async def update_tenant_settings(
         current_settings["clinic_longitude"] = payload.clinic_longitude
     if payload.clinic_work_hours is not None:
         current_settings["clinic_work_hours"] = payload.clinic_work_hours
+    if payload.admin_telegram_ids is not None:
+        current_settings["admin_telegram_ids"] = payload.admin_telegram_ids.strip()
+
+        # Update is_admin flag on matching User records
+        raw_ids = [x.strip() for x in payload.admin_telegram_ids.replace(";", ",").split(",") if x.strip()]
+        stmt_users = select(User).where(User.tenant_id == tenant_id)
+        res_users = await db.execute(stmt_users)
+        users = res_users.scalars().all()
+        for u in users:
+            u.is_admin = bool(u.external_id in raw_ids)
 
     tenant.settings = current_settings
     await db.commit()
@@ -92,5 +104,6 @@ async def update_tenant_settings(
         "clinic_latitude": float(current_settings.get("clinic_latitude", 41.311081)),
         "clinic_longitude": float(current_settings.get("clinic_longitude", 69.240562)),
         "clinic_work_hours": current_settings.get("clinic_work_hours", "Har kuni 09:00 - 18:00"),
+        "admin_telegram_ids": current_settings.get("admin_telegram_ids", ""),
         "settings": current_settings
     }
