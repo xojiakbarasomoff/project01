@@ -22,9 +22,9 @@ from app.services.answer import (
 from app.services.guardrail import EMERGENCY_RESPONSES
 from tests.conftest import Seed, isolated_settings
 
-# A fixed, non-zero direction. Distance to itself is 0.0, well inside the
-# default 0.3 threshold, so any FAQ seeded with this embedding is a
-# guaranteed match for a FakeEmbeddingProvider that returns it.
+# A fixed, non-zero direction. Distance to itself is 0.0, well inside
+# DEFAULT_MAX_DISTANCE whatever it is set to, so any FAQ seeded with this
+# embedding is a guaranteed match for a FakeEmbeddingProvider that returns it.
 QUERY_VECTOR = [1.0] + [0.0] * (EMBEDDING_DIMENSIONS - 1)
 
 

@@ -6,7 +6,7 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.rag.embeddings import EMBEDDING_DIMENSIONS, EmbeddingProvider
-from app.rag.retrieval import retrieve_relevant_faqs
+from app.rag.retrieval import DEFAULT_MAX_DISTANCE, retrieve_relevant_faqs
 from app.repositories.knowledge_base import KnowledgeBaseRepository
 from tests.conftest import Seed
 
@@ -191,3 +191,19 @@ async def test_retrieve_relevant_faqs_tenant_scoped(
 
     ids_seen = {m.knowledge_base.id for m in matches}
     assert other_tenant_id not in ids_seen
+
+
+def test_default_max_distance_sits_between_the_measured_extremes() -> None:
+    """The cutoff is measured, not chosen, and the measurement is narrow.
+
+    Against the live knowledge base, the furthest question that still wanted a
+    real row landed at 0.3190 ("qon guruhini aniqlash" -> the blood group and
+    rhesus test) and the nearest question with no answer in the clinic at all
+    landed at 0.3759 ("tish oldirsam qancha bo'ladi" -> ear cleaning, from a
+    clinic with no dentist). Moving the cutoff to either side of that gap
+    picks a failure: below it a patient is refused an answer that is in the
+    table, above it a patient is handed rows about a different part of the
+    body. This test is here so that a later nudge to the number has to argue
+    with the measurement rather than slide past it.
+    """
+    assert 0.3190 < DEFAULT_MAX_DISTANCE < 0.3759
