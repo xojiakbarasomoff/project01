@@ -110,6 +110,47 @@ async def test_gemini_embed_returns_vectors_in_order(monkeypatch: pytest.MonkeyP
     )
 
 
+class _EchoingGeminiModels:
+    """Answers each call with one vector per text it was given, so a chunked
+    embed can be checked for both call count and ordering.
+    """
+
+    def __init__(self) -> None:
+        self.batches: list[list[str]] = []
+
+    async def embed_content(self, *, model: str, contents: list[str], config: object):
+        self.batches.append(list(contents))
+        return SimpleNamespace(
+            values=None,
+            embeddings=[
+                SimpleNamespace(values=[float(int(text))] * EMBEDDING_DIMENSIONS)
+                for text in contents
+            ],
+        )
+
+
+async def test_gemini_embed_splits_batches_over_the_api_limit(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Gemini rejects a batch of more than 100 outright ("at most 100 requests
+    can be in one batch", a 400). Seeding a clinic's FAQ file is a single
+    embed() of the whole file, so anything past 100 rows failed the deploy --
+    which is what happened the first time a real price list was loaded.
+    """
+    models = _EchoingGeminiModels()
+    fake_client = SimpleNamespace(aio=SimpleNamespace(models=models))
+    monkeypatch.setattr("app.rag.embeddings.genai.Client", lambda **kwargs: fake_client)
+
+    texts = [str(index) for index in range(250)]
+    provider = GeminiEmbeddingProvider(settings=TEST_SETTINGS)
+    result = await provider.embed(texts)
+
+    assert [len(batch) for batch in models.batches] == [100, 100, 50]
+    assert len(result) == 250
+    # Order survives the split: vector i still belongs to text i.
+    assert [vector[0] for vector in result] == [float(index) for index in range(250)]
+
+
 async def test_gemini_embed_empty_list_skips_api_call(monkeypatch: pytest.MonkeyPatch) -> None:
     fake_client = _FakeGeminiClient([])
     monkeypatch.setattr("app.rag.embeddings.genai.Client", lambda **kwargs: fake_client)

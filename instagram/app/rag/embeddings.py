@@ -58,6 +58,15 @@ class OpenAIEmbeddingProvider(EmbeddingProvider):
         return [item.embedding for item in response.data]
 
 
+# Gemini rejects a batch embed of more than this many texts outright:
+# "BatchEmbedContentsRequest.requests: at most 100 requests can be in one
+# batch", a 400 rather than a truncation. Callers pass whatever they have --
+# ingest_faqs hands over an entire FAQ file in one go -- so the limit is
+# enforced here, where it is the API's rule rather than the caller's problem.
+# A clinic with 98 FAQs never met it; one with 680 fails on the first deploy.
+_GEMINI_BATCH_LIMIT = 100
+
+
 class GeminiEmbeddingProvider(EmbeddingProvider):
     def __init__(
         self,
@@ -73,19 +82,23 @@ class GeminiEmbeddingProvider(EmbeddingProvider):
     async def embed(self, texts: list[str]) -> list[list[float]]:
         if not texts:
             return []
-        # Batched the same way as OpenAIEmbeddingProvider: one call for the
-        # whole list, not one per text. gemini-embedding-001's native output
-        # is 3072 dims — explicitly truncated to EMBEDDING_DIMENSIONS (1536)
-        # via output_dimensionality, since pgvector can't index anything
-        # above 2000 dims (see EMBEDDING_DIMENSIONS' comment).
-        response = await self._client.aio.models.embed_content(
-            model=self._model,
-            contents=texts,
-            config=genai_types.EmbedContentConfig(output_dimensionality=EMBEDDING_DIMENSIONS),
-        )
-        if response.embeddings is None:
-            raise ValueError("Gemini embed_content returned no embeddings")
-        return [list(embedding.values or []) for embedding in response.embeddings]
+        # Batched the same way as OpenAIEmbeddingProvider: one call per
+        # chunk, not one per text. gemini-embedding-001's native output is
+        # 3072 dims — explicitly truncated to EMBEDDING_DIMENSIONS (1536) via
+        # output_dimensionality, since pgvector can't index anything above
+        # 2000 dims (see EMBEDDING_DIMENSIONS' comment).
+        vectors: list[list[float]] = []
+        for start in range(0, len(texts), _GEMINI_BATCH_LIMIT):
+            chunk = texts[start : start + _GEMINI_BATCH_LIMIT]
+            response = await self._client.aio.models.embed_content(
+                model=self._model,
+                contents=chunk,
+                config=genai_types.EmbedContentConfig(output_dimensionality=EMBEDDING_DIMENSIONS),
+            )
+            if response.embeddings is None:
+                raise ValueError("Gemini embed_content returned no embeddings")
+            vectors.extend(list(embedding.values or []) for embedding in response.embeddings)
+        return vectors
 
 
 def _select_embedding_provider(settings: Settings) -> EmbeddingProvider:
