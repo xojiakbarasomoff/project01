@@ -1,492 +1,3402 @@
 [
   {
     "question": "Klinikangiz haqida ma'lumot bering",
-    "answer": "Bizning klinikamiz zamonaviy stomatologiya klinikasi bo'lib, kattalar va bolalar uchun stomatologik xizmatlarni taqdim etadi.",
+    "answer": "Plan Baby Clinic — ayollar va erkaklar salomatligi bo'yicha kompleks markaz. Ginekologiya, urologiya-andrologiya, endokrinologiya, LOR, nevrologiya, ultratovush diagnostikasi, doplerografiya, fizioterapiya va laboratoriya xizmatlari bor. Sizni nima qiziqtiryapti?",
     "category": "umumiy"
   },
   {
     "question": "Bu qanday klinika?",
-    "answer": "Bizning klinikamiz zamonaviy stomatologiya klinikasi bo'lib, kattalar va bolalar uchun stomatologik xizmatlarni taqdim etadi.",
+    "answer": "Plan Baby Clinic — ayollar va erkaklar salomatligi bo'yicha kompleks markaz. Ginekologiya, urologiya-andrologiya, endokrinologiya, LOR, nevrologiya, ultratovush diagnostikasi, doplerografiya, fizioterapiya va laboratoriya xizmatlari bor. Sizni nima qiziqtiryapti?",
+    "category": "umumiy"
+  },
+  {
+    "question": "Что за клиника?",
+    "answer": "Plan Baby Clinic — комплексный центр здоровья для женщин и мужчин. Гинекология, урология-андрология, эндокринология, ЛОР, неврология, УЗИ-диагностика, доплерография, физиотерапия и лаборатория. Что вас интересует?",
     "category": "umumiy"
   },
   {
     "question": "Siz nima bilan shug'ullanasiz?",
-    "answer": "Bizning klinikamiz zamonaviy stomatologiya klinikasi bo'lib, kattalar va bolalar uchun stomatologik xizmatlarni taqdim etadi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Manzilingiz qayerda?",
-    "answer": "Toshkent shahri, Yunusobod tumani, Moyqo'rg'on ko'chasi 11A uy. Orientir: AQSH elchixonasi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Klinika qayerda joylashgan?",
-    "answer": "Toshkent shahri, Yunusobod tumani, Moyqo'rg'on ko'chasi 11A uy. Orientir: AQSH elchixonasi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Qayerdasiz?",
-    "answer": "Toshkent shahri, Yunusobod tumani, Moyqo'rg'on ko'chasi 11A uy. Orientir: AQSH elchixonasi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Qanday borsam bo'ladi?",
-    "answer": "Toshkent shahri, Yunusobod tumani, Moyqo'rg'on ko'chasi 11A uy. Orientir: AQSH elchixonasi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Манзилингиз қаерда?",
-    "answer": "Toshkent shahri, Yunusobod tumani, Moyqo'rg'on ko'chasi 11A uy. Orientir: AQSH elchixonasi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Где вы находитесь?",
-    "answer": "Toshkent shahri, Yunusobod tumani, Moyqo'rg'on ko'chasi 11A uy. Orientir: AQSH elchixonasi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Ваш адрес?",
-    "answer": "Toshkent shahri, Yunusobod tumani, Moyqo'rg'on ko'chasi 11A uy. Orientir: AQSH elchixonasi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Как до вас доехать?",
-    "answer": "Toshkent shahri, Yunusobod tumani, Moyqo'rg'on ko'chasi 11A uy. Orientir: AQSH elchixonasi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Ish vaqtingiz qanday?",
-    "answer": "Klinika har kuni 09:00 dan 20:00 gacha ishlaydi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Soat nechigacha ishlaysiz?",
-    "answer": "Klinika har kuni 09:00 dan 20:00 gacha ishlaydi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Nechada ochilasiz?",
-    "answer": "Klinika har kuni 09:00 dan 20:00 gacha ishlaydi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Yakshanba kuni ishlaysizmi?",
-    "answer": "Klinika har kuni 09:00 dan 20:00 gacha ishlaydi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Dam olish kunlari ishlaysizmi?",
-    "answer": "Klinika har kuni 09:00 dan 20:00 gacha ishlaydi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Иш вақтингиз қандай?",
-    "answer": "Klinika har kuni 09:00 dan 20:00 gacha ishlaydi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Во сколько вы работаете?",
-    "answer": "Klinika har kuni 09:00 dan 20:00 gacha ishlaydi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "График работы какой?",
-    "answer": "Klinika har kuni 09:00 dan 20:00 gacha ishlaydi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Вы работаете в воскресенье?",
-    "answer": "Klinika har kuni 09:00 dan 20:00 gacha ishlaydi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Telefon raqamingiz qanday?",
-    "answer": "Klinikaning telefon raqami: +998 33 667 77 88",
-    "category": "umumiy"
-  },
-  {
-    "question": "Телефон рақамингиз қандай?",
-    "answer": "Klinikaning telefon raqami: +998 33 667 77 88",
-    "category": "umumiy"
-  },
-  {
-    "question": "Ваш номер телефона?",
-    "answer": "Klinikaning telefon raqami: +998 33 667 77 88",
-    "category": "umumiy"
-  },
-  {
-    "question": "Qanday bog'lansam bo'ladi?",
-    "answer": "Klinikaning telefon raqami: +998 33 667 77 88. Klinika har kuni 09:00 dan 20:00 gacha ishlaydi. Manzil: Toshkent shahri, Yunusobod tumani, Moyqo'rg'on ko'chasi 11A uy. Orientir: AQSH elchixonasi.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Nechta filialingiz bor?",
-    "answer": "Klinikaning Toshkent shahrida 2 ta filiali mavjud.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Filiallaringiz bormi?",
-    "answer": "Klinikaning Toshkent shahrida 2 ta filiali mavjud.",
-    "category": "umumiy"
-  },
-  {
-    "question": "Сколько у вас филиалов?",
-    "answer": "Klinikaning Toshkent shahrida 2 ta filiali mavjud.",
+    "answer": "Plan Baby Clinic — ayollar va erkaklar salomatligi bo'yicha kompleks markaz. Ginekologiya, urologiya-andrologiya, endokrinologiya, LOR, nevrologiya, ultratovush diagnostikasi, doplerografiya, fizioterapiya va laboratoriya xizmatlari bor. Sizni nima qiziqtiryapti?",
     "category": "umumiy"
   },
   {
     "question": "Qanday xizmatlar ko'rsatasiz?",
-    "answer": "Klinikada tish davolash, tish tozalash, tishlarni oqartirish, plomba qo'yish, tish olish, implantatsiya, protezlash, ortodontiya va bolalar stomatologiyasi xizmatlari mavjud.",
+    "answer": "Ginekologiya va reproduktologiya, urologiya-andrologiya, endokrinologiya, LOR, nevrologiya, ultratovush diagnostikasi (UZI), doplerografiya, fizioterapiya va keng laboratoriya tekshiruvlari — gormonlar, PZR, TORCH, biokimyo, koagulogramma. Qaysi biri kerak?",
     "category": "xizmatlar"
   },
   {
-    "question": "Klinikada qaysi xizmatlar bor?",
-    "answer": "Klinikada tish davolash, tish tozalash, tishlarni oqartirish, plomba qo'yish, tish olish, implantatsiya, protezlash, ortodontiya va bolalar stomatologiyasi xizmatlari mavjud.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Қандай хизматлар кўрсатасиз?",
-    "answer": "Klinikada tish davolash, tish tozalash, tishlarni oqartirish, plomba qo'yish, tish olish, implantatsiya, protezlash, ortodontiya va bolalar stomatologiyasi xizmatlari mavjud.",
+    "question": "Klinikada qaysi bo'limlar bor?",
+    "answer": "Ginekologiya va reproduktologiya, urologiya-andrologiya, endokrinologiya, LOR, nevrologiya, ultratovush diagnostikasi (UZI), doplerografiya, fizioterapiya va laboratoriya. Qaysi bo'limga yozilmoqchisiz?",
     "category": "xizmatlar"
   },
   {
     "question": "Какие услуги вы предоставляете?",
-    "answer": "Klinikada tish davolash, tish tozalash, tishlarni oqartirish, plomba qo'yish, tish olish, implantatsiya, protezlash, ortodontiya va bolalar stomatologiyasi xizmatlari mavjud.",
+    "answer": "Гинекология и репродуктология, урология-андрология, эндокринология, ЛОР, неврология, УЗИ-диагностика, доплерография, физиотерапия и лабораторные исследования — гормоны, ПЦР, TORCH, биохимия, коагулограмма. Что именно вам нужно?",
     "category": "xizmatlar"
   },
   {
-    "question": "Qaysi bo'limlar mavjud?",
-    "answer": "Klinikada terapevtik stomatologiya, jarrohlik stomatologiyasi, ortodontiya, implantologiya va bolalar stomatologiyasi bo'limlari mavjud.",
+    "question": "Қандай хизматлар кўрсатасиз?",
+    "answer": "Гинекология ва репродуктология, урология-андрология, эндокринология, ЛОР, неврология, ультратовуш диагностикаси (УЗИ), доплерография, физиотерапия ва кенг лаборатория текширувлари. Қайси бири керак?",
     "category": "xizmatlar"
   },
   {
-    "question": "Qaysi mutaxassislar bor?",
-    "answer": "Klinikada stomatolog-terapevt, stomatolog-jarroh, ortodont, implantolog va bolalar stomatologi mutaxassislari faoliyat yuritadi.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Qabul yo'nalishlari qanday?",
-    "answer": "Tish og'rig'i va tish davolash, tishlarni tozalash, ortodontiya, implantatsiya, protezlash, tish olish va bolalar stomatologiyasi yo'nalishlari bo'yicha qabul mavjud.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Implantatsiya qilasizmi?",
-    "answer": "Ha, klinikada implantatsiya xizmati mavjud. Implantolog - Bekzod Aliyev.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Implant qo'yasizmi?",
-    "answer": "Ha, klinikada implantatsiya xizmati mavjud. Implantolog - Bekzod Aliyev.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Вы делаете имплантацию?",
-    "answer": "Ha, klinikada implantatsiya xizmati mavjud. Implantolog - Bekzod Aliyev.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Tishlarni oqartirasizmi?",
-    "answer": "Ha, klinikada tishlarni oqartirish xizmati mavjud.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Tish oqartirish bormi?",
-    "answer": "Ha, klinikada tishlarni oqartirish xizmati mavjud.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Breket qo'yasizmi?",
-    "answer": "Ha, klinikada ortodontiya xizmati mavjud. Ortodont - Dilnoza Rahimova.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Ortodontiya bormi?",
-    "answer": "Ha, klinikada ortodontiya xizmati mavjud. Ortodont - Dilnoza Rahimova.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Tishlarni to'g'rilaysizmi?",
-    "answer": "Ha, klinikada ortodontiya xizmati mavjud. Ortodont - Dilnoza Rahimova.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Bolalarni qabul qilasizmi?",
-    "answer": "Ha, klinikada bolalar stomatologiyasi xizmati mavjud. Bolalar stomatologi - Madina Xasanova.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Bolalar stomatologi bormi?",
-    "answer": "Ha, klinikada bolalar stomatologiyasi xizmati mavjud. Bolalar stomatologi - Madina Xasanova.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Детский стоматолог есть?",
-    "answer": "Ha, klinikada bolalar stomatologiyasi xizmati mavjud. Bolalar stomatologi - Madina Xasanova.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Tish olasizmi?",
-    "answer": "Ha, klinikada tish olish xizmati mavjud.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Protez qilasizmi?",
-    "answer": "Ha, klinikada protezlash xizmati mavjud.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Tish tozalash bormi?",
-    "answer": "Ha, klinikada professional tish tozalash xizmati mavjud.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Plomba qo'yasizmi?",
-    "answer": "Ha, klinikada plomba qo'yish xizmati mavjud.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Tish davolaysizmi?",
-    "answer": "Ha, klinikada tish davolash xizmati mavjud. Stomatolog-terapevt - Anvar Karimov.",
-    "category": "xizmatlar"
-  },
-  {
-    "question": "Qaysi shifokorlar bor?",
-    "answer": "Anvar Karimov - stomatolog-terapevt. Dilnoza Rahimova - ortodont. Bekzod Aliyev - implantolog. Madina Xasanova - bolalar stomatologi.",
+    "question": "Qaysi shifokorlar qabul qiladi?",
+    "answer": "Abduqahharova Nargiza — ginekolog-reproduktolog. Abdirova Umida — akusher-ginekolog. Ismailova Guzal — endokrinolog, dermatolog, kosmetolog. Iriskulov Nabijan — LOR. Husanov Sanjarbek — urolog-androlog, onkourolog. Ahmadaliev Temur — urolog-androlog. Kimga yozib qo'yay?",
     "category": "shifokorlar"
   },
   {
-    "question": "Shifokorlaringiz kimlar?",
-    "answer": "Anvar Karimov - stomatolog-terapevt. Dilnoza Rahimova - ortodont. Bekzod Aliyev - implantolog. Madina Xasanova - bolalar stomatologi.",
+    "question": "Shifokorlar haqida ma'lumot bering",
+    "answer": "Abduqahharova Nargiza — ginekolog-reproduktolog. Abdirova Umida — akusher-ginekolog. Ismailova Guzal — endokrinolog, dermatolog, kosmetolog. Iriskulov Nabijan — LOR. Husanov Sanjarbek — urolog-androlog, onkourolog. Ahmadaliev Temur — urolog-androlog. Kimga yozib qo'yay?",
     "category": "shifokorlar"
   },
   {
-    "question": "Врачи у вас какие?",
-    "answer": "Anvar Karimov - stomatolog-terapevt. Dilnoza Rahimova - ortodont. Bekzod Aliyev - implantolog. Madina Xasanova - bolalar stomatologi.",
+    "question": "Какие у вас врачи?",
+    "answer": "Абдукахарова Наргиза — гинеколог-репродуктолог. Абдирова Умида — акушер-гинеколог. Исмаилова Гузал — эндокринолог, дерматолог, косметолог. Ирискулов Набижан — ЛОР. Хусанов Санжарбек — уролог-андролог, онкоуролог. Ахмадалиев Темур — уролог-андролог. К кому вас записать?",
     "category": "shifokorlar"
   },
   {
-    "question": "Shifokorlarning qabul kunlari qanday?",
-    "answer": "Anvar Karimov (stomatolog-terapevt) - Dushanba-Juma, 09:00-17:00. Dilnoza Rahimova (ortodont) - Seshanba-Shanba, 10:00-18:00. Bekzod Aliyev (implantolog) - Dushanba-Shanba, 09:00-16:00. Madina Xasanova (bolalar stomatologi) - Dushanba-Juma, 10:00-18:00.",
+    "question": "Ginekolog bormi?",
+    "answer": "Ha, ginekologiya va reproduktologiya bo'limi bor. Abduqahharova Nargiza — ginekolog-reproduktolog, Abdirova Umida — akusher-ginekolog. Qabulga yozib qo'yaymi?",
     "category": "shifokorlar"
   },
   {
-    "question": "Doktorlar qachon qabul qiladi?",
-    "answer": "Anvar Karimov (stomatolog-terapevt) - Dushanba-Juma, 09:00-17:00. Dilnoza Rahimova (ortodont) - Seshanba-Shanba, 10:00-18:00. Bekzod Aliyev (implantolog) - Dushanba-Shanba, 09:00-16:00. Madina Xasanova (bolalar stomatologi) - Dushanba-Juma, 10:00-18:00.",
+    "question": "Urolog bormi?",
+    "answer": "Ha, urologiya-andrologiya bo'limi bor. Husanov Sanjarbek — urolog-androlog va onkourolog, Ahmadaliev Temur — urolog-androlog. Qabulga yozib qo'yaymi?",
     "category": "shifokorlar"
   },
   {
-    "question": "Anvar Karimov qachon qabul qiladi?",
-    "answer": "Anvar Karimov (stomatolog-terapevt) Dushanba-Juma kunlari 09:00-17:00 da qabul qiladi.",
-    "category": "shifokorlar"
+    "question": "Erkaklar uchun xizmatlar bormi?",
+    "answer": "Ha, albatta. Urologiya-andrologiya bo'limi erkaklar salomatligi bilan shug'ullanadi, spermogramma va boshqa tekshiruvlar ham bor. Qaysi masala bo'yicha murojaat qilyapsiz?",
+    "category": "xizmatlar"
   },
   {
-    "question": "Dilnoza Rahimova qachon qabul qiladi?",
-    "answer": "Dilnoza Rahimova (ortodont) Seshanba-Shanba kunlari 10:00-18:00 da qabul qiladi.",
-    "category": "shifokorlar"
+    "question": "Bepushtlik bo'yicha yordam berasizmi?",
+    "answer": "Ha, klinikada ginekolog-reproduktolog va urolog-androlog qabul qiladi, kerakli tekshiruvlar — gormonlar, spermogramma, TORCH, PZR — shu yerda topshiriladi. Shifokor qabuliga yozib qo'yaymi?",
+    "category": "xizmatlar"
   },
   {
-    "question": "Bekzod Aliyev qachon qabul qiladi?",
-    "answer": "Bekzod Aliyev (implantolog) Dushanba-Shanba kunlari 09:00-16:00 da qabul qiladi.",
-    "category": "shifokorlar"
+    "question": "UZI qilasizmi?",
+    "answer": "Ha, ultratovush diagnostikasi bo'limi bor — qorin bo'shlig'i, buyrak, qalqonsimon bez, sut bezi, bachadon va tuxumdonlar, homila skriningi, yurak EXOKG va doplerografiya. Qaysi UZI kerak?",
+    "category": "xizmatlar"
   },
   {
-    "question": "Madina Xasanova qachon qabul qiladi?",
-    "answer": "Madina Xasanova (bolalar stomatologi) Dushanba-Juma kunlari 10:00-18:00 da qabul qiladi.",
-    "category": "shifokorlar"
+    "question": "Tahlil topshirsa bo'ladimi?",
+    "answer": "Ha, laboratoriya bo'limi bor — gormonlar, biokimyo, PZR, TORCH infeksiyalari, koagulogramma, bakteriologik ekish va boshqalar. Qaysi tahlil kerakligini ayting, narxini aytaman.",
+    "category": "xizmatlar"
   },
   {
-    "question": "Ortodont kim?",
-    "answer": "Ortodont - Dilnoza Rahimova. U tishlarning joylashuvi va tish qatorini to'g'rilash bilan shug'ullanadi. Qabul: Seshanba-Shanba, 10:00-18:00.",
-    "category": "shifokorlar"
+    "question": "Manzilingiz qayerda?",
+    "answer": "Toshkent shahri, Yunusobod tumani, 6-mavze, Moyqo'rg'on ko'chasi 11A-uy. Orientir: AQSH elchixonasi. Qabulga yozib qo'yaymi?",
+    "category": "umumiy"
   },
   {
-    "question": "Implantolog kim?",
-    "answer": "Implantolog - Bekzod Aliyev. U implantatsiya bilan shug'ullanadi. Qabul: Dushanba-Shanba, 09:00-16:00.",
-    "category": "shifokorlar"
+    "question": "Klinika qayerda joylashgan?",
+    "answer": "Toshkent shahri, Yunusobod tumani, 6-mavze, Moyqo'rg'on ko'chasi 11A-uy. Orientir: AQSH elchixonasi. Qabulga yozib qo'yaymi?",
+    "category": "umumiy"
   },
   {
-    "question": "Bolalar shifokori kim?",
-    "answer": "Bolalar stomatologi - Madina Xasanova. Qabul: Dushanba-Juma, 10:00-18:00.",
-    "category": "shifokorlar"
+    "question": "Где вы находитесь?",
+    "answer": "Ташкент, Юнусабадский район, 6-й квартал, улица Мойкургон, 11А. Ориентир — посольство США. Записать вас на приём?",
+    "category": "umumiy"
   },
   {
-    "question": "Terapevt kim?",
-    "answer": "Stomatolog-terapevt - Anvar Karimov. U tishlarni davolash bilan shug'ullanadi. Qabul: Dushanba-Juma, 09:00-17:00.",
-    "category": "shifokorlar"
+    "question": "Телефон рақамингиз қандай?",
+    "answer": "Регистратура: +998 71 200 03 93. Мен ҳам шу ерда ёзиб қўя оламан — қачон қулай?",
+    "category": "umumiy"
   },
   {
-    "question": "Qanday qilib qabulga yozilsam bo'ladi?",
-    "answer": "Qabulga yozilish uchun telefon raqamingizni qoldirishingiz mumkin. Call-markaz xodimimiz siz bilan bog'lanib, sizga qulay qabul vaqtini belgilashga yordam beradi.",
+    "question": "Telefon raqamingiz qanday?",
+    "answer": "Registratura: +998 71 200 03 93. Men ham shu yerda yozib qo'ya olaman — qachon qulay?",
+    "category": "umumiy"
+  },
+  {
+    "question": "Как с вами связаться?",
+    "answer": "Регистратура: +998 71 200 03 93. Могу записать вас прямо здесь — когда вам удобно?",
+    "category": "umumiy"
+  },
+  {
+    "question": "Saytingiz bormi?",
+    "answer": "Ha — planbabyclinic.com. Instagram'da esa @planbaby_clinic. Savolingiz bo'lsa shu yerda ham javob beraman.",
+    "category": "umumiy"
+  },
+  {
+    "question": "Qabulga qanday yozilaman?",
+    "answer": "Shu yerda yozib qo'ya olaman. Qaysi shifokorga va qaysi kun qulay ekanini ayting, bo'sh vaqtlarni aytaman.",
     "category": "qabul"
   },
   {
     "question": "Qabulga yozilmoqchiman",
-    "answer": "Qabulga yozilish uchun telefon raqamingizni qoldirishingiz mumkin. Call-markaz xodimimiz siz bilan bog'lanib, sizga qulay qabul vaqtini belgilashga yordam beradi.",
+    "answer": "Albatta. Qaysi bo'limga — ginekologiya, urologiya, endokrinologiya, LOR, nevrologiya yoki UZI? Kun va vaqtni tanlaymiz.",
     "category": "qabul"
   },
   {
-    "question": "Navbat olsam bo'ladimi?",
-    "answer": "Qabulga yozilish uchun telefon raqamingizni qoldirishingiz mumkin. Call-markaz xodimimiz siz bilan bog'lanib, sizga qulay qabul vaqtini belgilashga yordam beradi.",
-    "category": "qabul"
-  },
-  {
-    "question": "Қабулга ёзилмоқчиман",
-    "answer": "Qabulga yozilish uchun telefon raqamingizni qoldirishingiz mumkin. Call-markaz xodimimiz siz bilan bog'lanib, sizga qulay qabul vaqtini belgilashga yordam beradi.",
-    "category": "qabul"
-  },
-  {
-    "question": "Как записаться на приём?",
-    "answer": "Qabulga yozilish uchun telefon raqamingizni qoldirishingiz mumkin. Call-markaz xodimimiz siz bilan bog'lanib, sizga qulay qabul vaqtini belgilashga yordam beradi.",
-    "category": "qabul"
-  },
-  {
-    "question": "Хочу записаться",
-    "answer": "Qabulga yozilish uchun telefon raqamingizni qoldirishingiz mumkin. Call-markaz xodimimiz siz bilan bog'lanib, sizga qulay qabul vaqtini belgilashga yordam beradi.",
-    "category": "qabul"
-  },
-  {
-    "question": "Stomatologga yozilmoqchiman",
-    "answer": "Albatta. Qaysi yo'nalishdagi stomatologga murojaat qilmoqchisiz? Agar aniq bilmasangiz, telefon raqamingizni qoldiring, call-markaz xodimimiz siz bilan bog'lanadi.",
-    "category": "qabul"
-  },
-  {
-    "question": "Bugun qabul bormi?",
-    "answer": "Bugungi bo'sh qabul vaqtlarini aniqlab berishimiz mumkin. Telefon raqamingizni qoldirsangiz, call-markaz xodimimiz siz bilan bog'lanadi.",
-    "category": "qabul"
-  },
-  {
-    "question": "Ertaga joy bormi?",
-    "answer": "Bo'sh qabul vaqtlarini aniqlab berishimiz mumkin. Telefon raqamingizni qoldirsangiz, call-markaz xodimimiz siz bilan bog'lanadi.",
-    "category": "qabul"
-  },
-  {
-    "question": "Qaysi vaqtlarda qabul bor?",
-    "answer": "Qabul vaqtlari shifokor va mutaxassisga qarab farq qiladi. Qaysi shifokorga yozilmoqchi ekaningizni aytsangiz, sizga ma'lumot beramiz.",
+    "question": "Хочу записаться на приём",
+    "answer": "Конечно. К какому специалисту — гинеколог, уролог, эндокринолог, ЛОР, невролог или на УЗИ? Подберём день и время.",
     "category": "qabul"
   },
   {
     "question": "Narxlaringiz qanday?",
-    "answer": "Stomatolog konsultatsiyasi - 100 000 so'm. Professional tish tozalash - 250 000 so'mdan. Tishlarni oqartirish - 800 000 so'mdan. Plomba qo'yish - 200 000 so'mdan. Implantatsiya - 3 500 000 so'mdan.",
-    "category": "narxlar"
-  },
-  {
-    "question": "Нархлари қанча?",
-    "answer": "Stomatolog konsultatsiyasi - 100 000 so'm. Professional tish tozalash - 250 000 so'mdan. Tishlarni oqartirish - 800 000 so'mdan. Plomba qo'yish - 200 000 so'mdan. Implantatsiya - 3 500 000 so'mdan.",
+    "answer": "Qaysi xizmat qiziqtiryapti — shifokor qabuli, UZI yoki tahlil? Ayting, aniq narxini aytaman.",
     "category": "narxlar"
   },
   {
     "question": "Какие у вас цены?",
-    "answer": "Stomatolog konsultatsiyasi - 100 000 so'm. Professional tish tozalash - 250 000 so'mdan. Tishlarni oqartirish - 800 000 so'mdan. Plomba qo'yish - 200 000 so'mdan. Implantatsiya - 3 500 000 so'mdan.",
+    "answer": "Какая услуга вас интересует — приём врача, УЗИ или анализ? Скажите, назову точную цену.",
     "category": "narxlar"
   },
   {
-    "question": "Konsultatsiya qancha turadi?",
-    "answer": "Stomatolog konsultatsiyasi - 100 000 so'm.",
+    "question": "Нархлари қанча?",
+    "answer": "Қайси хизмат қизиқтиряпти — шифокор қабули, УЗИ ёки таҳлил? Айтинг, аниқ нархини айтаман.",
     "category": "narxlar"
   },
   {
-    "question": "Сколько стоит консультация?",
-    "answer": "Stomatolog konsultatsiyasi - 100 000 so'm.",
+    "question": "EKG / ЭКГ qancha turadi?",
+    "answer": "EKG / ЭКГ — 50 000 so'm. Qabulga yozib qo'yaymi?",
     "category": "narxlar"
   },
   {
-    "question": "Tish tozalash qancha turadi?",
-    "answer": "Professional tish tozalash - 250 000 so'mdan.",
+    "question": "Сколько стоит EKG / ЭКГ?",
+    "answer": "EKG / ЭКГ — 50 000 so'm. Qabulga yozib qo'yaymi?",
     "category": "narxlar"
   },
   {
-    "question": "Сколько стоит чистка зубов?",
-    "answer": "Professional tish tozalash - 250 000 so'mdan.",
+    "question": "Ginekolog birinchi qabuli qancha turadi?",
+    "answer": "Ginekolog birinchi qabuli — 300 000 so'm. Qabulga yozib qo'yaymi?",
     "category": "narxlar"
   },
   {
-    "question": "Tishlarni oqartirish narxi qancha?",
-    "answer": "Tishlarni oqartirish - 800 000 so'mdan.",
+    "question": "Сколько стоит Ginekolog birinchi qabuli?",
+    "answer": "Ginekolog birinchi qabuli — 300 000 so'm. Qabulga yozib qo'yaymi?",
     "category": "narxlar"
   },
   {
-    "question": "Plomba qo'yish qancha turadi?",
-    "answer": "Plomba qo'yish - 200 000 so'mdan.",
+    "question": "Ginekolog qabuli qancha turadi?",
+    "answer": "Ginekolog birinchi qabuli — 300 000 so'm. Qabulga yozib qo'yaymi?",
     "category": "narxlar"
   },
   {
-    "question": "Implantatsiya narxi qancha?",
-    "answer": "Implantatsiya - 3 500 000 so'mdan.",
+    "question": "Ginekologga borish qancha turadi?",
+    "answer": "Ginekolog birinchi qabuli — 300 000 so'm. Qabulga yozib qo'yaymi?",
     "category": "narxlar"
   },
   {
-    "question": "Implant qancha turadi?",
-    "answer": "Implantatsiya - 3 500 000 so'mdan.",
+    "question": "Приём у врача Ginekolog — сколько стоит?",
+    "answer": "Ginekolog birinchi qabuli — 300 000 so'm. Qabulga yozib qo'yaymi?",
     "category": "narxlar"
   },
   {
-    "question": "Сколько стоит имплантация?",
-    "answer": "Implantatsiya - 3 500 000 so'mdan.",
+    "question": "Ginekolog takroriy qabuli qancha turadi?",
+    "answer": "Ginekolog takroriy qabuli — 150 000 so'm. Qabulga yozib qo'yaymi?",
     "category": "narxlar"
   },
   {
-    "question": "Qabulga qanday tayyorlanish kerak?",
-    "answer": "Qabulga kelishdan oldin maxsus tayyorgarlik talab qilinishi xizmat turiga qarab farq qiladi. Qaysi xizmatga yozilmoqchi ekaningizni aytsangiz, sizga tegishli ma'lumotni beramiz.",
-    "category": "tashkiliy"
+    "question": "Сколько стоит Ginekolog takroriy qabuli?",
+    "answer": "Ginekolog takroriy qabuli — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
   },
   {
-    "question": "Qaysi hujjatlar kerak?",
-    "answer": "Qabulga kelishda pasport yoki shaxsni tasdiqlovchi hujjat olib kelishingiz kerak. Qo'shimcha hujjatlar xizmat turiga qarab talab qilinishi mumkin.",
-    "category": "tashkiliy"
+    "question": "Гинекологическое вставление кольца qancha turadi?",
+    "answer": "Гинекологическое вставление кольца — 300 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
   },
   {
-    "question": "Какие документы нужны?",
-    "answer": "Qabulga kelishda pasport yoki shaxsni tasdiqlovchi hujjat olib kelishingiz kerak. Qo'shimcha hujjatlar xizmat turiga qarab talab qilinishi mumkin.",
-    "category": "tashkiliy"
+    "question": "Сколько стоит Гинекологическое вставление кольца?",
+    "answer": "Гинекологическое вставление кольца — 300 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
   },
   {
-    "question": "Pasport kerakmi?",
-    "answer": "Qabulga kelishda pasport yoki shaxsni tasdiqlovchi hujjat olib kelishingiz kerak.",
-    "category": "tashkiliy"
+    "question": "курсавое лечение сложный qancha turadi?",
+    "answer": "курсавое лечение сложный — 250 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
   },
   {
-    "question": "Analiz natijalarini qayerga yuborish kerak?",
-    "answer": "Analiz natijalarini klinikaning Telegram manzili orqali yuborishingiz mumkin: @DentClinic_uz. Agar qo'shimcha ma'lumot kerak bo'lsa, telefon raqamingizni qoldiring.",
-    "category": "tashkiliy"
+    "question": "Сколько стоит курсавое лечение сложный?",
+    "answer": "курсавое лечение сложный — 250 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
   },
   {
-    "question": "Telegramingiz bormi?",
-    "answer": "Klinikaning Telegram manzili: @DentClinic_uz",
-    "category": "tashkiliy"
+    "question": "Санация влаг. лечеб qancha turadi?",
+    "answer": "Санация влаг. лечеб — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
   },
   {
-    "question": "Tishim og'riyapti",
-    "answer": "Siz stomatolog-terapevt qabuliga murojaat qilishingiz mumkin. Qabulga yozilish uchun telefon raqamingizni qoldirsangiz, call-markaz xodimimiz siz bilan bog'lanadi.",
-    "category": "yo'naltirish"
+    "question": "Сколько стоит Санация влаг. лечеб?",
+    "answer": "Санация влаг. лечеб — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
   },
   {
-    "question": "Тишим оғрияпти",
-    "answer": "Siz stomatolog-terapevt qabuliga murojaat qilishingiz mumkin. Qabulga yozilish uchun telefon raqamingizni qoldirsangiz, call-markaz xodimimiz siz bilan bog'lanadi.",
-    "category": "yo'naltirish"
+    "question": "Кольпоскопия qancha turadi?",
+    "answer": "Кольпоскопия — 180 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
   },
   {
-    "question": "Зуб болит",
-    "answer": "Siz stomatolog-terapevt qabuliga murojaat qilishingiz mumkin. Qabulga yozilish uchun telefon raqamingizni qoldirsangiz, call-markaz xodimimiz siz bilan bog'lanadi.",
-    "category": "yo'naltirish"
+    "question": "Сколько стоит Кольпоскопия?",
+    "answer": "Кольпоскопия — 180 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
   },
   {
-    "question": "Qaysi doktorga borishim kerak?",
-    "answer": "Qaysi muammo bo'yicha murojaat qilmoqchisiz: tish og'rig'i, tishlarni davolash, breket, implantatsiya, tish tozalash yoki boshqa masala? Aytsangiz, sizga mos yo'nalishni ayta olamiz.",
-    "category": "yo'naltirish"
+    "question": "Введение спирали qancha turadi?",
+    "answer": "Введение спирали — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
   },
   {
-    "question": "Tishim bilan muammo bor",
-    "answer": "Muammoingiz haqida biroz batafsilroq yozib bera olasizmi? Shundan so'ng sizga qaysi yo'nalish bo'yicha murojaat qilish mumkinligi haqida ma'lumot beramiz.",
-    "category": "yo'naltirish"
+    "question": "Сколько стоит Введение спирали?",
+    "answer": "Введение спирали — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
   },
   {
-    "question": "Menga doktor kerak",
-    "answer": "Albatta. Qaysi masala bo'yicha shifokorga murojaat qilmoqchisiz?",
-    "category": "yo'naltirish"
+    "question": "Влагалищное омоложение qancha turadi?",
+    "answer": "Влагалищное омоложение — 2 000 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
   },
   {
-    "question": "Batafsil ma'lumot kerak",
-    "answer": "Qaysi xizmat yoki masala bo'yicha ma'lumot kerakligini yozib qoldiring, sizga kerakli ma'lumotni beramiz.",
-    "category": "yo'naltirish"
+    "question": "Сколько стоит Влагалищное омоложение?",
+    "answer": "Влагалищное омоложение — 2 000 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Гидротубация qancha turadi?",
+    "answer": "Гидротубация — 600 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Гидротубация?",
+    "answer": "Гидротубация — 600 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Удаление ВМС qancha turadi?",
+    "answer": "Удаление ВМС — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Удаление ВМС?",
+    "answer": "Удаление ВМС — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "PRP-терапия- 2этап qancha turadi?",
+    "answer": "PRP-терапия- 2этап — 1 000 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит PRP-терапия- 2этап?",
+    "answer": "PRP-терапия- 2этап — 1 000 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Пертубация qancha turadi?",
+    "answer": "Пертубация — 220 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Пертубация?",
+    "answer": "Пертубация — 220 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "PRP-терапия-1этап qancha turadi?",
+    "answer": "PRP-терапия-1этап — 1 200 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит PRP-терапия-1этап?",
+    "answer": "PRP-терапия-1этап — 1 200 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "PRP-терапия qancha turadi?",
+    "answer": "PRP-терапия — 600 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит PRP-терапия?",
+    "answer": "PRP-терапия — 600 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Парацервикал блокада qancha turadi?",
+    "answer": "Парацервикал блокада — 120 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Парацервикал блокада?",
+    "answer": "Парацервикал блокада — 120 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сжигание эрозии Лекарствами qancha turadi?",
+    "answer": "Сжигание эрозии Лекарствами — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Сжигание эрозии Лекарствами?",
+    "answer": "Сжигание эрозии Лекарствами — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сжигание кондиломы лекарствами qancha turadi?",
+    "answer": "Сжигание кондиломы лекарствами — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Сжигание кондиломы лекарствами?",
+    "answer": "Сжигание кондиломы лекарствами — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Гидротубация двухсторонняя qancha turadi?",
+    "answer": "Гидротубация двухсторонняя — 480 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Гидротубация двухсторонняя?",
+    "answer": "Гидротубация двухсторонняя — 480 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Массаж матки qancha turadi?",
+    "answer": "Массаж матки — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Массаж матки?",
+    "answer": "Массаж матки — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Лазерное омоложение Уретры qancha turadi?",
+    "answer": "Лазерное омоложение Уретры — 1 000 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Лазерное омоложение Уретры?",
+    "answer": "Лазерное омоложение Уретры — 1 000 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Лазерное омоложение Влагалище qancha turadi?",
+    "answer": "Лазерное омоложение Влагалище — 2 000 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Лазерное омоложение Влагалище?",
+    "answer": "Лазерное омоложение Влагалище — 2 000 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Лимфотроп.блокада qancha turadi?",
+    "answer": "Лимфотроп.блокада — 90 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Лимфотроп.блокада?",
+    "answer": "Лимфотроп.блокада — 90 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "LOR birinchi qabuli qancha turadi?",
+    "answer": "LOR birinchi qabuli — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит LOR birinchi qabuli?",
+    "answer": "LOR birinchi qabuli — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "LOR qabuli qancha turadi?",
+    "answer": "LOR birinchi qabuli — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "LORga borish qancha turadi?",
+    "answer": "LOR birinchi qabuli — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Приём у врача LOR — сколько стоит?",
+    "answer": "LOR birinchi qabuli — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "LOR takroriy qabuli qancha turadi?",
+    "answer": "LOR takroriy qabuli — 80 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит LOR takroriy qabuli?",
+    "answer": "LOR takroriy qabuli — 80 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Чистка уха qancha turadi?",
+    "answer": "Чистка уха — 40 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Чистка уха?",
+    "answer": "Чистка уха — 40 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Комплексная Терапия qancha turadi?",
+    "answer": "Комплексная Терапия — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Комплексная Терапия?",
+    "answer": "Комплексная Терапия — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Перемещение по Проецу qancha turadi?",
+    "answer": "Перемещение по Проецу — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Перемещение по Проецу?",
+    "answer": "Перемещение по Проецу — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Зондирование пазух носа qancha turadi?",
+    "answer": "Зондирование пазух носа — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Зондирование пазух носа?",
+    "answer": "Зондирование пазух носа — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Пункция гайморовой пазухи qancha turadi?",
+    "answer": "Пункция гайморовой пазухи — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Пункция гайморовой пазухи?",
+    "answer": "Пункция гайморовой пазухи — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Вскрытие фурункула носа, уха qancha turadi?",
+    "answer": "Вскрытие фурункула носа, уха — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Вскрытие фурункула носа, уха?",
+    "answer": "Вскрытие фурункула носа, уха — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Удаление инородного тела (носа, уха, глотки) qancha turadi?",
+    "answer": "Удаление инородного тела (носа, уха, глотки) — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Удаление инородного тела (носа, уха, глотки)?",
+    "answer": "Удаление инородного тела (носа, уха, глотки) — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Эндоназальная блокада qancha turadi?",
+    "answer": "Эндоназальная блокада — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Эндоназальная блокада?",
+    "answer": "Эндоназальная блокада — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Катетеризация слухового прохода (одно ухо) qancha turadi?",
+    "answer": "Катетеризация слухового прохода (одно ухо) — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Катетеризация слухового прохода (одно ухо)?",
+    "answer": "Катетеризация слухового прохода (одно ухо) — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Промывание лакун и обработка горла qancha turadi?",
+    "answer": "Промывание лакун и обработка горла — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Промывание лакун и обработка горла?",
+    "answer": "Промывание лакун и обработка горла — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Лимфотропное введение лекарственных веществ qancha turadi?",
+    "answer": "Лимфотропное введение лекарственных веществ — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Лимфотропное введение лекарственных веществ?",
+    "answer": "Лимфотропное введение лекарственных веществ — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Вскрытие паратонзиллярного абцесса qancha turadi?",
+    "answer": "Вскрытие паратонзиллярного абцесса — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Вскрытие паратонзиллярного абцесса?",
+    "answer": "Вскрытие паратонзиллярного абцесса — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Внутригортанное вливание qancha turadi?",
+    "answer": "Внутригортанное вливание — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Внутригортанное вливание?",
+    "answer": "Внутригортанное вливание — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Промывание серной пробки (одного уха) qancha turadi?",
+    "answer": "Промывание серной пробки (одного уха) — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Промывание серной пробки (одного уха)?",
+    "answer": "Промывание серной пробки (одного уха) — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Транстимпанальное введение лекарственных веществ qancha turadi?",
+    "answer": "Транстимпанальное введение лекарственных веществ — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Транстимпанальное введение лекарственных веществ?",
+    "answer": "Транстимпанальное введение лекарственных веществ — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Туалет уха (отомикоз, гнойный отит) qancha turadi?",
+    "answer": "Туалет уха (отомикоз, гнойный отит) — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Туалет уха (отомикоз, гнойный отит)?",
+    "answer": "Туалет уха (отомикоз, гнойный отит) — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Лечение афтозных стоматитов qancha turadi?",
+    "answer": "Лечение афтозных стоматитов — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Лечение афтозных стоматитов?",
+    "answer": "Лечение афтозных стоматитов — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Остановка носового кровотечения qancha turadi?",
+    "answer": "Остановка носового кровотечения — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Остановка носового кровотечения?",
+    "answer": "Остановка носового кровотечения — 70 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Заушная блокада (одно ухо) qancha turadi?",
+    "answer": "Заушная блокада (одно ухо) — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Заушная блокада (одно ухо)?",
+    "answer": "Заушная блокада (одно ухо) — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Промывание миндалин qancha turadi?",
+    "answer": "Промывание миндалин — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Промывание миндалин?",
+    "answer": "Промывание миндалин — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Аденоэктомия qancha turadi?",
+    "answer": "Аденоэктомия — 1 200 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Аденоэктомия?",
+    "answer": "Аденоэктомия — 1 200 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Endokrinolog birinchi qabuli qancha turadi?",
+    "answer": "Endokrinolog birinchi qabuli — 300 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Endokrinolog birinchi qabuli?",
+    "answer": "Endokrinolog birinchi qabuli — 300 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Endokrinolog qabuli qancha turadi?",
+    "answer": "Endokrinolog birinchi qabuli — 300 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Endokrinologga borish qancha turadi?",
+    "answer": "Endokrinolog birinchi qabuli — 300 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Приём у врача Endokrinolog — сколько стоит?",
+    "answer": "Endokrinolog birinchi qabuli — 300 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Endokrinolog takroriy qabuli qancha turadi?",
+    "answer": "Endokrinolog takroriy qabuli — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Endokrinolog takroriy qabuli?",
+    "answer": "Endokrinolog takroriy qabuli — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Перевязка qancha turadi?",
+    "answer": "Перевязка — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Перевязка?",
+    "answer": "Перевязка — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Urolog takroriy qabuli qancha turadi?",
+    "answer": "Urolog takroriy qabuli — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Urolog takroriy qabuli?",
+    "answer": "Urolog takroriy qabuli — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Urolog qabuli qancha turadi?",
+    "answer": "Urolog takroriy qabuli — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Urologga borish qancha turadi?",
+    "answer": "Urolog takroriy qabuli — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Приём у врача Urolog — сколько стоит?",
+    "answer": "Urolog takroriy qabuli — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "НСГ qancha turadi?",
+    "answer": "НСГ — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит НСГ?",
+    "answer": "НСГ — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ вилочковой железы (Тимус) qancha turadi?",
+    "answer": "УЗИ вилочковой железы (Тимус) — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ вилочковой железы (Тимус)?",
+    "answer": "УЗИ вилочковой железы (Тимус) — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ тазобедренный суставов qancha turadi?",
+    "answer": "УЗИ тазобедренный суставов — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ тазобедренный суставов?",
+    "answer": "УЗИ тазобедренный суставов — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "ТКДС qancha turadi?",
+    "answer": "ТКДС — 120 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ТКДС?",
+    "answer": "ТКДС — 120 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "БЦС qancha turadi?",
+    "answer": "БЦС — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит БЦС?",
+    "answer": "БЦС — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ брюшной полости (печень, желчный пузырь, поджелудочная железа, селезенка) qancha turadi?",
+    "answer": "УЗИ брюшной полости (печень, желчный пузырь, поджелудочная железа, селезенка) — 200 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ брюшной полости (печень, желчный пузырь, поджелудочная железа, селезенка)?",
+    "answer": "УЗИ брюшной полости (печень, желчный пузырь, поджелудочная железа, селезенка) — 200 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ печени и желчного пузыря qancha turadi?",
+    "answer": "УЗИ печени и желчного пузыря — 120 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ печени и желчного пузыря?",
+    "answer": "УЗИ печени и желчного пузыря — 120 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ поджелудочной железы qancha turadi?",
+    "answer": "УЗИ поджелудочной железы — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ поджелудочной железы?",
+    "answer": "УЗИ поджелудочной железы — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ селезенки qancha turadi?",
+    "answer": "УЗИ селезенки — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ селезенки?",
+    "answer": "УЗИ селезенки — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ печени и желчного пузыря с определением функции (с пробным завтраком: сметана, яйца, слив масло, йогурт, шоколад) qancha turadi?",
+    "answer": "УЗИ печени и желчного пузыря с определением функции (с пробным завтраком: сметана, яйца, слив масло, йогурт, шоколад) — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ печени и желчного пузыря с определением функции (с пробным завтраком: сметана, яйца, слив масло, йогурт, шоколад)?",
+    "answer": "УЗИ печени и желчного пузыря с определением функции (с пробным завтраком: сметана, яйца, слив масло, йогурт, шоколад) — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ почек и мочевого пузыря qancha turadi?",
+    "answer": "УЗИ почек и мочевого пузыря — 120 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ почек и мочевого пузыря?",
+    "answer": "УЗИ почек и мочевого пузыря — 120 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ предстательной железы – на полный мочевой пузырь + остаточ. моча qancha turadi?",
+    "answer": "УЗИ предстательной железы – на полный мочевой пузырь + остаточ. моча — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ предстательной железы – на полный мочевой пузырь + остаточ. моча?",
+    "answer": "УЗИ предстательной железы – на полный мочевой пузырь + остаточ. моча — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Комплекс МПС мужской (почки, мочевой пузырь, предстательная железа) qancha turadi?",
+    "answer": "Комплекс МПС мужской (почки, мочевой пузырь, предстательная железа) — 230 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Комплекс МПС мужской (почки, мочевой пузырь, предстательная железа)?",
+    "answer": "Комплекс МПС мужской (почки, мочевой пузырь, предстательная железа) — 230 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ надпочечников qancha turadi?",
+    "answer": "УЗИ надпочечников — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ надпочечников?",
+    "answer": "УЗИ надпочечников — 100 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ матки и яичников трансабдоминальнo qancha turadi?",
+    "answer": "УЗИ матки и яичников трансабдоминальнo — 120 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ матки и яичников трансабдоминальнo?",
+    "answer": "УЗИ матки и яичников трансабдоминальнo — 120 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ матки и яичников трансвагинальнo qancha turadi?",
+    "answer": "УЗИ матки и яичников трансвагинальнo — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ матки и яичников трансвагинальнo?",
+    "answer": "УЗИ матки и яичников трансвагинальнo — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Комплекс женский (матка и яичники, щитовидная железа, молочные железы) qancha turadi?",
+    "answer": "Комплекс женский (матка и яичники, щитовидная железа, молочные железы) — 300 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Комплекс женский (матка и яичники, щитовидная железа, молочные железы)?",
+    "answer": "Комплекс женский (матка и яичники, щитовидная железа, молочные железы) — 300 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Фолликулометрия qancha turadi?",
+    "answer": "Фолликулометрия — 120 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Фолликулометрия?",
+    "answer": "Фолликулометрия — 120 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ плода на 1-триместре беременности (до 11 недель) qancha turadi?",
+    "answer": "УЗИ плода на 1-триместре беременности (до 11 недель) — 120 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ плода на 1-триместре беременности (до 11 недель)?",
+    "answer": "УЗИ плода на 1-триместре беременности (до 11 недель) — 120 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ плода на 2-триместре беременности (с 12–26 недель) qancha turadi?",
+    "answer": "УЗИ плода на 2-триместре беременности (с 12–26 недель) — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ плода на 2-триместре беременности (с 12–26 недель)?",
+    "answer": "УЗИ плода на 2-триместре беременности (с 12–26 недель) — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ плода на 3-триместре беременности (с 26 недель) qancha turadi?",
+    "answer": "УЗИ плода на 3-триместре беременности (с 26 недель) — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ плода на 3-триместре беременности (с 26 недель)?",
+    "answer": "УЗИ плода на 3-триместре беременности (с 26 недель) — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Скрининг плода 1 скрининг (11–14 недель) qancha turadi?",
+    "answer": "Скрининг плода 1 скрининг (11–14 недель) — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Скрининг плода 1 скрининг (11–14 недель)?",
+    "answer": "Скрининг плода 1 скрининг (11–14 недель) — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Скрининг плода 2 скрининг (18–24 недель) qancha turadi?",
+    "answer": "Скрининг плода 2 скрининг (18–24 недель) — 250 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Скрининг плода 2 скрининг (18–24 недель)?",
+    "answer": "Скрининг плода 2 скрининг (18–24 недель) — 250 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Скрининг плода 3 скрининг (30–34 недель) qancha turadi?",
+    "answer": "Скрининг плода 3 скрининг (30–34 недель) — 250 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Скрининг плода 3 скрининг (30–34 недель)?",
+    "answer": "Скрининг плода 3 скрининг (30–34 недель) — 250 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Скрининг плода (двойня) qancha turadi?",
+    "answer": "Скрининг плода (двойня) — 400 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Скрининг плода (двойня)?",
+    "answer": "Скрининг плода (двойня) — 400 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ щитовидной железы qancha turadi?",
+    "answer": "УЗИ щитовидной железы — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ щитовидной железы?",
+    "answer": "УЗИ щитовидной железы — 150 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ молочной железы qancha turadi?",
+    "answer": "УЗИ молочной железы — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ молочной железы?",
+    "answer": "УЗИ молочной железы — 170 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ лимфатических узлов qancha turadi?",
+    "answer": "УЗИ лимфатических узлов — 115 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ лимфатических узлов?",
+    "answer": "УЗИ лимфатических узлов — 115 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ мягких тканей (в том числе лонный симфиз, плевральные полости) qancha turadi?",
+    "answer": "УЗИ мягких тканей (в том числе лонный симфиз, плевральные полости) — 115 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ мягких тканей (в том числе лонный симфиз, плевральные полости)?",
+    "answer": "УЗИ мягких тканей (в том числе лонный симфиз, плевральные полости) — 115 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Эластография щитовидной железы qancha turadi?",
+    "answer": "Эластография щитовидной железы — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Эластография щитовидной железы?",
+    "answer": "Эластография щитовидной железы — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Эластография молочных желез qancha turadi?",
+    "answer": "Эластография молочных желез — 230 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Эластография молочных желез?",
+    "answer": "Эластография молочных желез — 230 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Соноэластография печени qancha turadi?",
+    "answer": "Соноэластография печени — 230 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Соноэластография печени?",
+    "answer": "Соноэластография печени — 230 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Комплекс новорожденный (Нейросонография, тимус (6 мес), ЭХОКГ) qancha turadi?",
+    "answer": "Комплекс новорожденный (Нейросонография, тимус (6 мес), ЭХОКГ) — 360 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Комплекс новорожденный (Нейросонография, тимус (6 мес), ЭХОКГ)?",
+    "answer": "Комплекс новорожденный (Нейросонография, тимус (6 мес), ЭХОКГ) — 360 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Тазобедренные суставы (новорожденные до 6 месяцев) qancha turadi?",
+    "answer": "Тазобедренные суставы (новорожденные до 6 месяцев) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Тазобедренные суставы (новорожденные до 6 месяцев)?",
+    "answer": "Тазобедренные суставы (новорожденные до 6 месяцев) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Эхокардиография-УЗД Сердца qancha turadi?",
+    "answer": "Эхокардиография-УЗД Сердца — 250 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Эхокардиография-УЗД Сердца?",
+    "answer": "Эхокардиография-УЗД Сердца — 250 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "УЗИ мошонки с допплерографией qancha turadi?",
+    "answer": "УЗИ мошонки с допплерографией — 200 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УЗИ мошонки с допплерографией?",
+    "answer": "УЗИ мошонки с допплерографией — 200 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Доплерография плода (с 26 недель) qancha turadi?",
+    "answer": "Доплерография плода (с 26 недель) — 250 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Доплерография плода (с 26 недель)?",
+    "answer": "Доплерография плода (с 26 недель) — 250 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Доплерография многоплодной беременности (двойня) qancha turadi?",
+    "answer": "Доплерография многоплодной беременности (двойня) — 400 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Доплерография многоплодной беременности (двойня)?",
+    "answer": "Доплерография многоплодной беременности (двойня) — 400 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Доплерография нижних конечностей (вен и артерий) qancha turadi?",
+    "answer": "Доплерография нижних конечностей (вен и артерий) — 250 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Доплерография нижних конечностей (вен и артерий)?",
+    "answer": "Доплерография нижних конечностей (вен и артерий) — 250 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Доплерография Брахицефальных артерий (БЦС, сосуды шеи) qancha turadi?",
+    "answer": "Доплерография Брахицефальных артерий (БЦС, сосуды шеи) — 200 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Доплерография Брахицефальных артерий (БЦС, сосуды шеи)?",
+    "answer": "Доплерография Брахицефальных артерий (БЦС, сосуды шеи) — 200 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Электрофорез детям qancha turadi?",
+    "answer": "Электрофорез детям — 60 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Электрофорез детям?",
+    "answer": "Электрофорез детям — 60 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "УВЧ qancha turadi?",
+    "answer": "УВЧ — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит УВЧ?",
+    "answer": "УВЧ — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Дарсенваль qancha turadi?",
+    "answer": "Дарсенваль — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Дарсенваль?",
+    "answer": "Дарсенваль — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Электрофорез qancha turadi?",
+    "answer": "Электрофорез — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Электрофорез?",
+    "answer": "Электрофорез — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Ультразвук qancha turadi?",
+    "answer": "Ультразвук — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Ультразвук?",
+    "answer": "Ультразвук — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Смартпрост qancha turadi?",
+    "answer": "Смартпрост — 80 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Смартпрост?",
+    "answer": "Смартпрост — 80 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Парафин qancha turadi?",
+    "answer": "Парафин — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Парафин?",
+    "answer": "Парафин — 50 000 so'm. Qabulga yozib qo'yaymi?",
+    "category": "narxlar"
+  },
+  {
+    "question": "Группа крови-резус фактор qancha turadi?",
+    "answer": "Группа крови-резус фактор — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Группа крови-резус фактор?",
+    "answer": "Группа крови-резус фактор — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Общий анализ крови+ СОЭ qancha turadi?",
+    "answer": "Общий анализ крови+ СОЭ — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Общий анализ крови+ СОЭ?",
+    "answer": "Общий анализ крови+ СОЭ — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "CA 15-3 (маркер молочной железы) qancha turadi?",
+    "answer": "CA 15-3 (маркер молочной железы) — 130 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит CA 15-3 (маркер молочной железы)?",
+    "answer": "CA 15-3 (маркер молочной железы) — 130 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "СА 125 (яичники) qancha turadi?",
+    "answer": "СА 125 (яичники) — 160 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит СА 125 (яичники)?",
+    "answer": "СА 125 (яичники) — 160 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Онкомаркёр рака яичников HE4 qancha turadi?",
+    "answer": "Онкомаркёр рака яичников HE4 — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Онкомаркёр рака яичников HE4?",
+    "answer": "Онкомаркёр рака яичников HE4 — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Кортизол qancha turadi?",
+    "answer": "Кортизол — 130 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Кортизол?",
+    "answer": "Кортизол — 130 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Прогестерон qancha turadi?",
+    "answer": "Прогестерон — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Прогестерон?",
+    "answer": "Прогестерон — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Пролактин qancha turadi?",
+    "answer": "Пролактин — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Пролактин?",
+    "answer": "Пролактин — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Лютеинизирующийгормон (ЛГ) qancha turadi?",
+    "answer": "Лютеинизирующийгормон (ЛГ) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Лютеинизирующийгормон (ЛГ)?",
+    "answer": "Лютеинизирующийгормон (ЛГ) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Фолликулостимулирующийгормон (ФСГ) qancha turadi?",
+    "answer": "Фолликулостимулирующийгормон (ФСГ) — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Фолликулостимулирующийгормон (ФСГ)?",
+    "answer": "Фолликулостимулирующийгормон (ФСГ) — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ЭстрадиолЕ2 qancha turadi?",
+    "answer": "ЭстрадиолЕ2 — 120 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ЭстрадиолЕ2?",
+    "answer": "ЭстрадиолЕ2 — 120 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "17-OhПрогестерон qancha turadi?",
+    "answer": "17-OhПрогестерон — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит 17-OhПрогестерон?",
+    "answer": "17-OhПрогестерон — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Тиреотропныйгормон (ТТГ) qancha turadi?",
+    "answer": "Тиреотропныйгормон (ТТГ) — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Тиреотропныйгормон (ТТГ)?",
+    "answer": "Тиреотропныйгормон (ТТГ) — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "СвободныйТ3 qancha turadi?",
+    "answer": "СвободныйТ3 — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит СвободныйТ3?",
+    "answer": "СвободныйТ3 — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Трийодтиронин общийТ3 qancha turadi?",
+    "answer": "Трийодтиронин общийТ3 — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Трийодтиронин общийТ3?",
+    "answer": "Трийодтиронин общийТ3 — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "СвободныйТ4 qancha turadi?",
+    "answer": "СвободныйТ4 — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит СвободныйТ4?",
+    "answer": "СвободныйТ4 — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Тироксин общийТ4 qancha turadi?",
+    "answer": "Тироксин общийТ4 — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Тироксин общийТ4?",
+    "answer": "Тироксин общийТ4 — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Тестостерон qancha turadi?",
+    "answer": "Тестостерон — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Тестостерон?",
+    "answer": "Тестостерон — 95 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Свободный тестостерон qancha turadi?",
+    "answer": "Свободный тестостерон — 125 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Свободный тестостерон?",
+    "answer": "Свободный тестостерон — 125 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Дегидроэпиандростерона Сульфат (DHEA-S) qancha turadi?",
+    "answer": "Дегидроэпиандростерона Сульфат (DHEA-S) — 120 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Дегидроэпиандростерона Сульфат (DHEA-S)?",
+    "answer": "Дегидроэпиандростерона Сульфат (DHEA-S) — 120 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Инсулин (до еды) qancha turadi?",
+    "answer": "Инсулин (до еды) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Инсулин (до еды)?",
+    "answer": "Инсулин (до еды) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Антитела к тиреоглобулину (АНТИ-ТГ) qancha turadi?",
+    "answer": "Антитела к тиреоглобулину (АНТИ-ТГ) — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Антитела к тиреоглобулину (АНТИ-ТГ)?",
+    "answer": "Антитела к тиреоглобулину (АНТИ-ТГ) — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Антимюллеровгормон (АМГ) qancha turadi?",
+    "answer": "Антимюллеровгормон (АМГ) — 350 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Антимюллеровгормон (АМГ)?",
+    "answer": "Антимюллеровгормон (АМГ) — 350 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Адренокортикотропныйгормон (АКТГ) qancha turadi?",
+    "answer": "Адренокортикотропныйгормон (АКТГ) — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Адренокортикотропныйгормон (АКТГ)?",
+    "answer": "Адренокортикотропныйгормон (АКТГ) — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Паратиреоидныйгормон (ПТГ) qancha turadi?",
+    "answer": "Паратиреоидныйгормон (ПТГ) — 180 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Паратиреоидныйгормон (ПТГ)?",
+    "answer": "Паратиреоидныйгормон (ПТГ) — 180 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Глобулин связывающий половыегормоны qancha turadi?",
+    "answer": "Глобулин связывающий половыегормоны — 80 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Глобулин связывающий половыегормоны?",
+    "answer": "Глобулин связывающий половыегормоны — 80 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Тиреоглобулин (щитовидная железа) qancha turadi?",
+    "answer": "Тиреоглобулин (щитовидная железа) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Тиреоглобулин (щитовидная железа)?",
+    "answer": "Тиреоглобулин (щитовидная железа) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ВитаминВ12 qancha turadi?",
+    "answer": "ВитаминВ12 — 160 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ВитаминВ12?",
+    "answer": "ВитаминВ12 — 160 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Фолиевая кислота qancha turadi?",
+    "answer": "Фолиевая кислота — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Фолиевая кислота?",
+    "answer": "Фолиевая кислота — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ВитаминД qancha turadi?",
+    "answer": "ВитаминД — 180 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ВитаминД?",
+    "answer": "ВитаминД — 180 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "С-пептид qancha turadi?",
+    "answer": "С-пептид — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит С-пептид?",
+    "answer": "С-пептид — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ИнгибинВ qancha turadi?",
+    "answer": "ИнгибинВ — 370 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ИнгибинВ?",
+    "answer": "ИнгибинВ — 370 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Аутоантитела к тиреоидной пероксидазе (АТ-ТПО qancha turadi?",
+    "answer": "Аутоантитела к тиреоидной пероксидазе (АТ-ТПО — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Аутоантитела к тиреоидной пероксидазе (АТ-ТПО?",
+    "answer": "Аутоантитела к тиреоидной пероксидазе (АТ-ТПО — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Гомоцистеин qancha turadi?",
+    "answer": "Гомоцистеин — 300 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Гомоцистеин?",
+    "answer": "Гомоцистеин — 300 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ПСА (общий) qancha turadi?",
+    "answer": "ПСА (общий) — 130 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ПСА (общий)?",
+    "answer": "ПСА (общий) — 130 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Инсулиноподобный фактор роста I (ИФР-1) qancha turadi?",
+    "answer": "Инсулиноподобный фактор роста I (ИФР-1) — 180 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Инсулиноподобный фактор роста I (ИФР-1)?",
+    "answer": "Инсулиноподобный фактор роста I (ИФР-1) — 180 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "MAR TEST (диагностика мужского аутоиммунного бесплодия) qancha turadi?",
+    "answer": "MAR TEST (диагностика мужского аутоиммунного бесплодия) — 800 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит MAR TEST (диагностика мужского аутоиммунного бесплодия)?",
+    "answer": "MAR TEST (диагностика мужского аутоиммунного бесплодия) — 800 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Инсулин (после еды) qancha turadi?",
+    "answer": "Инсулин (после еды) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Инсулин (после еды)?",
+    "answer": "Инсулин (после еды) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ПСА (свободный) qancha turadi?",
+    "answer": "ПСА (свободный) — 130 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ПСА (свободный)?",
+    "answer": "ПСА (свободный) — 130 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "АФП qancha turadi?",
+    "answer": "АФП — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит АФП?",
+    "answer": "АФП — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ЛАКТАТДЕГИДРАГЕНЕЗА qancha turadi?",
+    "answer": "ЛАКТАТДЕГИДРАГЕНЕЗА — 70 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ЛАКТАТДЕГИДРАГЕНЕЗА?",
+    "answer": "ЛАКТАТДЕГИДРАГЕНЕЗА — 70 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Кальцитонин qancha turadi?",
+    "answer": "Кальцитонин — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Кальцитонин?",
+    "answer": "Кальцитонин — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "НCV Ab ( Гепатит С) qancha turadi?",
+    "answer": "НCV Ab ( Гепатит С) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит НCV Ab ( Гепатит С)?",
+    "answer": "НCV Ab ( Гепатит С) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "HDА qancha turadi?",
+    "answer": "HDА — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит HDА?",
+    "answer": "HDА — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Anti HAV IgG (Гепатит А) qancha turadi?",
+    "answer": "Anti HAV IgG (Гепатит А) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Anti HAV IgG (Гепатит А)?",
+    "answer": "Anti HAV IgG (Гепатит А) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "HAV IgG qancha turadi?",
+    "answer": "HAV IgG — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит HAV IgG?",
+    "answer": "HAV IgG — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Torch-infeksiyalari IGG — Toxoplasma Gondii IgG qancha turadi?",
+    "answer": "Torch-infeksiyalari IGG — Toxoplasma Gondii IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Torch-infeksiyalari IGG — Toxoplasma Gondii IgG?",
+    "answer": "Torch-infeksiyalari IGG — Toxoplasma Gondii IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Rubella IgG qancha turadi?",
+    "answer": "Rubella IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Rubella IgG?",
+    "answer": "Rubella IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Herpes Simplex 1/2 IgG qancha turadi?",
+    "answer": "Herpes Simplex 1/2 IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Herpes Simplex 1/2 IgG?",
+    "answer": "Herpes Simplex 1/2 IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Chlamydia trachomatis IgG qancha turadi?",
+    "answer": "Chlamydia trachomatis IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Chlamydia trachomatis IgG?",
+    "answer": "Chlamydia trachomatis IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Mycoplasma hominis IgG qancha turadi?",
+    "answer": "Mycoplasma hominis IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Mycoplasma hominis IgG?",
+    "answer": "Mycoplasma hominis IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Ureaplasma urealyticum IgG qancha turadi?",
+    "answer": "Ureaplasma urealyticum IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Ureaplasma urealyticum IgG?",
+    "answer": "Ureaplasma urealyticum IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Cytomegalovirus IgG qancha turadi?",
+    "answer": "Cytomegalovirus IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Cytomegalovirus IgG?",
+    "answer": "Cytomegalovirus IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Mycoplasma Pneumoniae IgG qancha turadi?",
+    "answer": "Mycoplasma Pneumoniae IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Mycoplasma Pneumoniae IgG?",
+    "answer": "Mycoplasma Pneumoniae IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Chlamydia Pneumoniae IgG qancha turadi?",
+    "answer": "Chlamydia Pneumoniae IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Chlamydia Pneumoniae IgG?",
+    "answer": "Chlamydia Pneumoniae IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Candida (IgG,IgA) qancha turadi?",
+    "answer": "Candida (IgG,IgA) — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Candida (IgG,IgA)?",
+    "answer": "Candida (IgG,IgA) — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Candida IgМ qancha turadi?",
+    "answer": "Candida IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Candida IgМ?",
+    "answer": "Candida IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Helicobakter pylori IgG qancha turadi?",
+    "answer": "Helicobakter pylori IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Helicobakter pylori IgG?",
+    "answer": "Helicobakter pylori IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Helicobakter pylori IgМ qancha turadi?",
+    "answer": "Helicobakter pylori IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Helicobakter pylori IgМ?",
+    "answer": "Helicobakter pylori IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Chlamydia pneumonia IgG qancha turadi?",
+    "answer": "Chlamydia pneumonia IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Chlamydia pneumonia IgG?",
+    "answer": "Chlamydia pneumonia IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Кандида IgG qancha turadi?",
+    "answer": "Кандида IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Кандида IgG?",
+    "answer": "Кандида IgG — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Кандида IgМ qancha turadi?",
+    "answer": "Кандида IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Кандида IgМ?",
+    "answer": "Кандида IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Коклюш(Bordetella pert)IgM&IgG qancha turadi?",
+    "answer": "Коклюш(Bordetella pert)IgM&IgG — 350 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Коклюш(Bordetella pert)IgM&IgG?",
+    "answer": "Коклюш(Bordetella pert)IgM&IgG — 350 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Общий белок qancha turadi?",
+    "answer": "Общий белок — 30 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Общий белок?",
+    "answer": "Общий белок — 30 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Альбумин qancha turadi?",
+    "answer": "Альбумин — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Альбумин?",
+    "answer": "Альбумин — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Аланинаминотрансфераза (АЛТ) qancha turadi?",
+    "answer": "Аланинаминотрансфераза (АЛТ) — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Аланинаминотрансфераза (АЛТ)?",
+    "answer": "Аланинаминотрансфераза (АЛТ) — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Аспартатаминотрансфераза (АСТ) qancha turadi?",
+    "answer": "Аспартатаминотрансфераза (АСТ) — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Аспартатаминотрансфераза (АСТ)?",
+    "answer": "Аспартатаминотрансфераза (АСТ) — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Креатинин qancha turadi?",
+    "answer": "Креатинин — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Креатинин?",
+    "answer": "Креатинин — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Мочевина qancha turadi?",
+    "answer": "Мочевина — 45 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Мочевина?",
+    "answer": "Мочевина — 45 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Щелочная фосфатаза qancha turadi?",
+    "answer": "Щелочная фосфатаза — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Щелочная фосфатаза?",
+    "answer": "Щелочная фосфатаза — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Глюкоза qancha turadi?",
+    "answer": "Глюкоза — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Глюкоза?",
+    "answer": "Глюкоза — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Мочевая кислота qancha turadi?",
+    "answer": "Мочевая кислота — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Мочевая кислота?",
+    "answer": "Мочевая кислота — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Билирубин группа qancha turadi?",
+    "answer": "Билирубин группа — 80 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Билирубин группа?",
+    "answer": "Билирубин группа — 80 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Билирубин общий qancha turadi?",
+    "answer": "Билирубин общий — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Билирубин общий?",
+    "answer": "Билирубин общий — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Билирубин прямой qancha turadi?",
+    "answer": "Билирубин прямой — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Билирубин прямой?",
+    "answer": "Билирубин прямой — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Билирубин непрямой qancha turadi?",
+    "answer": "Билирубин непрямой — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Билирубин непрямой?",
+    "answer": "Билирубин непрямой — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Индекс HOMA-IR qancha turadi?",
+    "answer": "Индекс HOMA-IR — 185 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Индекс HOMA-IR?",
+    "answer": "Индекс HOMA-IR — 185 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Глюкоза (после еды) qancha turadi?",
+    "answer": "Глюкоза (после еды) — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Глюкоза (после еды)?",
+    "answer": "Глюкоза (после еды) — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Ревматоидный фактор Р Ф qancha turadi?",
+    "answer": "Ревматоидный фактор Р Ф — 85 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Ревматоидный фактор Р Ф?",
+    "answer": "Ревматоидный фактор Р Ф — 85 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "С-реактивный белок (качественный) qancha turadi?",
+    "answer": "С-реактивный белок (качественный) — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит С-реактивный белок (качественный)?",
+    "answer": "С-реактивный белок (качественный) — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Антистрептолизин-О qancha turadi?",
+    "answer": "Антистрептолизин-О — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Антистрептолизин-О?",
+    "answer": "Антистрептолизин-О — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "С-реактивный белок (количественный) qancha turadi?",
+    "answer": "С-реактивный белок (количественный) — 130 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит С-реактивный белок (количественный)?",
+    "answer": "С-реактивный белок (количественный) — 130 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Холестерин общий qancha turadi?",
+    "answer": "Холестерин общий — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Холестерин общий?",
+    "answer": "Холестерин общий — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Холестерол-ЛПВП qancha turadi?",
+    "answer": "Холестерол-ЛПВП — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Холестерол-ЛПВП?",
+    "answer": "Холестерол-ЛПВП — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Холестерол-ЛПНП qancha turadi?",
+    "answer": "Холестерол-ЛПНП — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Холестерол-ЛПНП?",
+    "answer": "Холестерол-ЛПНП — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Триглицериды qancha turadi?",
+    "answer": "Триглицериды — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Триглицериды?",
+    "answer": "Триглицериды — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Холестерол-ЛПОНП qancha turadi?",
+    "answer": "Холестерол-ЛПОНП — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Холестерол-ЛПОНП?",
+    "answer": "Холестерол-ЛПОНП — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Ферритин qancha turadi?",
+    "answer": "Ферритин — 120 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Ферритин?",
+    "answer": "Ферритин — 120 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ПробаШуварского-Симса-Гунера qancha turadi?",
+    "answer": "ПробаШуварского-Симса-Гунера — 130 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ПробаШуварского-Симса-Гунера?",
+    "answer": "ПробаШуварского-Симса-Гунера — 130 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Проба на антиспермальные антитела qancha turadi?",
+    "answer": "Проба на антиспермальные антитела — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Проба на антиспермальные антитела?",
+    "answer": "Проба на антиспермальные антитела — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Железo qancha turadi?",
+    "answer": "Железo — 45 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Железo?",
+    "answer": "Железo — 45 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Калий qancha turadi?",
+    "answer": "Калий — 45 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Калий?",
+    "answer": "Калий — 45 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Натрий qancha turadi?",
+    "answer": "Натрий — 45 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Натрий?",
+    "answer": "Натрий — 45 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Хлор qancha turadi?",
+    "answer": "Хлор — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Хлор?",
+    "answer": "Хлор — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Кальций общий qancha turadi?",
+    "answer": "Кальций общий — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Кальций общий?",
+    "answer": "Кальций общий — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Фосфор qancha turadi?",
+    "answer": "Фосфор — 45 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Фосфор?",
+    "answer": "Фосфор — 45 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Магний qancha turadi?",
+    "answer": "Магний — 45 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Магний?",
+    "answer": "Магний — 45 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Цинк qancha turadi?",
+    "answer": "Цинк — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Цинк?",
+    "answer": "Цинк — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Медь qancha turadi?",
+    "answer": "Медь — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Медь?",
+    "answer": "Медь — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Мазок qancha turadi?",
+    "answer": "Мазок — 70 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Мазок?",
+    "answer": "Мазок — 70 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Цитология мазка ПАП-мазок qancha turadi?",
+    "answer": "Цитология мазка ПАП-мазок — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Цитология мазка ПАП-мазок?",
+    "answer": "Цитология мазка ПАП-мазок — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Спермограмма по ВО3 qancha turadi?",
+    "answer": "Спермограмма по ВО3 — 250 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Спермограмма по ВО3?",
+    "answer": "Спермограмма по ВО3 — 250 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Исслед. секрета предстател. железы qancha turadi?",
+    "answer": "Исслед. секрета предстател. железы — 120 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Исслед. секрета предстател. железы?",
+    "answer": "Исслед. секрета предстател. железы — 120 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Мазок 2 точек qancha turadi?",
+    "answer": "Мазок 2 точек — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Мазок 2 точек?",
+    "answer": "Мазок 2 точек — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Трихомониаз IgG qancha turadi?",
+    "answer": "Трихомониаз IgG — 65 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Трихомониаз IgG?",
+    "answer": "Трихомониаз IgG — 65 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Мазок из 3 точек qancha turadi?",
+    "answer": "Мазок из 3 точек — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Мазок из 3 точек?",
+    "answer": "Мазок из 3 точек — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Модифицированная проба: Meares и Stameу qancha turadi?",
+    "answer": "Модифицированная проба: Meares и Stameу — 300 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Модифицированная проба: Meares и Stameу?",
+    "answer": "Модифицированная проба: Meares и Stameу — 300 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Генетические причины азооспермии (Делеции AZF- локуса Y-хромосомы) qancha turadi?",
+    "answer": "Генетические причины азооспермии (Делеции AZF- локуса Y-хромосомы) — 720 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Генетические причины азооспермии (Делеции AZF- локуса Y-хромосомы)?",
+    "answer": "Генетические причины азооспермии (Делеции AZF- локуса Y-хромосомы) — 720 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ДНК фрагментация сперматозоидов qancha turadi?",
+    "answer": "ДНК фрагментация сперматозоидов — 1 770 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ДНК фрагментация сперматозоидов?",
+    "answer": "ДНК фрагментация сперматозоидов — 1 770 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Общий анализ мочи qancha turadi?",
+    "answer": "Общий анализ мочи — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Общий анализ мочи?",
+    "answer": "Общий анализ мочи — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Моча по Нечипоренкo qancha turadi?",
+    "answer": "Моча по Нечипоренкo — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Моча по Нечипоренкo?",
+    "answer": "Моча по Нечипоренкo — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Исслед. мочи поЗемницкому qancha turadi?",
+    "answer": "Исслед. мочи поЗемницкому — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Исслед. мочи поЗемницкому?",
+    "answer": "Исслед. мочи поЗемницкому — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Моча по Нечипоренко(в 2-х порциях) qancha turadi?",
+    "answer": "Моча по Нечипоренко(в 2-х порциях) — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Моча по Нечипоренко(в 2-х порциях)?",
+    "answer": "Моча по Нечипоренко(в 2-х порциях) — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Моча по Нечипоренко(в 3-х порциях) qancha turadi?",
+    "answer": "Моча по Нечипоренко(в 3-х порциях) — 70 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Моча по Нечипоренко(в 3-х порциях)?",
+    "answer": "Моча по Нечипоренко(в 3-х порциях) — 70 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "HBsAg(ГепатитB) qancha turadi?",
+    "answer": "HBsAg(ГепатитB) — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит HBsAg(ГепатитB)?",
+    "answer": "HBsAg(ГепатитB) — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "HCА qancha turadi?",
+    "answer": "HCА — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит HCА?",
+    "answer": "HCА — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Реакция Вассермана(RW) qancha turadi?",
+    "answer": "Реакция Вассермана(RW) — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Реакция Вассермана(RW)?",
+    "answer": "Реакция Вассермана(RW) — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Гликозилированный гемоглобин qancha turadi?",
+    "answer": "Гликозилированный гемоглобин — 105 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Гликозилированный гемоглобин?",
+    "answer": "Гликозилированный гемоглобин — 105 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ВИЧ1/2 qancha turadi?",
+    "answer": "ВИЧ1/2 — 70 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ВИЧ1/2?",
+    "answer": "ВИЧ1/2 — 70 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Иммуноглобулин E qancha turadi?",
+    "answer": "Иммуноглобулин E — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Иммуноглобулин E?",
+    "answer": "Иммуноглобулин E — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Иммунограмма развернутая qancha turadi?",
+    "answer": "Иммунограмма развернутая — 250 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Иммунограмма развернутая?",
+    "answer": "Иммунограмма развернутая — 250 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Интерфероновый статус qancha turadi?",
+    "answer": "Интерфероновый статус — 195 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Интерфероновый статус?",
+    "answer": "Интерфероновый статус — 195 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Иммуноглобулин M qancha turadi?",
+    "answer": "Иммуноглобулин M — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Иммуноглобулин M?",
+    "answer": "Иммуноглобулин M — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Общий анализ кала qancha turadi?",
+    "answer": "Общий анализ кала — 120 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Общий анализ кала?",
+    "answer": "Общий анализ кала — 120 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Кал на яйца глист qancha turadi?",
+    "answer": "Кал на яйца глист — 120 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Кал на яйца глист?",
+    "answer": "Кал на яйца глист — 120 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Кал на скрытое кровотечение qancha turadi?",
+    "answer": "Кал на скрытое кровотечение — 110 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Кал на скрытое кровотечение?",
+    "answer": "Кал на скрытое кровотечение — 110 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Кал на лямблии и другие простейшие qancha turadi?",
+    "answer": "Кал на лямблии и другие простейшие — 80 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Кал на лямблии и другие простейшие?",
+    "answer": "Кал на лямблии и другие простейшие — 80 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Кал на Helicobacter pylori qancha turadi?",
+    "answer": "Кал на Helicobacter pylori — 120 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Кал на Helicobacter pylori?",
+    "answer": "Кал на Helicobacter pylori — 120 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Антитела к антигенам лямблий суммарные (anti-Giardia Lamblia IgA, IgM, IgG total) qancha turadi?",
+    "answer": "Антитела к антигенам лямблий суммарные (anti-Giardia Lamblia IgA, IgM, IgG total) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Антитела к антигенам лямблий суммарные (anti-Giardia Lamblia IgA, IgM, IgG total)?",
+    "answer": "Антитела к антигенам лямблий суммарные (anti-Giardia Lamblia IgA, IgM, IgG total) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Антитела к аскаридам IgG (anti–Ascaris lumbricoides IgG) qancha turadi?",
+    "answer": "Антитела к аскаридам IgG (anti–Ascaris lumbricoides IgG) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Антитела к аскаридам IgG (anti–Ascaris lumbricoides IgG)?",
+    "answer": "Антитела к аскаридам IgG (anti–Ascaris lumbricoides IgG) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Соскоб на острицу qancha turadi?",
+    "answer": "Соскоб на острицу — 65 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Соскоб на острицу?",
+    "answer": "Соскоб на острицу — 65 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Бак.исслед.из 2 точек (vagina, cervical) qancha turadi?",
+    "answer": "Бак.исслед.из 2 точек (vagina, cervical) — 220 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Бак.исслед.из 2 точек (vagina, cervical)?",
+    "answer": "Бак.исслед.из 2 точек (vagina, cervical) — 220 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Бак.исслед.секрета простаты qancha turadi?",
+    "answer": "Бак.исслед.секрета простаты — 160 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Бак.исслед.секрета простаты?",
+    "answer": "Бак.исслед.секрета простаты — 160 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Бак.исслед.из зева qancha turadi?",
+    "answer": "Бак.исслед.из зева — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Бак.исслед.из зева?",
+    "answer": "Бак.исслед.из зева — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Бак.исслед.мочи qancha turadi?",
+    "answer": "Бак.исслед.мочи — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Бак.исслед.мочи?",
+    "answer": "Бак.исслед.мочи — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Бак.исслед.кала qancha turadi?",
+    "answer": "Бак.исслед.кала — 220 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Бак.исслед.кала?",
+    "answer": "Бак.исслед.кала — 220 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Бак.исслед.с участка порожения qancha turadi?",
+    "answer": "Бак.исслед.с участка порожения — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Бак.исслед.с участка порожения?",
+    "answer": "Бак.исслед.с участка порожения — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Бак.исслед.грудного молока qancha turadi?",
+    "answer": "Бак.исслед.грудного молока — 140 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Бак.исслед.грудного молока?",
+    "answer": "Бак.исслед.грудного молока — 140 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Бак.исслед.влагалища с 3хточек (urethra, vagina, cervical) qancha turadi?",
+    "answer": "Бак.исслед.влагалища с 3хточек (urethra, vagina, cervical) — 380 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Бак.исслед.влагалища с 3хточек (urethra, vagina, cervical)?",
+    "answer": "Бак.исслед.влагалища с 3хточек (urethra, vagina, cervical) — 380 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Бак.исслед.спермы qancha turadi?",
+    "answer": "Бак.исслед.спермы — 220 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Бак.исслед.спермы?",
+    "answer": "Бак.исслед.спермы — 220 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Бак.исслед.выдел.(Vagina) qancha turadi?",
+    "answer": "Бак.исслед.выдел.(Vagina) — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Бак.исслед.выдел.(Vagina)?",
+    "answer": "Бак.исслед.выдел.(Vagina) — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Бак.исслед.выдел.(Cervical) qancha turadi?",
+    "answer": "Бак.исслед.выдел.(Cervical) — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Бак.исслед.выдел.(Cervical)?",
+    "answer": "Бак.исслед.выдел.(Cervical) — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Бак.исслед.выдел.(Uretra) qancha turadi?",
+    "answer": "Бак.исслед.выдел.(Uretra) — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Бак.исслед.выдел.(Uretra)?",
+    "answer": "Бак.исслед.выдел.(Uretra) — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Альфа-Амилаза(Диастаза)в моче qancha turadi?",
+    "answer": "Альфа-Амилаза(Диастаза)в моче — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Альфа-Амилаза(Диастаза)в моче?",
+    "answer": "Альфа-Амилаза(Диастаза)в моче — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Мочевая кислота в суточной моче qancha turadi?",
+    "answer": "Мочевая кислота в суточной моче — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Мочевая кислота в суточной моче?",
+    "answer": "Мочевая кислота в суточной моче — 55 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Белок в сут.моче qancha turadi?",
+    "answer": "Белок в сут.моче — 70 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Белок в сут.моче?",
+    "answer": "Белок в сут.моче — 70 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Toxoplasma Gondii Ig М qancha turadi?",
+    "answer": "Toxoplasma Gondii Ig М — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Toxoplasma Gondii Ig М?",
+    "answer": "Toxoplasma Gondii Ig М — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Cytomegalovirus (Қon) qancha turadi?",
+    "answer": "Cytomegalovirus (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Cytomegalovirus (Қon)?",
+    "answer": "Cytomegalovirus (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Rubella Ig М qancha turadi?",
+    "answer": "Rubella Ig М — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Rubella Ig М?",
+    "answer": "Rubella Ig М — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Herpes Simplex 1/2 (Қon) qancha turadi?",
+    "answer": "Herpes Simplex 1/2 (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Herpes Simplex 1/2 (Қon)?",
+    "answer": "Herpes Simplex 1/2 (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Chlamydia trachomatis (Қon) qancha turadi?",
+    "answer": "Chlamydia trachomatis (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Chlamydia trachomatis (Қon)?",
+    "answer": "Chlamydia trachomatis (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Mycoplasma hominis (Қon) qancha turadi?",
+    "answer": "Mycoplasma hominis (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Mycoplasma hominis (Қon)?",
+    "answer": "Mycoplasma hominis (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Ureaplasma spp, FL (Қon) qancha turadi?",
+    "answer": "Ureaplasma spp, FL (Қon) — 175 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Ureaplasma spp, FL (Қon)?",
+    "answer": "Ureaplasma spp, FL (Қon) — 175 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ВПЧ - HPV (Қon) qancha turadi?",
+    "answer": "ВПЧ - HPV (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ВПЧ - HPV (Қon)?",
+    "answer": "ВПЧ - HPV (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ВПЧ скрининг (51, 56, 18, 39, 45, 59, 16, 31, 33, 35, 52, 58) qancha turadi?",
+    "answer": "ВПЧ скрининг (51, 56, 18, 39, 45, 59, 16, 31, 33, 35, 52, 58) — 280 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ВПЧ скрининг (51, 56, 18, 39, 45, 59, 16, 31, 33, 35, 52, 58)?",
+    "answer": "ВПЧ скрининг (51, 56, 18, 39, 45, 59, 16, 31, 33, 35, 52, 58) — 280 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "HBV (Sifatli) (Қon) qancha turadi?",
+    "answer": "HBV (Sifatli) (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит HBV (Sifatli) (Қon)?",
+    "answer": "HBV (Sifatli) (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Candida (Қon) qancha turadi?",
+    "answer": "Candida (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Candida (Қon)?",
+    "answer": "Candida (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "HDV (Sifatli) (Қon) qancha turadi?",
+    "answer": "HDV (Sifatli) (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит HDV (Sifatli) (Қon)?",
+    "answer": "HDV (Sifatli) (Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Epstein-Barr virusi (Қon) qancha turadi?",
+    "answer": "Epstein-Barr virusi (Қon) — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Epstein-Barr virusi (Қon)?",
+    "answer": "Epstein-Barr virusi (Қon) — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "SARS Covid-19 testi – IgG qancha turadi?",
+    "answer": "SARS Covid-19 testi – IgG — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит SARS Covid-19 testi – IgG?",
+    "answer": "SARS Covid-19 testi – IgG — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "SARS Covid-19 testi – IgМ qancha turadi?",
+    "answer": "SARS Covid-19 testi – IgМ — 110 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит SARS Covid-19 testi – IgМ?",
+    "answer": "SARS Covid-19 testi – IgМ — 110 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "QON PZR TAHLILi — Toxoplasma Gondii IgG qancha turadi?",
+    "answer": "QON PZR TAHLILi — Toxoplasma Gondii IgG — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит QON PZR TAHLILi — Toxoplasma Gondii IgG?",
+    "answer": "QON PZR TAHLILi — Toxoplasma Gondii IgG — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Фибриноген qancha turadi?",
+    "answer": "Фибриноген — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Фибриноген?",
+    "answer": "Фибриноген — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Комплекс Коагулограмма qancha turadi?",
+    "answer": "Комплекс Коагулограмма — 250 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Комплекс Коагулограмма?",
+    "answer": "Комплекс Коагулограмма — 250 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Время кровотечения qancha turadi?",
+    "answer": "Время кровотечения — 60 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Время кровотечения?",
+    "answer": "Время кровотечения — 60 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "МНО qancha turadi?",
+    "answer": "МНО — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит МНО?",
+    "answer": "МНО — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Протромбиновый индекс qancha turadi?",
+    "answer": "Протромбиновый индекс — 60 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Протромбиновый индекс?",
+    "answer": "Протромбиновый индекс — 60 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Протромбиновое время qancha turadi?",
+    "answer": "Протромбиновое время — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Протромбиновое время?",
+    "answer": "Протромбиновое время — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "АЧТВ (соотношение) qancha turadi?",
+    "answer": "АЧТВ (соотношение) — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит АЧТВ (соотношение)?",
+    "answer": "АЧТВ (соотношение) — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Время свертываемости по Сухареву qancha turadi?",
+    "answer": "Время свертываемости по Сухареву — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Время свертываемости по Сухареву?",
+    "answer": "Время свертываемости по Сухареву — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Агрегация тромбоцитов qancha turadi?",
+    "answer": "Агрегация тромбоцитов — 220 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Агрегация тромбоцитов?",
+    "answer": "Агрегация тромбоцитов — 220 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Тромбиновое время qancha turadi?",
+    "answer": "Тромбиновое время — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Тромбиновое время?",
+    "answer": "Тромбиновое время — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ХГЧ количественный qancha turadi?",
+    "answer": "ХГЧ количественный — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ХГЧ количественный?",
+    "answer": "ХГЧ количественный — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "RHEU - Антистрептолизин-О(ASLO) qancha turadi?",
+    "answer": "RHEU - Антистрептолизин-О(ASLO) — 60 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит RHEU - Антистрептолизин-О(ASLO)?",
+    "answer": "RHEU - Антистрептолизин-О(ASLO) — 60 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Toxoplasma Gondii IgМ qancha turadi?",
+    "answer": "Toxoplasma Gondii IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Toxoplasma Gondii IgМ?",
+    "answer": "Toxoplasma Gondii IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Cytomegalovirus IgМ qancha turadi?",
+    "answer": "Cytomegalovirus IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Cytomegalovirus IgМ?",
+    "answer": "Cytomegalovirus IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Rubella IgМ qancha turadi?",
+    "answer": "Rubella IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Rubella IgМ?",
+    "answer": "Rubella IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Chlamydia trachomatis IgМ qancha turadi?",
+    "answer": "Chlamydia trachomatis IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Chlamydia trachomatis IgМ?",
+    "answer": "Chlamydia trachomatis IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Mycoplasma hominis IgМ qancha turadi?",
+    "answer": "Mycoplasma hominis IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Mycoplasma hominis IgМ?",
+    "answer": "Mycoplasma hominis IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Ureaplasma urealyticum IgМ qancha turadi?",
+    "answer": "Ureaplasma urealyticum IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Ureaplasma urealyticum IgМ?",
+    "answer": "Ureaplasma urealyticum IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Herpes simplex II IgМ qancha turadi?",
+    "answer": "Herpes simplex II IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Herpes simplex II IgМ?",
+    "answer": "Herpes simplex II IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Mycoplasma Pneumoniae IgМ qancha turadi?",
+    "answer": "Mycoplasma Pneumoniae IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Mycoplasma Pneumoniae IgМ?",
+    "answer": "Mycoplasma Pneumoniae IgМ — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Chlamydia Pneumoniae IgM qancha turadi?",
+    "answer": "Chlamydia Pneumoniae IgM — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Chlamydia Pneumoniae IgM?",
+    "answer": "Chlamydia Pneumoniae IgM — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Гарднерелла qancha turadi?",
+    "answer": "Гарднерелла — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Гарднерелла?",
+    "answer": "Гарднерелла — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Toxoplasma gondii (Мазок) qancha turadi?",
+    "answer": "Toxoplasma gondii (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Toxoplasma gondii (Мазок)?",
+    "answer": "Toxoplasma gondii (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Cytomegalovirus (Мазок) qancha turadi?",
+    "answer": "Cytomegalovirus (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Cytomegalovirus (Мазок)?",
+    "answer": "Cytomegalovirus (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Rubella (Мазок) qancha turadi?",
+    "answer": "Rubella (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Rubella (Мазок)?",
+    "answer": "Rubella (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Herpes Simplex 1/2 (Мазок) qancha turadi?",
+    "answer": "Herpes Simplex 1/2 (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Herpes Simplex 1/2 (Мазок)?",
+    "answer": "Herpes Simplex 1/2 (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Chlamydia trachomatis (Мазок) qancha turadi?",
+    "answer": "Chlamydia trachomatis (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Chlamydia trachomatis (Мазок)?",
+    "answer": "Chlamydia trachomatis (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Mycoplasma hominis (Мазок) qancha turadi?",
+    "answer": "Mycoplasma hominis (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Mycoplasma hominis (Мазок)?",
+    "answer": "Mycoplasma hominis (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Ureaplasma spp, FL (Мазок) qancha turadi?",
+    "answer": "Ureaplasma spp, FL (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Ureaplasma spp, FL (Мазок)?",
+    "answer": "Ureaplasma spp, FL (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Candida (Мазок) qancha turadi?",
+    "answer": "Candida (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Candida (Мазок)?",
+    "answer": "Candida (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ВПЧ - HPV (Мазок) qancha turadi?",
+    "answer": "ВПЧ - HPV (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ВПЧ - HPV (Мазок)?",
+    "answer": "ВПЧ - HPV (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ВПЧ 31\\35 (Мазок) qancha turadi?",
+    "answer": "ВПЧ 31\\35 (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ВПЧ 31\\35 (Мазок)?",
+    "answer": "ВПЧ 31\\35 (Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Микобактерии туберкулеза, определение ДНК (Mycobacterium tuberculosis, DNA) qancha turadi?",
+    "answer": "Микобактерии туберкулеза, определение ДНК (Mycobacterium tuberculosis, DNA) — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Микобактерии туберкулеза, определение ДНК (Mycobacterium tuberculosis, DNA)?",
+    "answer": "Микобактерии туберкулеза, определение ДНК (Mycobacterium tuberculosis, DNA) — 200 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Андрофлор-скрин ДНК количественный qancha turadi?",
+    "answer": "Андрофлор-скрин ДНК количественный — 600 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Андрофлор-скрин ДНК количественный?",
+    "answer": "Андрофлор-скрин ДНК количественный — 600 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Демодекоз qancha turadi?",
+    "answer": "Демодекоз — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Демодекоз?",
+    "answer": "Демодекоз — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ВПЧ 16\\18(Қon) qancha turadi?",
+    "answer": "ВПЧ 16\\18(Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ВПЧ 16\\18(Қon)?",
+    "answer": "ВПЧ 16\\18(Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "HBV (Мiqdoriy)(Қon) qancha turadi?",
+    "answer": "HBV (Мiqdoriy)(Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит HBV (Мiqdoriy)(Қon)?",
+    "answer": "HBV (Мiqdoriy)(Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "HCV (Мiqdoriy)(Қon) qancha turadi?",
+    "answer": "HCV (Мiqdoriy)(Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит HCV (Мiqdoriy)(Қon)?",
+    "answer": "HCV (Мiqdoriy)(Қon) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ВПЧ 16\\18(Мазок) qancha turadi?",
+    "answer": "ВПЧ 16\\18(Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ВПЧ 16\\18(Мазок)?",
+    "answer": "ВПЧ 16\\18(Мазок) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "HDV (Мiqdoriy) qancha turadi?",
+    "answer": "HDV (Мiqdoriy) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит HDV (Мiqdoriy)?",
+    "answer": "HDV (Мiqdoriy) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ПЦРHCV (Genotip) qancha turadi?",
+    "answer": "ПЦРHCV (Genotip) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ПЦРHCV (Genotip)?",
+    "answer": "ПЦРHCV (Genotip) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Анти-фосфолипид скрин IgМ qancha turadi?",
+    "answer": "Анти-фосфолипид скрин IgМ — 180 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Анти-фосфолипид скрин IgМ?",
+    "answer": "Анти-фосфолипид скрин IgМ — 180 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Анти-фосфолипид скрин IgG qancha turadi?",
+    "answer": "Анти-фосфолипид скрин IgG — 180 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Анти-фосфолипид скрин IgG?",
+    "answer": "Анти-фосфолипид скрин IgG — 180 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Toxoplasmagondii(Моча) qancha turadi?",
+    "answer": "Toxoplasmagondii(Моча) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Toxoplasmagondii(Моча)?",
+    "answer": "Toxoplasmagondii(Моча) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Cytomegalovirus(Моча) qancha turadi?",
+    "answer": "Cytomegalovirus(Моча) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Cytomegalovirus(Моча)?",
+    "answer": "Cytomegalovirus(Моча) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "HerpesSimplex1/2(Моча) qancha turadi?",
+    "answer": "HerpesSimplex1/2(Моча) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит HerpesSimplex1/2(Моча)?",
+    "answer": "HerpesSimplex1/2(Моча) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Chlamydiatrachomatis(Моча) qancha turadi?",
+    "answer": "Chlamydiatrachomatis(Моча) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Chlamydiatrachomatis(Моча)?",
+    "answer": "Chlamydiatrachomatis(Моча) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Mycoplasmahominis(Моча) qancha turadi?",
+    "answer": "Mycoplasmahominis(Моча) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Mycoplasmahominis(Моча)?",
+    "answer": "Mycoplasmahominis(Моча) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Ureaplasmaspp,FL(Моча) qancha turadi?",
+    "answer": "Ureaplasmaspp,FL(Моча) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Ureaplasmaspp,FL(Моча)?",
+    "answer": "Ureaplasmaspp,FL(Моча) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "ВПЧ16\\18(Моча) qancha turadi?",
+    "answer": "ВПЧ16\\18(Моча) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит ВПЧ16\\18(Моча)?",
+    "answer": "ВПЧ16\\18(Моча) — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Д-димер qancha turadi?",
+    "answer": "Д-димер — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Д-димер?",
+    "answer": "Д-димер — 150 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Соматотропныйгормон(СТГ) qancha turadi?",
+    "answer": "Соматотропныйгормон(СТГ) — 110 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Соматотропныйгормон(СТГ)?",
+    "answer": "Соматотропныйгормон(СТГ) — 110 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Anti-HBsCliа qancha turadi?",
+    "answer": "Anti-HBsCliа — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Anti-HBsCliа?",
+    "answer": "Anti-HBsCliа — 50 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "HBsAg(ГепатитB)Clia qancha turadi?",
+    "answer": "HBsAg(ГепатитB)Clia — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит HBsAg(ГепатитB)Clia?",
+    "answer": "HBsAg(ГепатитB)Clia — 40 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Альфа-Амилаза(Диастаза) qancha turadi?",
+    "answer": "Альфа-Амилаза(Диастаза) — 45 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Альфа-Амилаза(Диастаза)?",
+    "answer": "Альфа-Амилаза(Диастаза) — 45 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Лактатдегидрогеназа(ЛДГ) qancha turadi?",
+    "answer": "Лактатдегидрогеназа(ЛДГ) — 30 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Лактатдегидрогеназа(ЛДГ)?",
+    "answer": "Лактатдегидрогеназа(ЛДГ) — 30 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Гамма-глутамилтрансфераза(ГГТ) qancha turadi?",
+    "answer": "Гамма-глутамилтрансфераза(ГГТ) — 30 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Гамма-глутамилтрансфераза(ГГТ)?",
+    "answer": "Гамма-глутамилтрансфераза(ГГТ) — 30 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "АнтителакHelicobacterpyloriсуммарные (Anti-H.pyloriIgA,IgM,IgG) qancha turadi?",
+    "answer": "АнтителакHelicobacterpyloriсуммарные (Anti-H.pyloriIgA,IgM,IgG) — 80 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит АнтителакHelicobacterpyloriсуммарные (Anti-H.pyloriIgA,IgM,IgG)?",
+    "answer": "АнтителакHelicobacterpyloriсуммарные (Anti-H.pyloriIgA,IgM,IgG) — 80 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Ureaplasmaspp,FL(Сперма) qancha turadi?",
+    "answer": "Ureaplasmaspp,FL(Сперма) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Ureaplasmaspp,FL(Сперма)?",
+    "answer": "Ureaplasmaspp,FL(Сперма) — 100 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Cytomegalovirus(Сперма) qancha turadi?",
+    "answer": "Cytomegalovirus(Сперма) — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
+  },
+  {
+    "question": "Сколько стоит Cytomegalovirus(Сперма)?",
+    "answer": "Cytomegalovirus(Сперма) — 90 000 so'm. Yana qaysi tahlillar kerakligini ayting, umumiy summasini hisoblab beraman.",
+    "category": "narxlar"
   }
 ]
