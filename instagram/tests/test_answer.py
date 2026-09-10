@@ -11,9 +11,11 @@ from app.rag.embeddings import EMBEDDING_DIMENSIONS, EmbeddingProvider
 from app.rag.llm import ChatMessage, LLMProvider
 from app.repositories.knowledge_base import KnowledgeBaseRepository
 from app.services.answer import (
+    HELP_RESPONSES,
     NO_MATCH_RESPONSE,
     NO_MATCH_RESPONSES,
     START_RESPONSES,
+    client_command_response,
     generate_answer,
     is_client_command,
 )
@@ -626,6 +628,60 @@ def test_anything_a_patient_actually_wrote_is_left_to_the_model(message: str) ->
     it would lose the only thing they wrote.
     """
     assert not is_client_command(message)
+
+
+@pytest.mark.parametrize(
+    "message",
+    ["/start clinic_ad_2", "/start@medasistebot ig_promo-7", "/start A1"],
+)
+def test_a_deep_link_campaign_tag_is_still_the_start_button(message: str) -> None:
+    """Ad campaigns reach the clinic through t.me/<bot>?start=<payload>, which
+    Telegram delivers as "/start clinic_ad_2". The payload is a campaign tag,
+    not a question — handing it to the model asks it to answer an opaque
+    token, which is the greeting-in-a-random-alphabet bug one keystroke away.
+    """
+    assert is_client_command(message)
+
+
+@pytest.mark.parametrize(
+    "message",
+    ["/help clinic_ad_2", "/start bugun qabulga", "/start narx?", "/start " + "a" * 65],
+)
+def test_only_start_takes_a_payload_and_only_a_payload_shaped_one(message: str) -> None:
+    """The deep-link exception is deliberately narrow: only "/start", only one
+    trailing word, and only within the alphabet and length Telegram allows a
+    payload. Everything else is a patient talking.
+    """
+    assert not is_client_command(message)
+
+
+def test_pressing_help_is_answered_with_help_not_a_greeting() -> None:
+    """A patient who presses Help halfway through a conversation is asking
+    what this chat can do. Greeting them from scratch drops that question and
+    reads as though the clinic forgot the conversation so far.
+    """
+    assert client_command_response("/help") == HELP_RESPONSES["uz-latn"]
+    assert client_command_response("/start") == START_RESPONSES["uz-latn"]
+    assert HELP_RESPONSES["uz-latn"] != START_RESPONSES["uz-latn"]
+
+
+@pytest.mark.parametrize(
+    ("default_language", "expected_script"),
+    [("Russian", "ru"), ("russian", "ru"), ("Uzbek", "uz-latn"), ("English", "uz-latn")],
+)
+def test_a_button_is_answered_in_the_clinics_configured_language(
+    default_language: str, expected_script: str
+) -> None:
+    """ "/start" has no letters in it at all, so script detection always lands
+    on Uzbek Latin and DEFAULT_REPLY_LANGUAGE was ignored — a clinic
+    configured for Russian greeted every patient in Uzbek on the one message
+    that makes its first impression.
+
+    A language these fixed lines don't exist in, English included, still falls
+    back to the clinic's own rather than guessing.
+    """
+    assert client_command_response("/start", default_language) == START_RESPONSES[expected_script]
+    assert client_command_response("/help", default_language) == HELP_RESPONSES[expected_script]
 
 
 async def test_pressing_start_greets_once_without_asking_the_model(

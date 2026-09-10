@@ -224,7 +224,9 @@ def render(slots: Sequence[datetime], now: datetime) -> str:
         + '\n- Say the day the way a person would — "bugun", "ertaga", '
         '"1-sentabr". Never read a date out in 2026-09-01 form: a patient '
         'being told to come on "ertaga 2026-08-31" is being handed a '
-        "machine's notes."
+        "machine's notes. This is about the sentence the patient reads; the "
+        "[[BOOK:...]] marker still carries the exact 2026-09-01T13:00 date "
+        "from the list, because it is machinery the patient never sees."
     )
 
 

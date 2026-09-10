@@ -1,3 +1,4 @@
+import re
 from collections.abc import Sequence
 from datetime import UTC, datetime
 
@@ -376,8 +377,24 @@ def no_match_response(user_message: str) -> str:
 
 # Telegram's own buttons, not something a patient typed. "/start" is what the
 # client sends when somebody opens the chat and presses Start, and it is the
-# very first thing the clinic ever receives from most patients.
+# very first thing the clinic ever receives from most patients. "/help" is the
+# other button the client offers from its menu, and it gets its own answer
+# below rather than the greeting: a patient who presses it halfway through a
+# conversation has asked what this chat can do, not arrived for the first time.
 _CLIENT_COMMANDS = frozenset({"/start", "/help"})
+
+# What Telegram puts after "/start" when a patient arrives through a deep link
+# (t.me/<bot>?start=<payload>) -- the standard way an ad campaign says which
+# ad the patient came from. Telegram restricts the payload to this alphabet
+# and 64 characters, so the shape is worth matching on: the alternative is
+# handing "clinic_ad_2" to the model and asking it to answer an opaque token.
+#
+# Deliberately narrow: only "/start" (never "/help") and only when the payload
+# is the single thing that follows it. "/start bugun qabulga yozilsam" is a
+# patient talking and still goes to the model. The one case this reads as a
+# campaign tag when it wasn't is a patient who typed exactly one plain word
+# after the command, and a greeting is a fair answer to that anyway.
+_DEEP_LINK_PAYLOAD = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 
 # Answered from here rather than by the model, for three reasons.
 #
@@ -404,28 +421,112 @@ START_RESPONSES = {
     "ru": ("Здравствуйте! Что вас беспокоит — или хотите записаться на приём к врачу?"),
 }
 
+# "/help" asks what this chat can do, which is a different question from
+# "hello". Answered from here for the same three reasons as the greeting --
+# it is a button rather than a sentence, it carries no language, and its
+# answer is fixed -- but it must not be the greeting itself: a patient who
+# presses Help mid-conversation would otherwise be welcomed as if they had
+# just arrived, and whatever they wanted help with is dropped.
+HELP_RESPONSES = {
+    "uz-latn": (
+        "Men klinikaning yordamchisiman. Xizmatlar, shifokorlar va ish vaqti "
+        "haqida so'rashingiz yoki shifokor qabuliga yozilishingiz mumkin. "
+        "Sizni nima qiziqtiryapti?"
+    ),
+    "uz-cyrl": (
+        "Мен клиниканинг ёрдамчисиман. Хизматлар, шифокорлар ва иш вақти "
+        "ҳақида сўрашингиз ёки шифокор қабулига ёзилишингиз мумкин. "
+        "Сизни нима қизиқтиряпти?"
+    ),
+    "ru": (
+        "Я помощник клиники. Можете спросить об услугах, врачах и часах работы "
+        "или записаться на приём. Что вас интересует?"
+    ),
+}
+
+# How DEFAULT_REPLY_LANGUAGE (free text, named in English -- see
+# app.core.config) picks one of the three scripts the fixed lines exist in.
+# A language with no entry here, English included, falls back to the script
+# the patient's own message was written in: there is no English greeting to
+# fall back to, and the clinic's own language beats guessing.
+_DEFAULT_LANGUAGE_SCRIPTS = {
+    "russian": "ru",
+    "ru": "ru",
+    "русский": "ru",
+    "uzbek": "uz-latn",
+    "uz": "uz-latn",
+    "o'zbek": "uz-latn",
+    "oʻzbek": "uz-latn",
+}
+
+
+def _fixed_line_script(user_message: str, default_language: str | None) -> str:
+    """Which script to answer a chat client's button in.
+
+    A button carries no language -- "/start" has no letters at all, and a deep
+    link's payload is a campaign tag, not something the patient wrote -- so
+    reply_script() would answer every one of them in Uzbek Latin regardless of
+    how the clinic is configured. The clinic's own DEFAULT_REPLY_LANGUAGE is
+    the better signal here, and the message itself is only consulted when that
+    setting names a language these fixed lines don't exist in.
+    """
+    if default_language is not None:
+        script = _DEFAULT_LANGUAGE_SCRIPTS.get(default_language.strip().lower())
+        if script is not None:
+            return script
+    return reply_script(user_message)
+
+
+def client_command(user_message: str) -> str | None:
+    """Which button the chat client sent on the patient's behalf, if any.
+
+    In groups Telegram addresses commands to a particular bot ("/start@name"),
+    and a client may pad them, so the text is trimmed to the bare command
+    before it is compared. A patient who writes past the command has said
+    something and is left to the model -- "/start bugun qabulga yozilsam" is a
+    request, and swallowing it would lose the only thing they wrote.
+
+    The one exception is a deep link's campaign tag; see _DEEP_LINK_PAYLOAD.
+    """
+    stripped = user_message.strip()
+    if "\n" in stripped:
+        return None
+
+    parts = stripped.split()
+    if not parts:
+        return None
+
+    command = parts[0].split("@", 1)[0].lower()
+    if command not in _CLIENT_COMMANDS:
+        return None
+    if len(parts) == 1:
+        return command
+    if command == "/start" and len(parts) == 2 and _DEEP_LINK_PAYLOAD.match(parts[1]):
+        return command
+    return None
+
 
 def is_client_command(user_message: str) -> bool:
     """Whether this "message" is a button the chat client sent on the
     patient's behalf.
-
-    In groups Telegram addresses commands to a particular bot ("/start@name"),
-    and a client may pad them, so the text is trimmed to the bare command
-    before it is compared. Anything with more than one word is left alone --
-    a patient who writes "/start bugun qabulga yozilsam" has said something,
-    and swallowing it would lose it.
     """
-    stripped = user_message.strip()
-    if " " in stripped or "\n" in stripped:
-        return False
-    return stripped.split("@", 1)[0].lower() in _CLIENT_COMMANDS
+    return client_command(user_message) is not None
 
 
-def start_response(user_message: str) -> str:
-    """The opening line, in the script the patient wrote in -- which for a
-    bare command is the clinic's own.
+def client_command_response(user_message: str, default_language: str | None = None) -> str:
+    """The fixed answer to a chat client's button, in the clinic's language.
+
+    Raises KeyError if the message is not a client command -- callers reach
+    this only through client_command(), which has already said that it is.
     """
-    return START_RESPONSES[reply_script(user_message)]
+    command = client_command(user_message)
+    responses = HELP_RESPONSES if command == "/help" else START_RESPONSES
+    return responses[_fixed_line_script(user_message, default_language)]
+
+
+def start_response(user_message: str, default_language: str | None = None) -> str:
+    """The opening line, in the clinic's own language."""
+    return START_RESPONSES[_fixed_line_script(user_message, default_language)]
 
 
 def _format_faq_context(matches: Sequence[KnowledgeBaseMatch]) -> str:
@@ -621,7 +722,7 @@ async def generate_answer(
     # Before the guardrail, because a chat client's button is not a sentence
     # for it to judge and cannot be an emergency.
     if is_client_command(user_message):
-        return start_response(user_message)
+        return client_command_response(user_message, resolved_settings.default_reply_language)
 
     guardrail = evaluate_guardrail(user_message, guardrail_classifier)
     if guardrail.fixed_response is not None:
