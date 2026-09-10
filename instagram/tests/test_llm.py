@@ -61,12 +61,27 @@ async def test_generate_prepends_system_prompt_and_returns_content(
 
     assert result == "Sure, we're open 9 to 5!"
     fake_client.chat.completions.create.assert_awaited_once_with(
-        model="gpt-4o-mini",
+        model=TEST_SETTINGS.openai_model,
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "What are your hours?"},
         ],
     )
+
+
+async def test_openai_model_comes_from_settings(monkeypatch: pytest.MonkeyPatch) -> None:
+    """OPENAI_MODEL is a dashboard lever, like GEMINI_MODEL: a model that
+    retires or answers badly has to be swappable while patients are waiting,
+    not after a redeploy. It was pinned in code to gpt-4o-mini until now.
+    """
+    fake_client = _FakeAsyncOpenAI("ok")
+    monkeypatch.setattr("app.rag.llm.AsyncOpenAI", lambda **kwargs: fake_client)
+
+    settings = TEST_SETTINGS.model_copy(update={"openai_model": "gpt-5.6-luna"})
+    provider = OpenAILLMProvider(settings=settings)
+    await provider.generate("system", [{"role": "user", "content": "hi"}])
+
+    assert fake_client.chat.completions.create.await_args.kwargs["model"] == "gpt-5.6-luna"
 
 
 async def test_generate_raises_when_content_is_none(monkeypatch: pytest.MonkeyPatch) -> None:

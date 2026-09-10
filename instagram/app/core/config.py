@@ -177,6 +177,15 @@ class Settings(BaseSettings):
     # see GeminiLLMProvider for why.
     gemini_model: str = Field(default="gemini-2.5-flash", alias="GEMINI_MODEL")
 
+    # Which OpenAI model answers, for the same reason GEMINI_MODEL exists and
+    # with the same rule about concrete versions: a model that retires, prices
+    # that change, or a reply quality problem are all things to fix from the
+    # dashboard while patients are waiting, not things to ship code for. The
+    # default is deliberately a current model rather than the gpt-4o-mini this
+    # was pinned to for two years -- but a deployment should still name the one
+    # it has tested.
+    openai_model: str = Field(default="gpt-5-mini", alias="OPENAI_MODEL")
+
     # Which backend writes the replies, when that should not be the same one
     # that makes the embeddings. Unset, it follows MODEL_PROVIDER and nothing
     # changes.

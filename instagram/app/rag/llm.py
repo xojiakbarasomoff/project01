@@ -28,11 +28,15 @@ class LLMProvider(ABC):
 
 
 class OpenAILLMProvider(LLMProvider):
-    def __init__(self, settings: Settings | None = None, model: str = "gpt-4o-mini") -> None:
-        api_key = (settings or get_settings()).openai_api_key
+    def __init__(self, settings: Settings | None = None, model: str | None = None) -> None:
+        resolved = settings or get_settings()
+        api_key = resolved.openai_api_key
         if api_key is None:
             raise ValueError("OPENAI_API_KEY is required to use OpenAILLMProvider")
-        self._model = model
+        # Settings.openai_model, not a literal default here, so the model can
+        # be changed from the host's dashboard -- see GeminiLLMProvider, which
+        # takes GEMINI_MODEL the same way and for the same reasons.
+        self._model = model or resolved.openai_model
         self._client = AsyncOpenAI(api_key=api_key)
 
     async def generate(self, system_prompt: str, messages: list[ChatMessage]) -> str:
