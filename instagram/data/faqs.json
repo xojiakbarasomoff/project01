@@ -41,12 +41,12 @@
   },
   {
     "question": "Qaysi shifokorlar qabul qiladi?",
-    "answer": "Abduqahharova Nargiza — ginekolog-reproduktolog. Abdirova Umida — akusher-ginekolog. Ismailova Guzal — endokrinolog, dermatolog, kosmetolog. Iriskulov Nabijan — LOR. Husanov Sanjarbek — urolog-androlog, onkourolog. Ahmadaliev Temur — urolog-androlog. Kimga yozib qo'yay?",
+    "answer": "Bizda ginekologiya-reproduktologiya, urologiya-andrologiya, endokrinologiya, LOR va nevrologiya shifokorlari qabul qiladi. Qaysi yo'nalish bo'yicha shifokor kerak?",
     "category": "shifokorlar"
   },
   {
     "question": "Shifokorlar haqida ma'lumot bering",
-    "answer": "Abduqahharova Nargiza — ginekolog-reproduktolog. Abdirova Umida — akusher-ginekolog. Ismailova Guzal — endokrinolog, dermatolog, kosmetolog. Iriskulov Nabijan — LOR. Husanov Sanjarbek — urolog-androlog, onkourolog. Ahmadaliev Temur — urolog-androlog. Kimga yozib qo'yay?",
+    "answer": "Bizda ginekologiya-reproduktologiya, urologiya-andrologiya, endokrinologiya, LOR va nevrologiya shifokorlari qabul qiladi. Qaysi yo'nalish bo'yicha shifokor kerak?",
     "category": "shifokorlar"
   },
   {
@@ -126,7 +126,7 @@
   },
   {
     "question": "Qabulga yozilmoqchiman",
-    "answer": "Albatta. Qaysi bo'limga — ginekologiya, urologiya, endokrinologiya, LOR, nevrologiya yoki UZI? Kun va vaqtni tanlaymiz.",
+    "answer": "Bizda jonli qabul bor — qabulga yozilish uchun +998 71 200 03 93 raqamiga qo'ng'iroq qiling.",
     "category": "qabul"
   },
   {
@@ -12611,12 +12611,12 @@
   },
   {
     "question": "Қайси шифокорлар қабул қилади?",
-    "answer": "Abduqahharova Nargiza — ginekolog-reproduktolog. Abdirova Umida — akusher-ginekolog. Ismailova Guzal — endokrinolog, dermatolog, kosmetolog. Iriskulov Nabijan — LOR. Husanov Sanjarbek — urolog-androlog, onkourolog. Ahmadaliev Temur — urolog-androlog. Kimga yozib qo'yay?",
+    "answer": "Бизда гинекология-репродуктология, урология-андрология, эндокринология, ЛОР ва неврология шифокорлари қабул қилади. Қайси йўналиш бўйича шифокор керак?",
     "category": "shifokorlar"
   },
   {
     "question": "Шифокорлар ҳақида маълумот беринг",
-    "answer": "Abduqahharova Nargiza — ginekolog-reproduktolog. Abdirova Umida — akusher-ginekolog. Ismailova Guzal — endokrinolog, dermatolog, kosmetolog. Iriskulov Nabijan — LOR. Husanov Sanjarbek — urolog-androlog, onkourolog. Ahmadaliev Temur — urolog-androlog. Kimga yozib qo'yay?",
+    "answer": "Бизда гинекология-репродуктология, урология-андрология, эндокринология, ЛОР ва неврология шифокорлари қабул қилади. Қайси йўналиш бўйича шифокор керак?",
     "category": "shifokorlar"
   },
   {
@@ -12671,7 +12671,7 @@
   },
   {
     "question": "Қабулга ёзилмоқчиман",
-    "answer": "Albatta. Qaysi bo'limga — ginekologiya, urologiya, endokrinologiya, LOR, nevrologiya yoki UZI? Kun va vaqtni tanlaymiz.",
+    "answer": "Бизда жонли қабул бор — қабулга ёзилиш учун +998 71 200 03 93 рақамига қўнғироқ қилинг.",
     "category": "qabul"
   },
   {

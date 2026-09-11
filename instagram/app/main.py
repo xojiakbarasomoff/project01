@@ -46,7 +46,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 _settings = get_settings()
 
 app = FastAPI(
-    title="Urology Clinic Assistant",
+    title="Clinic Assistant",
     lifespan=lifespan,
     # None removes the route entirely rather than hiding it, so there is
     # nothing to find at the usual address.
