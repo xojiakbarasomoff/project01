@@ -6278,5 +6278,165 @@
     "question": "buyrak UZI narxi qancha?",
     "answer": "УЗИ почек и мочевого пузыря — 120 000 so'm. Qabulga yozib qo'yaymi?",
     "category": "narxlar"
+  },
+  {
+    "question": "Sizlarda qanday hizmat turlari bor",
+    "answer": "Ginekologiya va reproduktologiya, urologiya-andrologiya, endokrinologiya, LOR, nevrologiya, ultratovush diagnostikasi (UZI), doplerografiya, fizioterapiya va keng laboratoriya tekshiruvlari — gormonlar, PZR, TORCH, biokimyo, koagulogramma. Qaysi biri kerak?",
+    "category": "xizmatlar"
+  },
+  {
+    "question": "Qanday hizmatlar bor",
+    "answer": "Ginekologiya va reproduktologiya, urologiya-andrologiya, endokrinologiya, LOR, nevrologiya, ultratovush diagnostikasi (UZI), doplerografiya, fizioterapiya va keng laboratoriya tekshiruvlari — gormonlar, PZR, TORCH, biokimyo, koagulogramma. Qaysi biri kerak?",
+    "category": "xizmatlar"
+  },
+  {
+    "question": "Qanaqa xizmatlar bor",
+    "answer": "Ginekologiya va reproduktologiya, urologiya-andrologiya, endokrinologiya, LOR, nevrologiya, ultratovush diagnostikasi (UZI), doplerografiya, fizioterapiya va keng laboratoriya tekshiruvlari — gormonlar, PZR, TORCH, biokimyo, koagulogramma. Qaysi biri kerak?",
+    "category": "xizmatlar"
+  },
+  {
+    "question": "Sizda nimalar bor",
+    "answer": "Ginekologiya va reproduktologiya, urologiya-andrologiya, endokrinologiya, LOR, nevrologiya, ultratovush diagnostikasi (UZI), doplerografiya, fizioterapiya va keng laboratoriya tekshiruvlari — gormonlar, PZR, TORCH, biokimyo, koagulogramma. Qaysi biri kerak?",
+    "category": "xizmatlar"
+  },
+  {
+    "question": "Nima ishlarni qilasizlar",
+    "answer": "Ginekologiya va reproduktologiya, urologiya-andrologiya, endokrinologiya, LOR, nevrologiya, ultratovush diagnostikasi (UZI), doplerografiya, fizioterapiya va keng laboratoriya tekshiruvlari — gormonlar, PZR, TORCH, biokimyo, koagulogramma. Qaysi biri kerak?",
+    "category": "xizmatlar"
+  },
+  {
+    "question": "Klinikada nimalar qilinadi",
+    "answer": "Ginekologiya va reproduktologiya, urologiya-andrologiya, endokrinologiya, LOR, nevrologiya, ultratovush diagnostikasi (UZI), doplerografiya, fizioterapiya va keng laboratoriya tekshiruvlari — gormonlar, PZR, TORCH, biokimyo, koagulogramma. Qaysi biri kerak?",
+    "category": "xizmatlar"
+  },
+  {
+    "question": "Qanday tekshiruvlar qilasizlar",
+    "answer": "Ginekologiya va reproduktologiya, urologiya-andrologiya, endokrinologiya, LOR, nevrologiya, ultratovush diagnostikasi (UZI), doplerografiya, fizioterapiya va keng laboratoriya tekshiruvlari — gormonlar, PZR, TORCH, biokimyo, koagulogramma. Qaysi biri kerak?",
+    "category": "xizmatlar"
+  },
+  {
+    "question": "Qaysi yo'nalishlar bo'yicha qabul qilasiz",
+    "answer": "Ginekologiya va reproduktologiya, urologiya-andrologiya, endokrinologiya, LOR, nevrologiya, ultratovush diagnostikasi (UZI), doplerografiya, fizioterapiya va keng laboratoriya tekshiruvlari — gormonlar, PZR, TORCH, biokimyo, koagulogramma. Qaysi biri kerak?",
+    "category": "xizmatlar"
+  },
+  {
+    "question": "Sizlarda nima xizmatlar mavjud",
+    "answer": "Ginekologiya va reproduktologiya, urologiya-andrologiya, endokrinologiya, LOR, nevrologiya, ultratovush diagnostikasi (UZI), doplerografiya, fizioterapiya va keng laboratoriya tekshiruvlari — gormonlar, PZR, TORCH, biokimyo, koagulogramma. Qaysi biri kerak?",
+    "category": "xizmatlar"
+  },
+  {
+    "question": "Какие услуги есть",
+    "answer": "Гинекология и репродуктология, урология-андрология, эндокринология, ЛОР, неврология, УЗИ-диагностика, доплерография, физиотерапия и лабораторные исследования — гормоны, ПЦР, TORCH, биохимия, коагулограмма. Что именно вам нужно?",
+    "category": "xizmatlar"
+  },
+  {
+    "question": "Что вы делаете",
+    "answer": "Гинекология и репродуктология, урология-андрология, эндокринология, ЛОР, неврология, УЗИ-диагностика, доплерография, физиотерапия и лабораторные исследования — гормоны, ПЦР, TORCH, биохимия, коагулограмма. Что именно вам нужно?",
+    "category": "xizmatlar"
+  },
+  {
+    "question": "Сизларда қандай хизмат турлари бор",
+    "answer": "Ginekologiya va reproduktologiya, urologiya-andrologiya, endokrinologiya, LOR, nevrologiya, ultratovush diagnostikasi (UZI), doplerografiya, fizioterapiya va keng laboratoriya tekshiruvlari — gormonlar, PZR, TORCH, biokimyo, koagulogramma. Qaysi biri kerak?",
+    "category": "xizmatlar"
+  },
+  {
+    "question": "Nechigacha ishlaysiz",
+    "answer": "Dushanbadan shanbagacha ishlaymiz, yakshanba dam olish kuni. Aniq soatlarni registraturadan aniqlab bering: +998 71 200 03 93. Xohlasangiz, shu yerda qabulga yozib qo'yaman — qaysi kun qulay?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Necigaca ishlisla",
+    "answer": "Dushanbadan shanbagacha ishlaymiz, yakshanba dam olish kuni. Aniq soatlarni registraturadan aniqlab bering: +998 71 200 03 93. Xohlasangiz, shu yerda qabulga yozib qo'yaman — qaysi kun qulay?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Ish vaqtingiz qanday",
+    "answer": "Dushanbadan shanbagacha ishlaymiz, yakshanba dam olish kuni. Aniq soatlarni registraturadan aniqlab bering: +998 71 200 03 93. Xohlasangiz, shu yerda qabulga yozib qo'yaman — qaysi kun qulay?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Ish vaqtlari",
+    "answer": "Dushanbadan shanbagacha ishlaymiz, yakshanba dam olish kuni. Aniq soatlarni registraturadan aniqlab bering: +998 71 200 03 93. Xohlasangiz, shu yerda qabulga yozib qo'yaman — qaysi kun qulay?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Qachon ishlaysiz",
+    "answer": "Dushanbadan shanbagacha ishlaymiz, yakshanba dam olish kuni. Aniq soatlarni registraturadan aniqlab bering: +998 71 200 03 93. Xohlasangiz, shu yerda qabulga yozib qo'yaman — qaysi kun qulay?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Soat nechada ochasiz",
+    "answer": "Dushanbadan shanbagacha ishlaymiz, yakshanba dam olish kuni. Aniq soatlarni registraturadan aniqlab bering: +998 71 200 03 93. Xohlasangiz, shu yerda qabulga yozib qo'yaman — qaysi kun qulay?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Soat nechagacha ishlaysiz",
+    "answer": "Dushanbadan shanbagacha ishlaymiz, yakshanba dam olish kuni. Aniq soatlarni registraturadan aniqlab bering: +998 71 200 03 93. Xohlasangiz, shu yerda qabulga yozib qo'yaman — qaysi kun qulay?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Nechida ochiladi",
+    "answer": "Dushanbadan shanbagacha ishlaymiz, yakshanba dam olish kuni. Aniq soatlarni registraturadan aniqlab bering: +998 71 200 03 93. Xohlasangiz, shu yerda qabulga yozib qo'yaman — qaysi kun qulay?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Yakshanba ishlaysizmi",
+    "answer": "Dushanbadan shanbagacha ishlaymiz, yakshanba dam olish kuni. Aniq soatlarni registraturadan aniqlab bering: +998 71 200 03 93. Xohlasangiz, shu yerda qabulga yozib qo'yaman — qaysi kun qulay?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Shanba kuni ishlaysizmi",
+    "answer": "Dushanbadan shanbagacha ishlaymiz, yakshanba dam olish kuni. Aniq soatlarni registraturadan aniqlab bering: +998 71 200 03 93. Xohlasangiz, shu yerda qabulga yozib qo'yaman — qaysi kun qulay?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Bugun ishlaysizmi",
+    "answer": "Dushanbadan shanbagacha ishlaymiz, yakshanba dam olish kuni. Aniq soatlarni registraturadan aniqlab bering: +998 71 200 03 93. Xohlasangiz, shu yerda qabulga yozib qo'yaman — qaysi kun qulay?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Qaysi kunlari ishlaysiz",
+    "answer": "Dushanbadan shanbagacha ishlaymiz, yakshanba dam olish kuni. Aniq soatlarni registraturadan aniqlab bering: +998 71 200 03 93. Xohlasangiz, shu yerda qabulga yozib qo'yaman — qaysi kun qulay?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Dam olish kuni qaysi",
+    "answer": "Dushanbadan shanbagacha ishlaymiz, yakshanba dam olish kuni. Aniq soatlarni registraturadan aniqlab bering: +998 71 200 03 93. Xohlasangiz, shu yerda qabulga yozib qo'yaman — qaysi kun qulay?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Иш вақтингиз қандай",
+    "answer": "Душанбадан шанбагача ишлаймиз, якшанба дам олиш куни. Аниқ соатларни регистратурадан аниқлаб беринг: +998 71 200 03 93. Хоҳласангиз, шу ерда қабулга ёзиб қўяман — қайси кун қулай?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Нечагача ишлайсиз",
+    "answer": "Душанбадан шанбагача ишлаймиз, якшанба дам олиш куни. Аниқ соатларни регистратурадан аниқлаб беринг: +998 71 200 03 93. Хоҳласангиз, шу ерда қабулга ёзиб қўяман — қайси кун қулай?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "График работы",
+    "answer": "Работаем с понедельника по субботу, воскресенье — выходной. Точные часы уточните в регистратуре: +998 71 200 03 93. Могу записать вас прямо здесь — какой день удобен?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "До скольки работаете",
+    "answer": "Работаем с понедельника по субботу, воскресенье — выходной. Точные часы уточните в регистратуре: +998 71 200 03 93. Могу записать вас прямо здесь — какой день удобен?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Во сколько открываетесь",
+    "answer": "Работаем с понедельника по субботу, воскресенье — выходной. Точные часы уточните в регистратуре: +998 71 200 03 93. Могу записать вас прямо здесь — какой день удобен?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "В воскресенье работаете",
+    "answer": "Работаем с понедельника по субботу, воскресенье — выходной. Точные часы уточните в регистратуре: +998 71 200 03 93. Могу записать вас прямо здесь — какой день удобен?",
+    "category": "ish_vaqti"
+  },
+  {
+    "question": "Когда вы работаете",
+    "answer": "Работаем с понедельника по субботу, воскресенье — выходной. Точные часы уточните в регистратуре: +998 71 200 03 93. Могу записать вас прямо здесь — какой день удобен?",
+    "category": "ish_vaqti"
   }
 ]
