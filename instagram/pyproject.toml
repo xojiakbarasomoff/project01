@@ -13,10 +13,13 @@ dependencies = [
     "redis>=5.0",
     "arq>=0.26",
     "openai>=1.50",
-    # app.services.sheets signs its service-account requests with this. It
-    # used to arrive for free underneath google-genai; with Gemini gone it is
-    # the only thing pulling it in, which is why it is declared.
+    # app.services.sheets signs its service-account requests with these. Both
+    # used to arrive for free underneath google-genai, and removing Gemini took
+    # requests with it: google.auth.transport.requests imports it at module
+    # level, so app.workers.tasks failed to import and the worker crash-looped
+    # on the deploy that dropped google-genai. Declared now, not leaned on.
     "google-auth>=2.0",
+    "requests>=2.32",
     "pydantic>=2.9",
     "pydantic-settings>=2.5",
     "httpx>=0.27",
