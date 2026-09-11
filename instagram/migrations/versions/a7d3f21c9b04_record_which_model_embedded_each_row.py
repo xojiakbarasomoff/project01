@@ -16,7 +16,7 @@ state of every row written before this migration, and is treated as a
 mismatch so they are repaired on the next ingest.
 
 Revision ID: a7d3f21c9b04
-Revises: e58b2d0af741
+Revises: a7d31f0c5b92
 """
 
 from collections.abc import Sequence
@@ -26,7 +26,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "a7d3f21c9b04"
-down_revision: str | Sequence[str] | None = "e58b2d0af741"
+down_revision: str | Sequence[str] | None = "a7d31f0c5b92"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
