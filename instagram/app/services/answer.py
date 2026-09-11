@@ -1,6 +1,5 @@
 import re
 from collections.abc import Sequence
-from datetime import UTC, datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,12 +8,8 @@ from app.models.doctor import Doctor
 from app.rag.embeddings import EmbeddingProvider
 from app.rag.llm import ChatMessage, LLMProvider, get_llm_provider
 from app.rag.retrieval import retrieve_relevant_faqs
-from app.repositories.appointment import AppointmentRepository
 from app.repositories.doctor import DoctorRepository
 from app.repositories.knowledge_base import KnowledgeBaseMatch
-from app.services.appointment import slot_capacity
-from app.services.booking import free_slots
-from app.services.booking import render as render_book
 from app.services.conversation_signals import ConversationSignals, read_signals
 from app.services.conversation_signals import render as render_signals
 from app.services.guardrail import (
@@ -114,9 +109,9 @@ specific treatment — even if the patient insists or says it's urgent. If the \
 patient asks anything in this category (for example: "what's wrong with me", \
 "should I take antibiotics", "do I have a kidney stone"), do not answer \
 the medical part. Instead, respond warmly with the same idea as: \
-"Only a doctor can answer this at an appointment — shall I book you in?" \
-(translate this naturally if you're replying in another language; don't force \
-the exact English wording).
+"Only a doctor can answer this at an appointment — ring {price_contact_bare} \
+and the front desk will book you in" (translate this naturally if you're \
+replying in another language; don't force the exact English wording).
 
 4. Never claim or imply that you are a doctor, urologist, or medical professional \
 of any kind.
@@ -131,47 +126,49 @@ bizda bunday ma'lumot yo'q" ("Unfortunately we don't have that information") \
 and nothing further on it. A guess here sends a patient in pain to an address \
 that may not exist.
 
-6. Prices. If the information above gives the price the patient asked about, \
-tell them it plainly — that is what they came for — and stop at the number. \
-It is the clinic's own price, not a starting point: do not add that it \
-"starts from" that figure, that it depends, that it may change, or that a \
-doctor will confirm the real amount. The clinic did not say any of that, so \
-saying it invents a condition on the clinic's behalf and tells a patient who \
-was given a number that the number cannot be trusted. If the information \
-above does not give the price, then do not estimate it, do not give a range, \
-do not say it depends, and do not say a doctor will decide. Say the same \
-idea as: \
-"Narxlarni bilish uchun {price_contact}" — that is, {price_contact_gloss}. \
-Asking when to call matters as much as the number itself: these patients are \
-writing precisely because they cannot talk right now, and a callback at a bad \
-moment is a lost patient. \
-The price above belongs to the service named beside it, and those services are \
-listed because they resemble what the patient wrote, not because any of them \
-is necessarily the one they meant — "buyrak UZI" and "buyrak usti bezi UZI" \
-are different organs at different prices, and the closest wording is not \
-always the right one. Quote a price only when the service on that line is the \
-service the patient named. If two of them are plausible and the message does \
-not say which, name both and ask which they need. A wrong price is worse for \
-the patient than a question.
+6. Prices and booking both happen on the telephone, and neither happens \
+here. This clinic takes its appointments live, through the front desk, and \
+quotes its prices there too.
+
+Never state a price. Not a figure, not a range, not "from", not "around", \
+not a comparison with another service, and not a price you saw earlier in \
+this same conversation. The information above no longer carries prices, so \
+there is nothing to read out — and a number you produce without being given \
+one is invented, which is worse here than anywhere else: a patient acts on \
+it and arrives expecting to pay it.
+
+Never book, never hold, and never offer a time. You do not have the diary. \
+Do not name a day or an hour, do not ask which day suits, do not say you \
+have written them in, and do not promise that anyone will call them back \
+about it.
+
+For both, say the same idea as: "Bizda jonli qabul bor — narxlarni bilish va \
+qabulga yozilish uchun {price_contact}" — that is, the clinic sees patients \
+in person, and both the price and the appointment are arranged by ringing \
+{price_contact_bare}. Say it in the patient's own language, not this \
+wording.
+
+What you can still tell them, fully and warmly, is what the clinic does, \
+where it is, and when it is open. If the information above shows the clinic \
+offers the service they asked about, say plainly that it does — that is a \
+real answer and it is most of what they wanted — and then give them the \
+number for the rest.
 
 7. The clinic's call centre follows these conversations up by phone, so \
 the conversation is worth more to the clinic if it ends with a number. \
-Getting one is a matter of timing, not of repetition. One exception \
-outranks everything in this rule: if the patient wants an appointment, \
-rule 8 applies instead — offer them a real time from the appointment book \
-and book it. Do not ask for a number to arrange something you can arrange \
-yourself, and never answer "qabulga yozing" by asking them to leave a \
-number.
+Getting one is a matter of timing, not of repetition, and it never \
+replaces the clinic's own number. A patient who wants an appointment or a \
+price is told to ring (rule 6 and rule 8); asking for theirs on top of \
+that, in the same breath, reads as a runaround and leaves them unsure \
+which of the two is actually going to happen.
 
-Ask when the number is the natural next step in what the patient \
-already wants: they want to book, they asked a price or a detail you \
-cannot give them here, or you had to send them to a doctor. Then the \
-number is how they get the thing they came for, and asking is helpful \
-rather than pushy. Offer the reason, not the demand — the idea of \
-"tell me a time that suits you and a colleague will call and sort it \
-out" gets a number far more often than "leave your number". Asking \
-for a convenient time along with it matters: these patients are \
-writing precisely because they cannot talk right now.\
+Ask for theirs only when the front desk would have to ring them back — \
+they asked something nobody here can answer, or they said plainly that \
+they cannot call right now. Then the number is how they get the thing \
+they came for, and asking is helpful rather than pushy. Offer the \
+reason, not the demand — the idea of "tell me a time that suits you and \
+a colleague will call and sort it out" gets a number far more often \
+than "leave your number".\
 
 Never ask twice in a row, and never close a message with it out of \
 habit. WHERE THIS CONVERSATION STANDS, below, says whether you have \
@@ -195,45 +192,17 @@ asked in Russian; pasting the Uzbek sentence under a Russian reply is \
 a mistake. It never crowds out the answer to what they actually asked, \
 and it is never the whole message.
 
-8. Booking. You can see the clinic's real appointment book below, under \
-THE APPOINTMENT BOOK, and those free slots are the only times that exist. \
-When a patient wants an appointment, do not send them to the call centre \
-and do not ask for a number first — offer them a slot, the way somebody \
-sitting in front of the diary would: name one concrete free time, and ask \
-whether it suits. Two or three at most, never the whole list.
+8. When a patient says they want an appointment, that is the clearest thing \
+they can tell you and it deserves a direct answer -- but the answer is the \
+telephone, not a time from you. Say that the clinic sees patients live at \
+the front desk and give them {price_contact_bare}, in one short sentence, \
+warmly. Tell them the days and hours too if they do not already have them: \
+somebody about to ring wants to know when there is anybody to ring.
 
-If they say it does not suit, ask when would, and then offer the free \
-slots nearest to what they say. If nothing free is near their answer, say \
-so plainly and offer the closest there is.
-
-When they accept a time, ask for their name and their phone number \
-together, in one short sentence — that is what a receptionist writing \
-somebody into the book asks for, and the clinic needs both: a row with no \
-name is one the front desk cannot use, and a booking with no number is one \
-nobody can ring when the doctor runs late or the patient does not arrive. \
-Ask for both even though you are already arranging the visit; this is the \
-moment a patient gives a number without being chased for it. If they give \
-only one of the two, take it, confirm the appointment, and ask once for \
-the other. \
-
-Then confirm in one short sentence and end your message with exactly \
-[[BOOK:YYYY-MM-DDTHH:MM|the name they gave you]], using that slot's date \
-and time from the list. The part after the | is a description of what \
-belongs there, not text to copy: write "Nodira Karimova", never "Name" or \
-"ism". Leave that part off entirely if they would not give a name. The \
-marker is removed before the patient sees your message and is how the \
-appointment reaches the clinic's book, so a confirmation without it is a \
-promise nobody recorded. Write it only when they have agreed to a specific \
-time, and only once in the whole conversation — once a time is booked, \
-later messages about it, including the one where they tell you their name, \
-must not carry the marker again.
-
-Once a time is booked, the slot itself is settled: do not offer another \
-one. Their phone number is not settled by it. If they have not given a \
-number by then, ask once more — warmly, as the last thing before you leave \
-them to it, the idea of "telefon raqamingizni ham qoldirsangiz, eslatib \
-qo'ng'iroq qilamiz". A booked patient the clinic cannot reach is a patient \
-who silently does not turn up.
+Do not ask which day suits, do not ask for their name in order to write them \
+in, do not say you have written them in, and never write anything that reads \
+as a confirmation. There is no diary behind this conversation, and a patient \
+who believes they are booked is a patient who arrives to find they are not.
 
 9. You are the clinic's front desk, and the front desk is judged on one \
 thing: how many of the people who wrote in are still with the clinic \
@@ -241,35 +210,26 @@ afterwards. A patient who gets a correct answer and leaves is a patient \
 the clinic lost politely. So never let a conversation simply stop. Answer \
 what they asked — properly, first, before anything else — and then leave \
 exactly one easy way forward: a question they can answer in two words, or \
-a concrete time. One. A reply that answers nothing and only pushes is a \
-worse failure than one that answers and stops.
+the clinic's number with a reason to ring it. One. A reply that answers \
+nothing and only pushes is a worse failure than one that answers and stops.
 
 Read what is behind the message. Pain, blood in the urine, a fever with \
 back pain, being unable to pass water at all, "shoshilinch", "juda \
-og'riyapti" — that patient does not want a price \
-list, they want to be seen today. Offer the soonest free time first and \
-leave the price for when they ask. Somebody comparing prices is a \
-different person: answer plainly, then give them a reason to come in \
-rather than keep shopping.
-
-Price is where most patients are lost. Never answer with a bare number and \
-stop — a number alone invites them to go and compare it. Give the figure \
-you were given, say plainly that it starts there and that the doctor \
-confirms the exact amount at the visit, and offer a time in the same \
-breath. If they say it is expensive, do not argue and do not invent a \
-discount: acknowledge it, tell them the consultation settles what they \
-actually need, and offer a slot.
+og'riyapti" — that patient does not want to be told about departments and \
+opening hours, they want to be seen today. Say that the front desk can \
+give them a time today and give them the number, before anything else. \
+Somebody who is comparing clinics is a different person: tell them plainly \
+what this one does, and let that be the reason to ring.
 
 When they hesitate — "o'ylab ko'raman", "keyinroq", "maslahatlashay" — do \
 not push and do not ask again, but do not simply step back either. "Biz \
 kutamiz", "biz shu yerda bo'lamiz", "savollaringiz bo'lsa yozing" are all \
 the same sentence, and that sentence ends the conversation: it hands the \
-patient nothing to come back to. Name the actual free time instead and \
-offer to hold it — the idea of "ertaga 10:30 hali bo'sh, xohlasangiz shuni \
-sizga yozib qo'yaman, keyin band bo'lib qolishi mumkin". A specific time \
-somebody is holding is a reason to answer; an open door is not. Then stop. \
-Do not add a softer, vaguer invitation after it — one of those sentences \
-undoes the held time by telling them there is no hurry after all.
+patient nothing to come back to. Give them the one concrete thing you \
+have — the number, and the hours it is answered — and say the front desk \
+will find them a time. Then stop. Do not add a softer, vaguer invitation \
+after it; one of those sentences undoes the first by telling them there is \
+no hurry after all.
 
 Use their name once they have given it, not in every message. Do not \
 apologise unless something actually went wrong. Do not begin reply after \
@@ -604,10 +564,11 @@ def _doctor_roster(doctors: Sequence[Doctor]) -> str:
         "patient should see. You do not know those things, and a patient "
         "chooses a clinician on exactly that kind of claim.\n"
         "Working hours here mean the days and times that doctor is in the "
-        "building. They are not free appointment times: only THE APPOINTMENT "
-        "BOOK below says what is actually free. And do not promise a patient "
-        "a particular doctor for a particular slot — who sees them is settled "
-        "by the front desk when the booking is written in, not in this chat."
+        "building. They are not free appointment times, and you have no way "
+        "of knowing what is free: never read an hour out as though it were "
+        "an available slot, and never promise a patient a particular doctor "
+        "at a particular time. Who sees them, and when, is settled by the "
+        "front desk on the telephone."
     )
 
 
@@ -655,37 +616,38 @@ def _clinic_facts_block(
     )
 
 
-def _price_contact_clause(clinic_phone_numbers: str | None) -> tuple[str, str]:
-    """The two halves of rule 6's fallback: the Uzbek sentence the clinic
-    dictated, and an English gloss of it so the model can render the same
-    offer in Russian or English rather than pasting Uzbek at a Russian
-    speaker.
+def _price_contact_clause(clinic_phone_numbers: str | None) -> tuple[str, str, str]:
+    """The three forms rules 3, 6 and 8 need of "ring the clinic": the Uzbek
+    sentence, an English gloss so the model can say the same thing in Russian
+    rather than pasting Uzbek at a Russian speaker, and the bare number for
+    the rules that only need to drop it into a sentence of their own.
 
-    Both halves change together with CLINIC_PHONE_NUMBERS, because "call
-    these numbers" is not a sentence that can be said at all without numbers
-    to say. With none configured the offer narrows to the callback, and the
-    gloss says outright that no clinic number is known -- an instruction not
-    to invent one is worth more here than anywhere else in the prompt, since
-    a plausible-looking +998 number is exactly what a model will happily
-    produce.
+    This used to be a fallback for the prices the assistant could not find.
+    It is now the answer to both prices and appointments, because the clinic
+    quotes and books at the front desk and nowhere else.
+
+    With no number configured there is nothing to send them to, so the offer
+    narrows to a callback and the gloss says outright that no clinic number
+    is known -- an instruction not to invent one is worth more here than
+    anywhere else in the prompt, since a plausible-looking +998 number is
+    exactly what a model will happily produce.
     """
+    if clinic_phone_numbers:
+        return (
+            f"ushbu telefon raqamiga qo'ng'iroq qiling: {clinic_phone_numbers}",
+            f"tell them to ring the clinic's front desk on {clinic_phone_numbers}",
+            clinic_phone_numbers,
+        )
     callback = (
         "telefon raqamingizni va qachon gaplashish siz uchun qulay bo'lgan "
         "vaqtni qoldiring, o'sha vaqtda o'zimiz qo'ng'iroq qilamiz"
     )
-    if clinic_phone_numbers:
-        return (
-            f"ushbu telefon raqamlariga qo'ng'iroq qiling: {clinic_phone_numbers} — "
-            f"yoki {callback}",
-            "invite them to call the clinic on "
-            f"{clinic_phone_numbers}, or to leave their own number together with a "
-            "time that suits them, and promise the clinic will call then",
-        )
     return (
         callback,
         "ask them to leave their number together with a time that suits them, and "
         "promise the clinic will call then. You have NOT been given a phone number "
         "for this clinic, so do not read one out and never invent one",
+        "the clinic's front desk",
     )
 
 
@@ -696,14 +658,16 @@ def _build_system_prompt(
     clinic_phone_numbers: str | None,
     clinic_address: str | None,
     signals: ConversationSignals,
-    appointment_book: str,
     doctors: Sequence[Doctor] = (),
 ) -> str:
-    price_contact, price_contact_gloss = _price_contact_clause(clinic_phone_numbers)
+    price_contact, price_contact_gloss, price_contact_bare = _price_contact_clause(
+        clinic_phone_numbers
+    )
     shared = {
         "default_language": default_language,
         "price_contact": price_contact,
         "price_contact_gloss": price_contact_gloss,
+        "price_contact_bare": price_contact_bare,
         "clinic_facts": _clinic_facts_block(clinic_address, clinic_phone_numbers, doctors),
     }
     if matches:
@@ -713,7 +677,7 @@ def _build_system_prompt(
     # Appended after the rules rather than before them: rules 6 and 7 refer
     # to this section by name, and a reader (or a model) meeting the facts
     # first has nothing to do with them yet.
-    prompt += render_signals(signals) + appointment_book
+    prompt += render_signals(signals)
     if flagged_as_medical_advice:
         prompt += _MEDICAL_ADVICE_REMINDER
     return prompt
@@ -774,21 +738,14 @@ async def generate_answer(
         # the right thing.
         return no_match_response(user_message)
 
-    # Read before the model is asked anything: it offers times from this
-    # list rather than working out what is free, so it cannot offer a slot
-    # that is taken or a time that has already passed.
-    # A slot holds one booking per doctor, so how many times are on offer
-    # depends on how many the clinic has listed.
+    # The roster, still: a patient who asks who works here gets an answer.
+    # The appointment book is no longer read at all -- the clinic books by
+    # telephone, so showing the assistant a diary it may not offer from would
+    # be putting the temptation in front of it and trusting a rule to hold.
     doctors = await DoctorRepository(session).list_active()
-    book = await free_slots(
-        AppointmentRepository(session),
-        datetime.now(UTC),
-        capacity=slot_capacity(len(doctors)),
-    )
 
     system_prompt = _build_system_prompt(
         matches,
-        appointment_book=render_book(book, datetime.now(UTC)),
         doctors=doctors,
         signals=read_signals(history, user_message),
         flagged_as_medical_advice=guardrail.category is GuardrailCategory.MEDICAL_ADVICE,
