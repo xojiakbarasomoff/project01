@@ -133,7 +133,11 @@ async def resolve_faq_tenant_id(
 
 
 async def seed_faqs(
-    session: AsyncSession, faqs: list[FAQImport], ig_account_id: str | None = None
+    session: AsyncSession,
+    faqs: list[FAQImport],
+    ig_account_id: str | None = None,
+    *,
+    reembed_existing: bool = False,
 ) -> tuple[uuid.UUID, int]:
     """Ingest `faqs` for the resolved tenant and commit. Returns the tenant and
     how many rows were written, for the caller to log or print.
@@ -141,7 +145,7 @@ async def seed_faqs(
     tenant_id = await resolve_faq_tenant_id(session, ig_account_id)
     token = set_current_tenant(tenant_id)
     try:
-        rows = await ingest_faqs(session, faqs)
+        rows = await ingest_faqs(session, faqs, reembed_existing=reembed_existing)
         await session.commit()
     finally:
         reset_current_tenant(token)

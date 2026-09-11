@@ -45,7 +45,9 @@ async def main() -> None:
 
     async with db_session() as session:
         try:
-            tenant_id, count = await seed_faqs(session, faqs, os.environ.get("IG_ACCOUNT_ID"))
+            tenant_id, count = await seed_faqs(
+                session, faqs, os.environ.get("IG_ACCOUNT_ID"), reembed_existing=True
+            )
         except FaqSeedingError as exc:
             sys.exit(str(exc))
 
