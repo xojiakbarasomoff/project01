@@ -21,10 +21,9 @@ before the patient sees anything, the slot is re-checked against the
 database, and only then is the appointment created.
 
 A marker rather than tool calling, because LLMProvider is text in, text out
-across three providers (Gemini, OpenAI, Qwen through Hugging Face) and each
-speaks a different tool protocol. One marker works identically on all three,
-in a single call -- which matters when the deployment's whole daily
-allowance is measured in tens of replies.
+and the fallback backend (Qwen through Hugging Face) speaks a different tool
+protocol from OpenAI. One marker works identically on both, in a single
+call.
 
 The honest weakness is the gap between offering a slot and writing the row:
 another booking can land in between. It is re-checked at write time and

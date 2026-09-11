@@ -34,4 +34,10 @@ class KnowledgeBase(Base):
     answer: Mapped[str] = mapped_column(Text, nullable=False)
     category: Mapped[str | None] = mapped_column(String(100), nullable=True)
     embedding: Mapped[list[float]] = mapped_column(Vector(1536), nullable=False)
+    # Which model made `embedding`. Two vectors are only comparable when the
+    # same model produced them, so this is what tells a later ingest that a
+    # row it is looking at is not merely old but meaningless -- see
+    # app.services.knowledge_base.ingest_faqs. NULL means "written before
+    # anybody recorded this", which is treated as a mismatch and repaired.
+    embedding_model: Mapped[str | None] = mapped_column(String(100), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("true"))

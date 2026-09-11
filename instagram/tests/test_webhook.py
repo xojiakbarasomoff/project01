@@ -28,7 +28,6 @@ TEST_SETTINGS = Settings(
     database_url="postgresql+asyncpg://test:test@localhost/test",
     redis_url="redis://localhost:6379/0",
     openai_api_key="sk-test",
-    gemini_api_key="test-gemini-key",
     webhook_verify_token="test-verify-token",
     meta_app_secret="test-app-secret",
 )

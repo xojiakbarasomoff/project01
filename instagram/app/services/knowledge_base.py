@@ -5,7 +5,7 @@ from pydantic import BaseModel, field_validator
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.knowledge_base import KnowledgeBase
-from app.rag.embeddings import EmbeddingProvider, get_embedding_provider
+from app.rag.embeddings import EMBEDDING_MODEL, EmbeddingProvider, get_embedding_provider
 from app.repositories.knowledge_base import KnowledgeBaseRepository
 
 
@@ -63,12 +63,15 @@ async def ingest_faqs(
     clinic's file has grown past 2500 rows: re-embedding all of them to change
     two was minutes of startup and an API bill for work already done.
 
-    reembed_existing forces every row through the provider again. That is the
-    right thing exactly once -- after MODEL_PROVIDER changes -- because the
-    stored vectors were made by the old provider and a query embedded by the
-    new one is being compared against a space it does not share. It is what
-    scripts/ingest_faqs.py passes, since that is the tool an operator reaches
-    for after a provider switch.
+    A row whose stored embedding_model is not the model now configured is
+    re-embedded even so. Vectors from two different models are not comparable,
+    so such a row is not stale, it is meaningless -- and the failure is silent
+    without this check: retrieval returns nothing, and the assistant answers
+    "I don't know" to questions it has an exact row for.
+
+    reembed_existing forces every row through the provider again, whatever the
+    stored model says. It is what scripts/ingest_faqs.py passes, for the case
+    where the model kept its name but the vectors still need rebuilding.
     """
     validated = [
         faq if isinstance(faq, FAQImport) else FAQImport.model_validate(faq) for faq in faqs
@@ -79,8 +82,17 @@ async def ingest_faqs(
     repo = KnowledgeBaseRepository(session)
     existing_rows = {faq.question: await repo.get_by_question(faq.question) for faq in validated}
 
+    # A row is embedded again when it is new, when the caller asked for it,
+    # or when the vector it holds was made by a different model from the one
+    # configured now. That last case is the one that used to be silent: the
+    # old vectors stayed, every distance came back too far, and the clinic
+    # found out through a bot that had stopped recognising its own FAQ.
     needs_embedding = [
-        faq for faq in validated if reembed_existing or existing_rows[faq.question] is None
+        faq
+        for faq in validated
+        if reembed_existing
+        or existing_rows[faq.question] is None
+        or existing_rows[faq.question].embedding_model != EMBEDDING_MODEL
     ]
     provider = embedding_provider or get_embedding_provider()
     fresh = dict(
@@ -98,6 +110,7 @@ async def ingest_faqs(
             values: dict[str, Any] = {"answer": faq.answer, "category": faq.category}
             if faq.question in fresh:
                 values["embedding"] = fresh[faq.question]
+                values["embedding_model"] = EMBEDDING_MODEL
             row = await repo.update(existing, **values)
         else:
             row = await repo.create(
@@ -105,6 +118,7 @@ async def ingest_faqs(
                 answer=faq.answer,
                 category=faq.category,
                 embedding=fresh[faq.question],
+                embedding_model=EMBEDDING_MODEL,
             )
         results.append(row)
     return results

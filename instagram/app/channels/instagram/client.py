@@ -17,9 +17,9 @@ logger = logging.getLogger(__name__)
 MESSAGING_WINDOW = timedelta(hours=24)
 
 # Pinned to a concrete version, not an alias, for the same reproducibility
-# reason GeminiLLMProvider pins its model (see app/rag/llm.py) — an alias
-# like "latest" can change Graph API behavior under us without any change on
-# our side.
+# reason OPENAI_MODEL names a concrete model (see app/core/config.py) — an
+# alias like "latest" can change Graph API behavior under us without any
+# change on our side.
 GRAPH_API_VERSION = "v21.0"
 # graph.instagram.com, not graph.facebook.com. The channel credentials are
 # Instagram Login tokens (they start with "IGAA"), which the Facebook host

@@ -2,8 +2,6 @@ from abc import ABC, abstractmethod
 from functools import lru_cache
 from typing import Literal, TypedDict, cast
 
-from google import genai
-from google.genai import types as genai_types
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionMessageParam
 
@@ -34,8 +32,9 @@ class OpenAILLMProvider(LLMProvider):
         if api_key is None:
             raise ValueError("OPENAI_API_KEY is required to use OpenAILLMProvider")
         # Settings.openai_model, not a literal default here, so the model can
-        # be changed from the host's dashboard -- see GeminiLLMProvider, which
-        # takes GEMINI_MODEL the same way and for the same reasons.
+        # be changed from the host's dashboard: a model that retires or starts
+        # writing badly is something to fix while patients are waiting, not
+        # something to ship code for.
         self._model = model or resolved.openai_model
         self._client = AsyncOpenAI(api_key=api_key)
 
@@ -57,47 +56,6 @@ class OpenAILLMProvider(LLMProvider):
         if content is None:
             raise ValueError("OpenAI chat completion returned no text content")
         return content
-
-
-class GeminiLLMProvider(LLMProvider):
-    # gemini-2.0-flash (originally proposed) is deprecated/no longer served.
-    # gemini-2.5-flash verified live against the real API: responds
-    # reliably. Pinned to a concrete version rather than an alias like
-    # "gemini-flash-latest" (also verified working) — an alias can shift
-    # which model actually runs without any change on our side, which is
-    # bad for reproducing behavior/debugging later. The newer
-    # gemini-3.7-flash was tried too and returned a 503 (overloaded) at
-    # verification time — not reliable enough to default to.
-    #
-    # The default lives on Settings.gemini_model rather than here, so that a
-    # deployment whose daily free-tier allowance for one model is spent can
-    # be moved to another by setting GEMINI_MODEL, without waiting for a
-    # code change to ship.
-    def __init__(self, settings: Settings | None = None, model: str | None = None) -> None:
-        resolved = settings or get_settings()
-        api_key = resolved.gemini_api_key
-        if api_key is None:
-            raise ValueError("GEMINI_API_KEY is required to use GeminiLLMProvider")
-        self._model = model or resolved.gemini_model
-        self._client = genai.Client(api_key=api_key)
-
-    async def generate(self, system_prompt: str, messages: list[ChatMessage]) -> str:
-        # Gemini's turn roles are "user"/"model", not "user"/"assistant".
-        contents = [
-            genai_types.Content(
-                role="model" if message["role"] == "assistant" else "user",
-                parts=[genai_types.Part(text=message["content"])],
-            )
-            for message in messages
-        ]
-        response = await self._client.aio.models.generate_content(
-            model=self._model,
-            contents=contents,
-            config=genai_types.GenerateContentConfig(system_instruction=system_prompt),
-        )
-        if response.text is None:
-            raise ValueError("Gemini generate_content returned no text content")
-        return response.text
 
 
 # Hugging Face's Inference Providers router, which speaks the OpenAI chat
@@ -139,15 +97,13 @@ class QwenLLMProvider(LLMProvider):
 
 
 def _select_llm_provider(settings: Settings) -> LLMProvider:
-    # LLM_PROVIDER, when set, overrides MODEL_PROVIDER for replies only —
-    # embeddings stay where they are, because moving those means re-embedding
-    # the knowledge base (see Settings.llm_provider).
-    chosen = settings.llm_provider or settings.model_provider
-    if chosen == "openai":
-        return OpenAILLMProvider(settings)
-    if chosen == "qwen":
+    # OpenAI unless something explicitly asks for otherwise. LLM_PROVIDER
+    # moves the replies alone and leaves the embeddings where they are,
+    # because moving those means re-embedding the knowledge base (see
+    # Settings.llm_provider).
+    if settings.llm_provider == "qwen":
         return QwenLLMProvider(settings)
-    return GeminiLLMProvider(settings)
+    return OpenAILLMProvider(settings)
 
 
 @lru_cache

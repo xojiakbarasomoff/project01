@@ -13,9 +13,9 @@ dependencies = [
     "redis>=5.0",
     "arq>=0.26",
     "openai>=1.50",
-    "google-genai>=1.0",
-    # Declared rather than leaned on: google-genai already pulls it in, and
-    # app.services.sheets would break silently the day that stops being true.
+    # app.services.sheets signs its service-account requests with this. It
+    # used to arrive for free underneath google-genai; with Gemini gone it is
+    # the only thing pulling it in, which is why it is declared.
     "google-auth>=2.0",
     "pydantic>=2.9",
     "pydantic-settings>=2.5",

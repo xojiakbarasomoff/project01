@@ -112,8 +112,8 @@ Same repo, same branch, same root directory. Then:
 
 The provisioning variables (`PROVISION_*`) are read on web startup only, so
 they are harmless on the worker — but the worker does need `DATABASE_URL`,
-`REDIS_URL`, `ENCRYPTION_KEY`, `MODEL_PROVIDER` and the model API key, or it
-cannot answer anything.
+`REDIS_URL`, `ENCRYPTION_KEY` and `OPENAI_API_KEY`, or it cannot answer
+anything.
 
 > Keep `ENCRYPTION_KEY` **identical** on both services. The worker decrypts
 > the token the web process encrypted; two different keys means every reply
@@ -218,9 +218,13 @@ hand is never overwritten.
 ## Costs and what to watch
 
 Railway bills by usage. Four services of this size land around $10–20/month.
-The two model providers are separate: `MODEL_PROVIDER=gemini` is what this
-deployment is configured for, and switching it later means re-embedding the
-entire knowledge base, because the two providers' vectors are not comparable.
+Replies and embeddings both go to OpenAI, billed per token on the key in
+`OPENAI_API_KEY`. Changing the embedding model later means re-embedding the
+entire knowledge base, because vectors from two models are not comparable —
+`knowledge_base.embedding_model` records which model made each row, and
+`ingest_faqs` re-embeds any row that disagrees with the configured one, so a
+change repairs itself on the next seed rather than silently emptying
+retrieval.
 
 Back the database up. Patient appointments and the knowledge base are the two
 things in this system that cannot be rebuilt from the repository.

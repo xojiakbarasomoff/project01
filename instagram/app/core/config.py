@@ -117,12 +117,6 @@ class Settings(BaseSettings):
     # guardrail.EMERGENCY_RESPONSE / answer.NO_MATCH_RESPONSE.
     debounce_window_seconds: int = Field(default=5, ge=0, alias="DEBOUNCE_WINDOW_SECONDS")
 
-    # Single switch governing both the LLM and embedding backend (see
-    # app.rag.llm._select_llm_provider / app.rag.embeddings._select_embedding_provider).
-    # Defaults to gemini: the CEO's direction is Gemini, and we may have no
-    # OpenAI key at all — defaulting to openai would fail with a 401 the
-    # moment anyone ran this without explicitly setting the provider. openai
-    # stays fully implemented and selectable in case we switch back.
     # The Instagram access token this deployment's channel should carry. Read
     # here only so first-run provisioning (app.core.provisioning) can seed a
     # channel with a usable credential; the running pipeline reads the token
@@ -185,42 +179,28 @@ class Settings(BaseSettings):
     # bookings one appointment slot holds.
     seed_doctors_from: str | None = Field(default=None, alias="SEED_DOCTORS_FROM")
 
-    model_provider: Literal["openai", "gemini"] = Field(default="gemini", alias="MODEL_PROVIDER")
-
-    # Which Gemini model answers. Configurable because the free tier meters
-    # requests per project *per model*: with one model's daily allowance
-    # spent, the deployment goes silent, and the only lever that helps
-    # before the quota resets is pointing it at a different model. That is a
-    # decision for whoever is watching the logs at the time, not one worth a
-    # redeploy of new code. Concrete versions only, no "-latest" alias --
-    # see GeminiLLMProvider for why.
-    gemini_model: str = Field(default="gemini-2.5-flash", alias="GEMINI_MODEL")
-
-    # Which OpenAI model answers, for the same reason GEMINI_MODEL exists and
-    # with the same rule about concrete versions: a model that retires, prices
-    # that change, or a reply quality problem are all things to fix from the
-    # dashboard while patients are waiting, not things to ship code for. The
-    # default is deliberately a current model rather than the gpt-4o-mini this
-    # was pinned to for two years -- but a deployment should still name the one
-    # it has tested.
+    # Which OpenAI model answers. Configurable, and named with a concrete
+    # version rather than an alias: a model that retires, prices that change,
+    # or a reply quality problem are all things to fix from the dashboard
+    # while patients are waiting, not things to ship code for -- and an alias
+    # can move the model under a deployment with no change on our side, which
+    # makes yesterday's behaviour impossible to reproduce.
     openai_model: str = Field(default="gpt-5-mini", alias="OPENAI_MODEL")
 
-    # Which backend writes the replies, when that should not be the same one
-    # that makes the embeddings. Unset, it follows MODEL_PROVIDER and nothing
-    # changes.
+    # Which backend writes the replies. Unset -- the normal case -- they are
+    # written by OpenAI, which is also what makes the embeddings.
     #
-    # The two are separable in one direction only, and that is the whole
-    # reason this exists. Swapping the model that writes a reply costs
-    # nothing: the next message is simply written by something else.
-    # Swapping the model that makes embeddings invalidates every vector in
-    # knowledge_base -- they are only comparable to vectors from the same
-    # model -- so it means re-embedding the clinic's whole FAQ before
-    # retrieval finds anything again. A deployment that has run out of one
-    # provider's daily allowance needs the cheap half of that, immediately,
-    # and should not have to take the expensive half with it.
-    llm_provider: Literal["openai", "gemini", "qwen"] | None = Field(
-        default=None, alias="LLM_PROVIDER"
-    )
+    # It exists for the one emergency worth an escape hatch: replies can be
+    # moved to another backend without touching the embeddings. Swapping the
+    # model that writes a reply costs nothing, since the next message is
+    # simply written by something else. Swapping the model that makes
+    # embeddings invalidates every vector in knowledge_base -- they are only
+    # comparable to vectors from the same model -- so it means re-embedding
+    # the clinic's whole FAQ before retrieval finds anything again. A
+    # deployment locked out of OpenAI at two in the afternoon needs the cheap
+    # half of that immediately, and should not have to take the expensive
+    # half with it.
+    llm_provider: Literal["openai", "qwen"] | None = Field(default=None, alias="LLM_PROVIDER")
 
     # Hugging Face access token. Its Inference Providers router is
     # OpenAI-compatible, which is what lets Qwen be reached through the same
@@ -248,7 +228,6 @@ class Settings(BaseSettings):
     )
     qwen_model: str = Field(default="Qwen/Qwen3-235B-A22B-Instruct-2507", alias="QWEN_MODEL")
     openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
-    gemini_api_key: str | None = Field(default=None, alias="GEMINI_API_KEY")
 
     @field_validator(
         "provision_ig_account_id",
@@ -311,20 +290,18 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _require_active_provider_key(self) -> Self:
-        if self.model_provider == "openai" and self.openai_api_key is None:
-            raise ValueError("OPENAI_API_KEY is required when MODEL_PROVIDER=openai")
-        if self.model_provider == "gemini" and self.gemini_api_key is None:
-            raise ValueError("GEMINI_API_KEY is required when MODEL_PROVIDER=gemini")
+        # OPENAI_API_KEY is not optional any more: it makes every embedding
+        # in the system, so a deployment without one cannot retrieve a single
+        # FAQ row no matter what writes its replies.
+        #
         # Checked at startup rather than on the first patient message: a
         # deployment that names a provider it has no credential for should
         # refuse to boot, not accept webhooks and then fail to answer every
         # one of them.
+        if self.openai_api_key is None:
+            raise ValueError("OPENAI_API_KEY is required")
         if self.llm_provider == "qwen" and self.hf_token is None:
             raise ValueError("HF_TOKEN is required when LLM_PROVIDER=qwen")
-        if self.llm_provider == "openai" and self.openai_api_key is None:
-            raise ValueError("OPENAI_API_KEY is required when LLM_PROVIDER=openai")
-        if self.llm_provider == "gemini" and self.gemini_api_key is None:
-            raise ValueError("GEMINI_API_KEY is required when LLM_PROVIDER=gemini")
         return self
 
     @model_validator(mode="after")

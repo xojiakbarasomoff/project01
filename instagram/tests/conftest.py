@@ -143,7 +143,7 @@ def isolated_settings(**overrides: object) -> Settings:
         "meta_app_secret": "test-app-secret",
         "encryption_key": "Hq3_REB-V0twf7iBgCPCSUZQiG44egxyiZg9kOKRxUg=",
         "session_secret_key": "test-session-secret",
-        "gemini_api_key": "test-gemini-key",
+        "openai_api_key": "sk-test",
     }
     return Settings(_env_file=None, **{**base, **overrides})  # type: ignore[arg-type]
 

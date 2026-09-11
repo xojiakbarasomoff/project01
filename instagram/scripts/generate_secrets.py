@@ -53,10 +53,9 @@ WEBHOOK_VERIFY_TOKEN={webhook_verify_token}
 SESSION_COOKIE_SECURE=true
 
 # --- the model provider ---------------------------------------------------
-MODEL_PROVIDER=gemini
-# TODO: your Gemini API key. Switching provider later means re-embedding the
-# whole knowledge base, so decide before loading the FAQs.
-GEMINI_API_KEY=TODO
+# TODO: your OpenAI API key. It writes the replies and makes every embedding,
+# so nothing retrieves without it.
+OPENAI_API_KEY=TODO
 
 # --- this deployment's public identity ------------------------------------
 # TODO: the domain Railway generated for the web service, https, no trailing
