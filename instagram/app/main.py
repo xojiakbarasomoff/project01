@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, status
 from fastapi.responses import FileResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 
@@ -112,6 +112,24 @@ if _ADMIN_UI.is_dir():
 @app.exception_handler(NotAuthenticatedError)
 async def _redirect_to_login(request: Request, exc: NotAuthenticatedError) -> RedirectResponse:
     return RedirectResponse(url="/login", status_code=303)
+
+
+@app.get("/", include_in_schema=False)
+async def root_to_dashboard() -> RedirectResponse:
+    """The front door. Everything this deployment serves a person lives under
+    a path -- /admin/, /login -- and nothing was mounted at "/", so opening
+    the bare domain answered {"detail":"Not Found"}. That is the link the
+    host's own dashboard shows and the one a bookmark keeps, and a staff
+    member who followed it got a line of JSON under the platform's error
+    headers, which reads as the site being down rather than as a missing
+    route. Same reasoning as /dashboard in app.api.dashboard: the operator
+    dashboard is where a person opening this domain means to go.
+
+    Temporary (302) rather than permanent, so that putting a landing page or
+    a patient-facing route here later does not have to outlive a redirect
+    cached in every operator's browser.
+    """
+    return RedirectResponse(url="/admin/", status_code=status.HTTP_302_FOUND)
 
 
 @app.get("/health")

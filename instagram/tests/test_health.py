@@ -23,3 +23,16 @@ def test_privacy_policy_is_served() -> None:
     assert response.status_code == 200
     assert response.headers["content-type"].startswith("text/html")
     assert "Privacy Policy" in response.text
+
+
+def test_root_sends_a_visitor_to_the_dashboard() -> None:
+    """The bare domain is the link the host's dashboard shows and the one a
+    bookmark keeps. Nothing was mounted at "/", so following it answered
+    {"detail":"Not Found"} under the platform's own error headers -- which
+    reads to a staff member as the clinic's site being down, not as a
+    missing route. Asserts the redirect rather than the eventual page: the
+    dashboard itself decides whether this visitor gets it or the login form.
+    """
+    response = client.get("/", follow_redirects=False)
+    assert response.status_code == 302
+    assert response.headers["location"] == "/admin/"
