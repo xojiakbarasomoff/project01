@@ -219,3 +219,44 @@ def test_gemini_embedding_provider_without_key_raises() -> None:
     settings = TEST_SETTINGS.model_copy(update={"gemini_api_key": None})
     with pytest.raises(ValueError, match="GEMINI_API_KEY"):
         GeminiEmbeddingProvider(settings=settings)
+
+
+class _EchoingOpenAIEmbeddings:
+    """One vector per input text, so a chunked embed can be checked for both
+    call count and ordering.
+    """
+
+    def __init__(self) -> None:
+        self.batches: list[list[str]] = []
+
+    async def create(self, *, model: str, input: list[str], dimensions: int):
+        self.batches.append(list(input))
+        return SimpleNamespace(
+            data=[
+                SimpleNamespace(embedding=[float(int(text))] * EMBEDDING_DIMENSIONS)
+                for text in input
+            ]
+        )
+
+
+async def test_openai_embed_splits_batches_over_the_api_limit(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """OpenAI takes at most 2048 inputs per request. Gemini's much lower cap
+    was hit immediately and fixed; this one sat unnoticed because the clinic
+    was under it -- and the knowledge base has been growing a wording at a
+    time, from 98 rows to over 1500. ingest_faqs embeds a whole file in one
+    call, so the deploy that crosses 2048 loses its entire seed.
+    """
+    embeddings = _EchoingOpenAIEmbeddings()
+    fake_client = SimpleNamespace(embeddings=embeddings)
+    monkeypatch.setattr("app.rag.embeddings.AsyncOpenAI", lambda **kwargs: fake_client)
+
+    texts = [str(index) for index in range(5000)]
+    provider = OpenAIEmbeddingProvider(settings=TEST_SETTINGS)
+    result = await provider.embed(texts)
+
+    assert [len(batch) for batch in embeddings.batches] == [2048, 2048, 904]
+    assert len(result) == 5000
+    # Order survives the split: vector i still belongs to text i.
+    assert [vector[0] for vector in result] == [float(index) for index in range(5000)]

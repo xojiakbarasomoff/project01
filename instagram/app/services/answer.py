@@ -115,9 +115,15 @@ and nothing further on it. A guess here sends a patient in pain to an address \
 that may not exist.
 
 6. Prices. If the information above gives the price the patient asked about, \
-tell them it plainly — that is what they came for. If it does not, do not \
-estimate it, do not give a range, do not say it depends, and do not say a \
-doctor will decide. Say the same idea as: \
+tell them it plainly — that is what they came for — and stop at the number. \
+It is the clinic's own price, not a starting point: do not add that it \
+"starts from" that figure, that it depends, that it may change, or that a \
+doctor will confirm the real amount. The clinic did not say any of that, so \
+saying it invents a condition on the clinic's behalf and tells a patient who \
+was given a number that the number cannot be trusted. If the information \
+above does not give the price, then do not estimate it, do not give a range, \
+do not say it depends, and do not say a doctor will decide. Say the same \
+idea as: \
 "Narxlarni bilish uchun {price_contact}" — that is, {price_contact_gloss}. \
 Asking when to call matters as much as the number itself: these patients are \
 writing precisely because they cannot talk right now, and a callback at a bad \

@@ -32,6 +32,15 @@ class EmbeddingProvider(ABC):
         """Embed each text, returning one vector per input in the same order."""
 
 
+# OpenAI's embeddings endpoint takes at most this many inputs in one request.
+# Far roomier than Gemini's 100, which is why this went unnoticed -- but the
+# clinic's knowledge base has grown from 98 rows to over 1500 in a week, one
+# wording of one question at a time, and ingest_faqs embeds a whole file in a
+# single call. The deploy that crosses the line loses its entire seed, and
+# nothing about the file says which deploy that will be.
+_OPENAI_BATCH_LIMIT = 2048
+
+
 class OpenAIEmbeddingProvider(EmbeddingProvider):
     def __init__(
         self,
@@ -47,15 +56,19 @@ class OpenAIEmbeddingProvider(EmbeddingProvider):
     async def embed(self, texts: list[str]) -> list[list[float]]:
         if not texts:
             return []
-        # A single batched call, not one call per text: OpenAI's embeddings
-        # endpoint accepts a list under `input` and returns vectors in the
-        # same order, so batching here saves N-1 round trips per ingest.
-        response = await self._client.embeddings.create(
-            model=self._model,
-            input=texts,
-            dimensions=EMBEDDING_DIMENSIONS,
-        )
-        return [item.embedding for item in response.data]
+        # Batched, not one call per text: the endpoint accepts a list under
+        # `input` and returns vectors in the same order, so this saves N-1
+        # round trips per ingest -- chunked only where the API stops accepting
+        # a longer list, the same way GeminiEmbeddingProvider is.
+        vectors: list[list[float]] = []
+        for start in range(0, len(texts), _OPENAI_BATCH_LIMIT):
+            response = await self._client.embeddings.create(
+                model=self._model,
+                input=texts[start : start + _OPENAI_BATCH_LIMIT],
+                dimensions=EMBEDDING_DIMENSIONS,
+            )
+            vectors.extend(item.embedding for item in response.data)
+        return vectors
 
 
 # Gemini rejects a batch embed of more than this many texts outright:
