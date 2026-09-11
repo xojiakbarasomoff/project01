@@ -11,6 +11,8 @@ from app.rag.embeddings import EMBEDDING_DIMENSIONS, EmbeddingProvider
 from app.rag.llm import ChatMessage, LLMProvider
 from app.repositories.knowledge_base import KnowledgeBaseRepository
 from app.services.answer import (
+    _clinic_facts_block,
+    _doctor_roster,
     HELP_RESPONSES,
     NO_MATCH_RESPONSE,
     NO_MATCH_RESPONSES,
@@ -914,3 +916,75 @@ async def test_generate_answer_emergency_message_in_uzbek(
     assert result == EMERGENCY_RESPONSES["uz-latn"]
     assert llm_provider.calls == []
     assert embedding_provider.calls == []
+
+
+# --- the roster's own rendering ---------------------------------------------
+#
+# Pure functions, so these need no database: what is being checked is the
+# shape of the text handed to the model, which is where the ugliness came
+# from.
+
+
+class _Listed:
+    """A doctor row, as much of one as the roster reads."""
+
+    def __init__(self, name: str, specialty: str, working_hours: str) -> None:
+        self.name = name
+        self.specialty = specialty
+        self.working_hours = working_hours
+
+
+_ALL_NINE_TO_SIX = [
+    _Listed("Abdirova Umida Irsaliyevna", "Akusher-ginekolog", "09:00 - 18:00"),
+    _Listed("Iriskulov Nabijan Kadirkulovich", "LOR", "09:00 - 18:00"),
+    _Listed("Xusanov Sanjarbek Muhammadsohibovich", "Urolog-androlog", "09:00 - 18:00"),
+]
+
+
+def test_hours_every_doctor_shares_are_stated_once_not_per_name() -> None:
+    """What the clinic complained about: asked for information about the
+    clinic and its doctors, the reply came back as six bulleted names each
+    ending "09:00-18:00", because that is exactly how the prompt handed the
+    roster over.
+    """
+    roster = _doctor_roster(_ALL_NINE_TO_SIX)
+
+    assert roster.count("09:00 - 18:00") == 1
+    assert "- Iriskulov Nabijan Kadirkulovich — LOR" in roster
+    assert "LOR — 09:00" not in roster
+    assert "never after each name" in roster
+
+
+def test_doctors_who_work_different_hours_keep_their_own() -> None:
+    """The hours only collapse into one fact when they are one fact. A clinic
+    whose LOR leaves at two has to be able to say so.
+    """
+    mixed = [
+        _Listed("Dr. Aliyev A.A.", "Urolog", "09:00 - 18:00"),
+        _Listed("Dr. Karimova N.S.", "LOR", "09:00 - 14:00"),
+    ]
+
+    roster = _doctor_roster(mixed)
+
+    assert "- Dr. Aliyev A.A. — Urolog — 09:00 - 18:00" in roster
+    assert "- Dr. Karimova N.S. — LOR — 09:00 - 14:00" in roster
+
+
+def test_the_working_week_reaches_the_prompt_when_it_is_configured() -> None:
+    """"09:00-18:00" on its own never says which days, and the days were the
+    part patients were being told wrongly.
+    """
+    facts = _clinic_facts_block(
+        "Toshkent, Moyqo'rg'on 11A",
+        "+998 71 200 03 93",
+        _ALL_NINE_TO_SIX,
+        "Dushanbadan shanbagacha 09:00 dan 18:00 gacha",
+    )
+
+    assert "Open: Dushanbadan shanbagacha 09:00 dan 18:00 gacha" in facts
+
+
+def test_an_unconfigured_working_week_adds_no_line() -> None:
+    facts = _clinic_facts_block("Toshkent, Moyqo'rg'on 11A", "+998 71 200 03 93", ())
+
+    assert "Open:" not in facts

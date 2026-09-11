@@ -112,6 +112,17 @@ and leave the number off if they already have it — the answer to "UZI \
 qilasizlarmi?" is that the clinic does ultrasound, and which kinds, not a \
 number they were given a minute ago.
 
+A wide question — "klinika haqida ma'lumot bering", "doktorlar haqida \
+ayting" — is answered the way a person at a desk answers it: two or \
+three sentences, in prose, and then ask which part they want. Never \
+empty the whole list into the chat. Asked about the clinic, say what it \
+does and where it is, and the working days and hours once, as one \
+sentence — "dushanbadan shanbagacha 09:00 dan 18:00 gacha", not "09:00–\
+18:00" hung off the end of six other sentences. Asked about the doctors, \
+name them and what each one does, and nothing else: the hours belong to \
+the clinic, not after every name, and repeating them down a list is the \
+single ugliest thing this assistant does.
+
 When a patient writes about pain, fear, infertility, a sexual problem, or \
 anything else they had to work themselves up to typing, let them see you \
 read it before you get to the facts — one short sentence, not a performance. \
@@ -600,13 +611,29 @@ def _doctor_roster(doctors: Sequence[Doctor]) -> str:
     """
     if not doctors:
         return ""
-    lines = "\n".join(
-        f"- {doctor.name} — {doctor.specialty} — {doctor.working_hours}" for doctor in doctors
-    )
+    # Six clinicians who all work the same day produced six identical
+    # "09:00 - 18:00" tails, and a model copying the block back wrote the
+    # hours six times in one reply. When the roster agrees with itself the
+    # hours are a fact about the clinic, so they are stated as one.
+    shared_hours = {doctor.working_hours for doctor in doctors}
+    if len(shared_hours) == 1:
+        lines = "\n".join(f"- {doctor.name} — {doctor.specialty}" for doctor in doctors)
+        hours_note = (
+            f"All of them are in during the clinic's usual hours ({shared_hours.pop()}), "
+            "so those hours are a fact about the clinic and not about any one "
+            "doctor: say them once if they are asked for, and never after each "
+            "name.\n"
+        )
+    else:
+        lines = "\n".join(
+            f"- {doctor.name} — {doctor.specialty} — {doctor.working_hours}" for doctor in doctors
+        )
+        hours_note = ""
     return (
         "\n\nThe clinicians currently seeing patients here, given to you as "
         "fact:\n"
         f"{lines}\n"
+        f"{hours_note}"
         "You may name them and say what each one does and when they work. "
         "This is the whole list: never name a doctor who is not on it, and "
         "never add anything to what is written about the ones who are — not "
@@ -627,6 +654,7 @@ def _clinic_facts_block(
     clinic_address: str | None,
     clinic_phone_numbers: str | None,
     doctors: Sequence[Doctor] = (),
+    clinic_work_hours: str | None = None,
 ) -> str:
     """The handful of clinic facts that come from configuration and from the
     clinic's own tables rather than from the knowledge base, rendered as a
@@ -647,6 +675,8 @@ def _clinic_facts_block(
         lines.append(f"Address: {clinic_address}")
     if clinic_phone_numbers:
         lines.append(f"Phone: {clinic_phone_numbers}")
+    if clinic_work_hours:
+        lines.append(f"Open: {clinic_work_hours}")
 
     roster = _doctor_roster(doctors)
     if not lines:
@@ -710,6 +740,7 @@ def _build_system_prompt(
     clinic_address: str | None,
     signals: ConversationSignals,
     doctors: Sequence[Doctor] = (),
+    clinic_work_hours: str | None = None,
 ) -> str:
     price_contact, price_contact_gloss, price_contact_bare = _price_contact_clause(
         clinic_phone_numbers
@@ -719,7 +750,9 @@ def _build_system_prompt(
         "price_contact": price_contact,
         "price_contact_gloss": price_contact_gloss,
         "price_contact_bare": price_contact_bare,
-        "clinic_facts": _clinic_facts_block(clinic_address, clinic_phone_numbers, doctors),
+        "clinic_facts": _clinic_facts_block(
+            clinic_address, clinic_phone_numbers, doctors, clinic_work_hours
+        ),
     }
     if matches:
         prompt = _SYSTEM_PROMPT_TEMPLATE.format(faq_context=_format_faq_context(matches), **shared)
@@ -803,6 +836,7 @@ async def generate_answer(
         default_language=resolved_settings.default_reply_language,
         clinic_phone_numbers=resolved_settings.clinic_phone_numbers,
         clinic_address=resolved_settings.clinic_address,
+        clinic_work_hours=resolved_settings.clinic_work_hours,
     )
     provider = llm_provider or get_llm_provider()
     conversation: list[ChatMessage] = [

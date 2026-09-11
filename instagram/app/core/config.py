@@ -90,6 +90,19 @@ class Settings(BaseSettings):
     # prompt text exists to prevent.
     clinic_phone_numbers: str | None = Field(default=None, alias="CLINIC_PHONE_NUMBERS")
 
+    # When the clinic is open, as one sentence in the clinic's own words --
+    # "Dushanbadan shanbagacha 09:00 dan 18:00 gacha", say. Configuration for
+    # the same reason as the address: the assistant may not state an opening
+    # time it was not given.
+    #
+    # It exists because the only other place the hours appeared was the
+    # doctors table, one row at a time. A patient who asked about the clinic
+    # got six clinicians each with "09:00 - 18:00" after their name and no
+    # mention of which days -- the hours repeated until they looked like part
+    # of every doctor's title, and the one fact actually being asked for, the
+    # working week, was not in the prompt at all.
+    clinic_work_hours: str | None = Field(default=None, alias="CLINIC_WORK_HOURS")
+
     # How long to wait for a patient to finish typing before answering. The
     # wait exists so a question split across bubbles ("Salom" / "narxi
     # qancha?") gets one answer instead of one per bubble -- but it is dead
@@ -242,6 +255,7 @@ class Settings(BaseSettings):
         "provision_tenant_name",
         "clinic_phone_numbers",
         "clinic_address",
+        "clinic_work_hours",
         "seed_faqs_from",
         "seed_doctors_from",
         "public_base_url",
