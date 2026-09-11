@@ -10,6 +10,7 @@ import pytest
 
 from app.rag.llm import ChatMessage
 from app.services.conversation_signals import (
+    looks_like_a_greeting,
     looks_like_a_phone_number,
     read_signals,
     render,
@@ -33,9 +34,6 @@ def test_no_history_is_the_opening_message() -> None:
 
 
 def test_one_earlier_turn_is_already_a_conversation() -> None:
-    """The greeting rule hangs off this: a second hello is the single most
-    obvious tell that nobody is reading.
-    """
     assert not read_signals([_user("salom")]).is_opening
 
 
@@ -215,3 +213,84 @@ def test_the_current_message_does_not_make_an_opening_look_like_a_continuation()
 
 def test_the_patients_own_message_is_never_counted_as_us_asking() -> None:
     assert read_signals([], "telefon raqamingiz bormi?").times_asked_for_number == 0
+
+
+# --- greeting ---------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "Assalomu alaykum",
+        "assalomu alaykum!!",
+        # What patients actually type. The first word is misspelt past
+        # recognition and the greeting still has to be answered.
+        "Osalamayalaykum",
+        "salam alikum",
+        "Ассалому алайкум",
+        "Салом",
+        "Здравствуйте",
+        "Привет!",
+    ],
+)
+def test_a_greeting_is_recognised_however_it_is_spelt(message: str) -> None:
+    assert looks_like_a_greeting(message)
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "EKG qancha turadi",
+        "buyragim og'riyapti",
+        "+998901234567",
+        "Qabulga yozilmoqchiman",
+        "Rahmat",
+    ],
+)
+def test_an_ordinary_message_is_not_a_greeting(message: str) -> None:
+    assert not looks_like_a_greeting(message)
+
+
+def test_a_greeting_is_returned_even_in_the_middle_of_a_thread() -> None:
+    """The bug this was written for.
+
+    An Instagram thread is one conversation for as long as the account
+    exists, so tying the greeting to is_opening meant a patient who came
+    back a week later and said "Assalomu alaykum" was answered with the
+    clinic's opening hours and no hello at all.
+    """
+    history = [_user("EKG bormi"), _assistant("Ha, EKG bizda bor.")]
+
+    signals = read_signals(history, "Assalomu alaykum")
+
+    assert signals.patient_greeted_now
+    assert not signals.already_greeted
+    assert "return the greeting" in render(signals)
+
+
+def test_a_greeting_already_returned_is_not_returned_twice() -> None:
+    history = [_user("Salom"), _assistant("Va alaykum assalom! Nima bo'yicha yordam beray?")]
+
+    signals = read_signals(history, "Assalomu alaykum")
+
+    assert signals.already_greeted
+    assert "do not open with one again" in render(signals)
+
+
+def test_a_patient_who_did_not_greet_is_not_greeted() -> None:
+    signals = read_signals([_user("Salom"), _assistant("Va alaykum assalom!")], "EKG bormi")
+
+    assert not signals.patient_greeted_now
+    assert "greeted you in this message" not in render(signals)
+
+
+def test_the_word_further_down_a_reply_is_not_a_greeting_we_gave() -> None:
+    """Only the opening counts. A reply that happens to contain the word
+    later would otherwise spend the greeting the patient has not had yet.
+    """
+    history = [
+        _user("EKG bormi"),
+        _assistant("Ha, bor. Kelganingizda registraturada salom deb ayting, kutib olamiz."),
+    ]
+
+    assert not read_signals(history, "Assalomu alaykum").already_greeted

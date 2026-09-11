@@ -78,6 +78,59 @@ def _normalise(text: str) -> str:
     return _APOSTROPHES.sub("", text.lower())
 
 
+# What a greeting looks like, in every alphabet and spelling this deployment
+# receives one in. Matched as substrings against text with its non-letters
+# stripped, because the greeting a patient actually types is "Osalamayalaykum",
+# "assalomu alaykum!!", "Ассалому алайкум" or "salam alikum" -- the word is
+# recognisable, the spelling is never the same twice, and a list of exact forms
+# would miss nearly all of them.
+#
+# "salam" rather than "salom" as the Latin stem, because the vowel is the thing
+# patients vary; both are covered, along with the "alaykum" half on its own, so
+# a message that mangles the first word still matches on the second.
+_GREETING_MARKERS = (
+    "salom",
+    "salam",
+    "alaykum",
+    "aleykum",
+    "alikum",
+    "салом",
+    "салам",
+    "алайкум",
+    "алейкум",
+    "привет",
+    "здравств",
+    "zdravstv",
+    "dobriy",
+    "добр",
+    "hello",
+)
+
+# Everything that is not a letter, so punctuation, emoji and digits cannot
+# come between a marker and the text it should have matched.
+_NON_LETTERS = re.compile(r"[^a-zЀ-ӿ]+")
+
+
+def _letters(text: str) -> str:
+    return _NON_LETTERS.sub("", _normalise(text))
+
+
+def looks_like_a_greeting(text: str) -> bool:
+    letters = _letters(text)
+    return any(marker in letters for marker in _GREETING_MARKERS)
+
+
+# A greeting is something a message opens with. Read further than that and an
+# assistant turn quoting the clinic back to a patient -- or simply using the
+# word later in a sentence -- counts as having said hello, and the next real
+# greeting goes unanswered: the bug this module is being changed to fix.
+_OPENING_LETTERS = 24
+
+
+def opens_with_a_greeting(text: str) -> bool:
+    return looks_like_a_greeting(_letters(text)[:_OPENING_LETTERS])
+
+
 @dataclass(frozen=True)
 class ConversationSignals:
     """Facts about the conversation so far, from the assistant's side."""
@@ -85,6 +138,19 @@ class ConversationSignals:
     is_opening: bool
     patient_left_number: bool
     times_asked_for_number: int
+    # Whether the message being answered right now is itself a greeting, and
+    # whether we have ever returned one in this conversation.
+    #
+    # These exist because is_opening was doing this job and doing it wrongly.
+    # Greeting was tied to "this is their first message", so a patient who
+    # said hello again -- the next morning, or after the thread had gone quiet
+    # for a week -- was told the opening hours with no hello in front of them.
+    # An Instagram thread is one conversation forever; a person at a front
+    # desk answers "Assalomu alaykum" with "Va alaykum assalom" every single
+    # time it is said to them, and only starts sounding like a machine if they
+    # say it twice in a row within one exchange.
+    patient_greeted_now: bool
+    already_greeted: bool
 
 
 def looks_like_a_phone_number(text: str) -> bool:
@@ -132,10 +198,18 @@ def read_signals(
         if turn["role"] == "assistant"
         and any(m in _normalise(turn["content"]) for m in _ASK_MARKERS)
     )
+    # Only the most recent assistant turn: greeting twice inside one exchange
+    # is the mechanical thing, greeting again after the patient has come back
+    # and said hello is not.
+    last_assistant = next(
+        (turn["content"] for turn in reversed(turns) if turn["role"] == "assistant"), ""
+    )
     return ConversationSignals(
         is_opening=not turns,
         patient_left_number=patient_left_number,
         times_asked_for_number=times_asked,
+        patient_greeted_now=bool(user_message and looks_like_a_greeting(user_message)),
+        already_greeted=opens_with_a_greeting(last_assistant),
     )
 
 
@@ -159,6 +233,16 @@ def render(signals: ConversationSignals) -> str:
             else "They have not given you a phone number yet."
         ),
     ]
+    if signals.patient_greeted_now and not signals.already_greeted:
+        lines.append(
+            "They have greeted you in this message, and you have not greeted "
+            "them back yet — return the greeting before anything else."
+        )
+    elif signals.patient_greeted_now:
+        lines.append(
+            "They have greeted you in this message, but your own last message "
+            "already opened with a greeting — do not open with one again."
+        )
     if signals.times_asked_for_number == 0:
         lines.append("You have not asked them for their number in this conversation.")
     elif signals.times_asked_for_number == 1:
