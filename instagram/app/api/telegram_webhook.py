@@ -32,7 +32,7 @@ from app.models.channel import Channel
 from app.services.conversation import register_inbound_message
 from app.services.debounce import handle_inbound_message
 from app.services.idempotency import claim_event
-from app.services.tenant_resolution import ResolvedChannel, resolve_channel
+from app.services.tenant_resolution import ResolvedChannel, bot_replies_enabled, resolve_channel
 
 logger = logging.getLogger(__name__)
 
@@ -255,6 +255,19 @@ async def _handle_update(
         logger.info(
             "telegram_bot_disabled_for_conversation",
             extra={"conversation_id": str(inbound.conversation_id)},
+        )
+        return
+
+    if not await bot_replies_enabled(session, channel.tenant_id):
+        # The clinic's own switch, the same one the Instagram webhook reads:
+        # one dashboard button silences every channel, which is what somebody
+        # turning the assistant off actually means.
+        logger.info(
+            "telegram_bot_disabled_for_tenant",
+            extra={
+                "tenant_id": str(channel.tenant_id),
+                "conversation_id": str(inbound.conversation_id),
+            },
         )
         return
 

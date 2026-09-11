@@ -15,6 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.channels.base import ChannelType
 from app.models.channel import Channel
+from app.models.tenant import Tenant
 
 
 @dataclass(frozen=True)
@@ -63,3 +64,20 @@ async def resolve_instagram_channel(
     return await resolve_channel(
         session, channel_type=ChannelType.INSTAGRAM, external_id=ig_account_id
     )
+
+
+async def bot_replies_enabled(session: AsyncSession, tenant_id: uuid.UUID) -> bool:
+    """Whether this clinic's assistant is currently answering patients.
+
+    Read from tenants.settings, the same JSONB the dashboard writes, so the
+    switch on the conversations screen takes effect on the next message with
+    no deploy and no restart.
+
+    Absent means on. A clinic that has never touched the switch is a clinic
+    whose bot has been answering all along, and a missing key must not read
+    as "turned off" and silence it.
+    """
+    tenant = await session.get(Tenant, tenant_id)
+    if tenant is None:
+        return True
+    return bool(tenant.settings.get("bot_replies_enabled", True))

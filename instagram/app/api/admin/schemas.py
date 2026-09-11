@@ -198,6 +198,15 @@ class TenantSettings(BaseModel):
     so a form that only changes the address does not blank the phone numbers.
     """
 
+    # The clinic's own on/off switch for the assistant, flipped from the
+    # conversations screen. False and every inbound message is still received,
+    # still stored and still listed there -- no reply is written and no job is
+    # queued for one, so nothing piles up to be answered late. It lives here,
+    # in the clinic's settings, because the alternative was reaching into the
+    # host's dashboard and stopping the worker, which takes minutes, loses the
+    # answer to anything already queued, and is not something a front desk can
+    # be asked to do at eleven at night.
+    bot_replies_enabled: bool | None = None
     debounce_seconds: int | None = Field(default=None, ge=0, le=300)
     clinic_address: str | None = None
     clinic_landmark: str | None = None

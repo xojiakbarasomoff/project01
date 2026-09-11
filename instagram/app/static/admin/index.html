@@ -156,7 +156,13 @@
 
   <section id="tab-chats" hidden>
     <div class="panel">
-      <h2>Suhbatlar</h2>
+      <div class="row" style="justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <h2 style="margin:0">Suhbatlar</h2>
+        <div class="row" style="gap:8px;align-items:center">
+          <span id="botStatePill" class="pill">—</span>
+          <button id="botToggle" class="act" hidden></button>
+        </div>
+      </div>
       <div class="row" id="views-conversations" style="margin-bottom:10px;gap:6px;flex-wrap:wrap"></div>
       <div class="scroll"><table>
         <thead><tr><th>Bemor</th><th>Kanal</th><th>Oxirgi xabar</th><th>Bot</th><th></th></tr></thead>
@@ -450,7 +456,44 @@ async function act(path, message) {
 
 // --- conversations -------------------------------------------------------
 
+// The clinic's own switch for the whole assistant, not one conversation.
+// Read from the same settings the dashboard already edits, and rendered next
+// to the conversations because that is the screen somebody is looking at when
+// they decide the bot should stop.
+let BOT_REPLIES_ENABLED = true;
+
+function renderBotSwitch() {
+  const pill = document.getElementById("botStatePill");
+  const button = document.getElementById("botToggle");
+  pill.textContent = BOT_REPLIES_ENABLED ? "Bot yoqilgan" : "Bot o'chirilgan";
+  pill.className = "pill " + (BOT_REPLIES_ENABLED ? "ok" : "bad");
+  button.hidden = !canManageClinic();
+  button.textContent = BOT_REPLIES_ENABLED ? "Botni o'chirish" : "Botni yoqish";
+}
+
+async function loadBotSwitch() {
+  const settings = await api("/settings");
+  BOT_REPLIES_ENABLED = settings.bot_replies_enabled !== false;
+  renderBotSwitch();
+}
+
+document.getElementById("botToggle").addEventListener("click", async () => {
+  const turningOff = BOT_REPLIES_ENABLED;
+  // Asked before turning it off, never before turning it back on: leaving
+  // patients unanswered is the direction that needs a second thought.
+  if (turningOff && !confirm("Bot javob berishni to'xtatadimi? Xabarlar kelaveradi va shu yerda ko'rinadi.")) return;
+  try {
+    await api("/settings", { method: "PATCH", body: { bot_replies_enabled: !BOT_REPLIES_ENABLED } });
+    BOT_REPLIES_ENABLED = !BOT_REPLIES_ENABLED;
+    renderBotSwitch();
+    toast(BOT_REPLIES_ENABLED ? "Bot yoqildi" : "Bot o'chirildi");
+  } catch (err) {
+    toast(err.message, true);
+  }
+});
+
 async function loadChats() {
+  await loadBotSwitch();
   const rows = await api("/conversations?" + new URLSearchParams(LIST_PARAMS.conversations));
   fill("chatRows", rows.map((c) =>
     el("tr", {},

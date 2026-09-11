@@ -27,7 +27,11 @@ from app.core.tenant_context import reset_current_tenant, set_current_tenant
 from app.services.conversation import register_inbound_message
 from app.services.debounce import handle_inbound_message
 from app.services.idempotency import claim_event
-from app.services.tenant_resolution import ResolvedChannel, resolve_instagram_channel
+from app.services.tenant_resolution import (
+    ResolvedChannel,
+    bot_replies_enabled,
+    resolve_instagram_channel,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -196,6 +200,21 @@ async def _handle_event(
             extra={
                 "conversation_id": str(inbound.conversation_id),
                 "sender_igsid": event.sender.id,
+            },
+        )
+        return
+
+    if not await bot_replies_enabled(session, channel.tenant_id):
+        # The clinic has switched the assistant off from the dashboard.
+        # Checked here rather than in the worker so that nothing is queued
+        # while it is off: a switch that let jobs accumulate would answer
+        # every one of them the moment it was switched back on, which is a
+        # burst of late replies to patients who have long since given up.
+        logger.info(
+            "webhook_bot_disabled_for_tenant",
+            extra={
+                "tenant_id": str(channel.tenant_id),
+                "conversation_id": str(inbound.conversation_id),
             },
         )
         return

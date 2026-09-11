@@ -2,6 +2,7 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.channels.base import ChannelType
+from app.models.tenant import Tenant
 from app.services.tenant_resolution import resolve_channel, resolve_instagram_channel
 from tests.conftest import Seed
 
@@ -76,3 +77,49 @@ async def test_resolve_channel_accepts_the_enum_or_its_value(
 
     assert resolved is not None
     assert resolved.channel_id == seed.a.channel.id
+
+
+# --- the clinic's own on/off switch for the assistant ---
+
+
+async def test_bot_replies_enabled_defaults_to_on_when_never_set(
+    db_session: AsyncSession, seed: Seed
+) -> None:
+    """A clinic that has never touched the switch has had a bot answering all
+    along. A missing key must read as on, or shipping this feature would
+    silence every existing deployment.
+    """
+    from app.services.tenant_resolution import bot_replies_enabled
+
+    assert await bot_replies_enabled(db_session, seed.tenant_a.id) is True
+
+
+async def test_bot_replies_enabled_follows_the_setting(
+    db_session: AsyncSession, seed: Seed
+) -> None:
+    from app.services.tenant_resolution import bot_replies_enabled
+
+    tenant = await db_session.get(Tenant, seed.tenant_a.id)
+    assert tenant is not None
+    tenant.settings = {**tenant.settings, "bot_replies_enabled": False}
+    await db_session.flush()
+
+    assert await bot_replies_enabled(db_session, seed.tenant_a.id) is False
+
+    tenant.settings = {**tenant.settings, "bot_replies_enabled": True}
+    await db_session.flush()
+
+    assert await bot_replies_enabled(db_session, seed.tenant_a.id) is True
+
+
+async def test_bot_replies_enabled_is_per_clinic(db_session: AsyncSession, seed: Seed) -> None:
+    """One clinic switching its assistant off must not silence another's."""
+    from app.services.tenant_resolution import bot_replies_enabled
+
+    tenant_a = await db_session.get(Tenant, seed.tenant_a.id)
+    assert tenant_a is not None
+    tenant_a.settings = {**tenant_a.settings, "bot_replies_enabled": False}
+    await db_session.flush()
+
+    assert await bot_replies_enabled(db_session, seed.tenant_a.id) is False
+    assert await bot_replies_enabled(db_session, seed.tenant_b.id) is True

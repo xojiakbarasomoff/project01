@@ -57,6 +57,7 @@ from app.services.sheets import (
     mirror_lead,
     summarise_problem,
 )
+from app.services.tenant_resolution import bot_replies_enabled
 from app.services.token_refresh import refresh_instagram_tokens
 from app.services.webhook_watch import verify_telegram_webhooks
 
@@ -116,6 +117,18 @@ async def process_inbound_message(
     token = set_current_tenant(tenant_uuid)
     try:
         async with session_factory() as session:
+            if not await bot_replies_enabled(session, tenant_uuid):
+                # Belt to the webhook's braces. The webhook stops queueing the
+                # moment the clinic switches the assistant off, but jobs
+                # already in Redis outlive that -- including any scheduled
+                # before the switch was flipped. Checked again here so
+                # switching off is immediate rather than "immediate once the
+                # queue drains".
+                logger.info(
+                    "worker_bot_disabled_for_tenant",
+                    extra={"tenant_id": tenant_id, "conversation_id": conversation_id},
+                )
+                return
             history = await context_for_reply(session, conversation_uuid)
             reply = await generate_answer(
                 session,
