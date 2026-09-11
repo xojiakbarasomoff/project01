@@ -294,3 +294,68 @@ def test_the_word_further_down_a_reply_is_not_a_greeting_we_gave() -> None:
     ]
 
     assert not read_signals(history, "Assalomu alaykum").already_greeted
+
+
+# --- clinic details already given -------------------------------------------
+
+
+def test_a_detail_we_have_already_given_is_marked_as_given() -> None:
+    """The transcript this was written for put the same number and the same
+    opening hours under three consecutive messages, one of which was a
+    question about ultrasound that never got answered.
+    """
+    history = [
+        _user("qabulga yozilmoqchiman"),
+        _assistant(
+            "Qabulga yozilish uchun +998 71 200 03 93 ga qo'ng'iroq qiling; "
+            "shifokorlar 09:00-18:00 orasida ishlaydi."
+        ),
+    ]
+
+    signals = read_signals(history, "Uzi boyicha yozvotudm")
+
+    assert signals.number_already_given
+    assert signals.hours_already_given
+    assert not signals.address_already_given
+    rendered = render(signals)
+    assert "telephone number and the opening hours" in rendered
+    assert "do not print them again" in rendered
+
+
+def test_nothing_given_yet_says_nothing() -> None:
+    signals = read_signals([_user("salom"), _assistant("Va alaykum assalom!")], "UZI bormi?")
+
+    assert not signals.number_already_given
+    assert not signals.hours_already_given
+    assert "already given them" not in render(signals)
+
+
+def test_the_patients_own_number_is_not_a_number_we_gave() -> None:
+    """Only our side counts. A patient who types their own number has not
+    been given the clinic's, and would otherwise never receive it.
+    """
+    history = [_user("+998901234567"), _assistant("Rahmat, hamkasbim bog'lanadi.")]
+
+    assert not read_signals(history, "UZI qancha?").number_already_given
+
+
+def test_the_address_is_recognised_from_our_own_wording() -> None:
+    history = [
+        _user("qayerdasiz"),
+        _assistant("Toshkent shahri, Yunusobod tumani, Moyqo'rg'on ko'chasi 11A uy."),
+    ]
+
+    signals = read_signals(history, "UZI bormi?")
+
+    assert signals.address_already_given
+    assert "the clinic's address" in render(signals)
+
+
+def test_a_loose_number_is_not_read_as_the_hours() -> None:
+    """The FAQ is full of numbers that are not clock times -- room numbers,
+    house numbers, how many days a result takes -- and reading one as the
+    opening hours would suppress the hours the patient still needs.
+    """
+    history = [_user("qayerdasiz"), _assistant("Moyqo'rg'on ko'chasi 11A uy, 2-qavat.")]
+
+    assert not read_signals(history, "nechida ochilasiz?").hours_already_given

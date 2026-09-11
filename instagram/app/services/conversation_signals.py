@@ -131,6 +131,36 @@ def opens_with_a_greeting(text: str) -> bool:
     return looks_like_a_greeting(_letters(text)[:_OPENING_LETTERS])
 
 
+# Clinic details the assistant has already handed over. Repeating one is what
+# turns a front desk into a leaflet: the transcript that prompted this answered
+# "Osalamayalaykum", "Assalomu alaykum" and "Uzi boyicha yozvotudm" with the
+# same telephone number and the same opening hours three times running, which
+# reads as a machine with one sentence in it -- and buried the fact that the
+# third message was a question about ultrasound that never got answered.
+#
+# Detected from our own earlier replies rather than asked of the model,
+# for the same reason as everything else here: "have you already said this?"
+# is a question about text, and code reads text more reliably than a model
+# reads its own history.
+
+# 09:00, 09.00, 9:00-18:00 -- an hour written with a separator. A bare "18"
+# is not enough: the price rows and the doctor list are full of loose numbers.
+_CLOCK = re.compile(r"\d{1,2}[:.]\d{2}")
+
+_ADDRESS_MARKERS = (
+    "kocha",
+    "kochasi",
+    "manzil",
+    "tuman",
+    "shahri",
+    "кўча",
+    "куча",
+    "улиц",
+    "адрес",
+    "район",
+)
+
+
 @dataclass(frozen=True)
 class ConversationSignals:
     """Facts about the conversation so far, from the assistant's side."""
@@ -151,6 +181,10 @@ class ConversationSignals:
     # say it twice in a row within one exchange.
     patient_greeted_now: bool
     already_greeted: bool
+    # Whether we have already given each of these in this conversation.
+    number_already_given: bool
+    hours_already_given: bool
+    address_already_given: bool
 
 
 def looks_like_a_phone_number(text: str) -> bool:
@@ -201,16 +235,26 @@ def read_signals(
     # Only the most recent assistant turn: greeting twice inside one exchange
     # is the mechanical thing, greeting again after the patient has come back
     # and said hello is not.
-    last_assistant = next(
-        (turn["content"] for turn in reversed(turns) if turn["role"] == "assistant"), ""
-    )
+    ours = [turn["content"] for turn in turns if turn["role"] == "assistant"]
+    last_assistant = ours[-1] if ours else ""
     return ConversationSignals(
         is_opening=not turns,
         patient_left_number=patient_left_number,
         times_asked_for_number=times_asked,
         patient_greeted_now=bool(user_message and looks_like_a_greeting(user_message)),
         already_greeted=opens_with_a_greeting(last_assistant),
+        number_already_given=any(looks_like_a_phone_number(turn) for turn in ours),
+        hours_already_given=any(_CLOCK.search(turn) for turn in ours),
+        address_already_given=any(
+            marker in _letters(turn) for turn in ours for marker in _ADDRESS_MARKERS
+        ),
     )
+
+
+def _join(items: list[str]) -> str:
+    if len(items) == 1:
+        return items[0]
+    return ", ".join(items[:-1]) + " and " + items[-1]
 
 
 def render(signals: ConversationSignals) -> str:
@@ -242,6 +286,23 @@ def render(signals: ConversationSignals) -> str:
         lines.append(
             "They have greeted you in this message, but your own last message "
             "already opened with a greeting — do not open with one again."
+        )
+    already = [
+        label
+        for label, given in (
+            ("the clinic's telephone number", signals.number_already_given),
+            ("the opening hours", signals.hours_already_given),
+            ("the clinic's address", signals.address_already_given),
+        )
+        if given
+    ]
+    if already:
+        lines.append(
+            "You have already given them "
+            + _join(already)
+            + " in this conversation — do not print "
+            + ("them" if len(already) > 1 else "it")
+            + " again unless they ask."
         )
     if signals.times_asked_for_number == 0:
         lines.append("You have not asked them for their number in this conversation.")
