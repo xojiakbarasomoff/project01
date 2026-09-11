@@ -17503,5 +17503,55 @@
     "question": "есть ли свободное время",
     "answer": "Конечно. К какому специалисту — гинеколог, уролог, эндокринолог, ЛОР, невролог или на УЗИ? Подберём день и время.",
     "category": "qabul"
+  },
+  {
+    "question": "Ayol shifokor bormi",
+    "answer": "Ha, ayol shifokorlarimiz bor. Ginekologiya bo'yicha Abdirova Umida Irsaliyevna (akusher-ginekolog) va Abduqaharova Nargiza Abdurahimovna (ginekolog, reproduktolog), endokrinologiya bo'yicha Ismoilova Guzal Maqsudbekovna qabul qiladi. Qaysi biriga yozib qo'yaymi?",
+    "category": "shifokorlar"
+  },
+  {
+    "question": "Ayol shifokor bormi?",
+    "answer": "Ha, ayol shifokorlarimiz bor. Ginekologiya bo'yicha Abdirova Umida Irsaliyevna (akusher-ginekolog) va Abduqaharova Nargiza Abdurahimovna (ginekolog, reproduktolog), endokrinologiya bo'yicha Ismoilova Guzal Maqsudbekovna qabul qiladi. Qaysi biriga yozib qo'yaymi?",
+    "category": "shifokorlar"
+  },
+  {
+    "question": "Ayol doktor bormi",
+    "answer": "Ha, ayol shifokorlarimiz bor. Ginekologiya bo'yicha Abdirova Umida Irsaliyevna (akusher-ginekolog) va Abduqaharova Nargiza Abdurahimovna (ginekolog, reproduktolog), endokrinologiya bo'yicha Ismoilova Guzal Maqsudbekovna qabul qiladi. Qaysi biriga yozib qo'yaymi?",
+    "category": "shifokorlar"
+  },
+  {
+    "question": "Ginekolog ayolmi",
+    "answer": "Ha, ayol shifokorlarimiz bor. Ginekologiya bo'yicha Abdirova Umida Irsaliyevna (akusher-ginekolog) va Abduqaharova Nargiza Abdurahimovna (ginekolog, reproduktolog), endokrinologiya bo'yicha Ismoilova Guzal Maqsudbekovna qabul qiladi. Qaysi biriga yozib qo'yaymi?",
+    "category": "shifokorlar"
+  },
+  {
+    "question": "Ayol ginekolog bormi",
+    "answer": "Ha, ayol shifokorlarimiz bor. Ginekologiya bo'yicha Abdirova Umida Irsaliyevna (akusher-ginekolog) va Abduqaharova Nargiza Abdurahimovna (ginekolog, reproduktolog), endokrinologiya bo'yicha Ismoilova Guzal Maqsudbekovna qabul qiladi. Qaysi biriga yozib qo'yaymi?",
+    "category": "shifokorlar"
+  },
+  {
+    "question": "Erkak shifokorga bormoqchi emasman",
+    "answer": "Ha, ayol shifokorlarimiz bor. Ginekologiya bo'yicha Abdirova Umida Irsaliyevna (akusher-ginekolog) va Abduqaharova Nargiza Abdurahimovna (ginekolog, reproduktolog), endokrinologiya bo'yicha Ismoilova Guzal Maqsudbekovna qabul qiladi. Qaysi biriga yozib qo'yaymi?",
+    "category": "shifokorlar"
+  },
+  {
+    "question": "Аёл шифокор борми",
+    "answer": "Ҳа, аёл шифокорларимиз бор. Гинекология бўйича Абдирова Умида Ирсалиевна (акушер-гинеколог) ва Абдуқаҳарова Наргиза Абдураҳимовна (гинеколог, репродуктолог), эндокринология бўйича Исмоилова Гузал Мақсудбековна қабул қилади. Қайси бирига ёзиб қўяйми?",
+    "category": "shifokorlar"
+  },
+  {
+    "question": "Аёл гинеколог борми",
+    "answer": "Ҳа, аёл шифокорларимиз бор. Гинекология бўйича Абдирова Умида Ирсалиевна (акушер-гинеколог) ва Абдуқаҳарова Наргиза Абдураҳимовна (гинеколог, репродуктолог), эндокринология бўйича Исмоилова Гузал Мақсудбековна қабул қилади. Қайси бирига ёзиб қўяйми?",
+    "category": "shifokorlar"
+  },
+  {
+    "question": "Есть ли женщина врач",
+    "answer": "Да, у нас есть женщины-врачи. По гинекологии принимают Абдирова Умида Ирсалиевна (акушер-гинеколог) и Абдукахарова Наргиза Абдурахимовна (гинеколог, репродуктолог), по эндокринологии — Исмаилова Гузаль Максудбековна. К кому вас записать?",
+    "category": "shifokorlar"
+  },
+  {
+    "question": "Женский гинеколог есть",
+    "answer": "Да, у нас есть женщины-врачи. По гинекологии принимают Абдирова Умида Ирсалиевна (акушер-гинеколог) и Абдукахарова Наргиза Абдурахимовна (гинеколог, репродуктолог), по эндокринологии — Исмаилова Гузаль Максудбековна. К кому вас записать?",
+    "category": "shifokorlar"
   }
 ]

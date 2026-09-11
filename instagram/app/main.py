@@ -20,6 +20,7 @@ from app.api import (
 )
 from app.api.auth import NotAuthenticatedError
 from app.core.config import get_settings
+from app.core.doctor_seeding import seed_doctors_if_configured
 from app.core.faq_seeding import seed_faqs_if_configured
 from app.core.logging import configure_logging
 from app.core.provisioning import provision_if_configured
@@ -36,6 +37,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # After provisioning, not before: seeding resolves its tenant through the
     # channel row that provisioning is the thing responsible for creating.
     await seed_faqs_if_configured(settings)
+    # The roster decides how many bookings a slot holds, so it wants to be
+    # in place before the first webhook is answered, not after it.
+    await seed_doctors_if_configured(settings)
     yield
 
 

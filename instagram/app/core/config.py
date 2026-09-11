@@ -166,6 +166,12 @@ class Settings(BaseSettings):
     # default) skips seeding entirely.
     seed_faqs_from: str | None = Field(default=None, alias="SEED_FAQS_FROM")
 
+    # Path to a roster JSON file to load into doctors on web startup (see
+    # app.core.doctor_seeding), armed and unset the same way. The roster is
+    # what lets the assistant say who works here, and what decides how many
+    # bookings one appointment slot holds.
+    seed_doctors_from: str | None = Field(default=None, alias="SEED_DOCTORS_FROM")
+
     model_provider: Literal["openai", "gemini"] = Field(default="gemini", alias="MODEL_PROVIDER")
 
     # Which Gemini model answers. Configurable because the free tier meters
@@ -237,6 +243,7 @@ class Settings(BaseSettings):
         "clinic_phone_numbers",
         "clinic_address",
         "seed_faqs_from",
+        "seed_doctors_from",
         "public_base_url",
         "provision_telegram_bot_token",
         "provision_operator_username",

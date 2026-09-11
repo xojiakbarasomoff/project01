@@ -226,3 +226,32 @@ async def test_a_missing_faq_file_does_not_stop_the_app_from_starting(
     tmp_path: Path,
 ) -> None:
     await seed_faqs_if_configured(_settings(seed_faqs_from=str(tmp_path / "absent.json")))
+
+
+# --- the clinician roster, loaded the same way ---
+
+
+def test_load_doctors_reads_the_shipped_roster() -> None:
+    """The file that ships with the repo has to parse, because nothing else
+    checks it before a deploy reads it at startup: a typo here is a clinic
+    that boots with no clinicians, which silently drops the appointment book
+    to one seat per slot and leaves "qaysi shifokor qabul qiladi?"
+    unanswerable.
+    """
+    from app.core.doctor_seeding import load_doctors
+
+    doctors = load_doctors(Path("data/doctors.json"))
+
+    assert len(doctors) == 6
+    assert all(doctor.name and doctor.specialty for doctor in doctors)
+    assert {doctor.working_hours for doctor in doctors} == {"09:00 - 18:00"}
+
+
+def test_load_doctors_rejects_a_blank_name(tmp_path: Path) -> None:
+    from app.core.doctor_seeding import load_doctors
+
+    path = tmp_path / "doctors.json"
+    path.write_text('[{"name": "  ", "specialty": "LOR"}]', encoding="utf-8")
+
+    with pytest.raises(FaqSeedingError, match="Invalid doctor entry"):
+        load_doctors(path)
