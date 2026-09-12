@@ -331,31 +331,26 @@ async def test_prompt_carries_the_expected_greeting_for_each_language(
 
 
 @pytest.mark.parametrize("with_faq", [True, False], ids=["with_faq", "without_faq"])
-async def test_prompt_asks_for_a_phone_number_for_the_call_centre(
+async def test_prompt_does_not_ask_for_the_patients_number(
     db_session: AsyncSession,
     seed: Seed,
     as_tenant: Callable[[UUID], AbstractContextManager[None]],
     with_faq: bool,
 ) -> None:
-    """The number is the whole point of the conversation for the clinic: a
-    call-centre colleague picks it up from here. Nothing in this pipeline
-    persists it yet, so the prompt is currently the only thing that gets it
-    asked for at all.
+    """It used to, and asking was the point: a call-centre colleague picked
+    the number up from here. The clinic books by telephone now, so the two
+    requests compete -- told "ring us" and "leave your number" in one reply,
+    a patient cannot tell which is actually going to happen, and production
+    was doing exactly that to somebody writing about three years of
+    infertility.
     """
     system_prompt = await _capture_system_prompt(db_session, seed, as_tenant, with_faq=with_faq)
 
-    assert "the conversation is worth more to the clinic if it ends with a number" in (
-        system_prompt
-    )
-    # Asked as the way to the thing the patient already wants, not as a
-    # demand: "leave your number" is the phrasing people scroll past.
-    assert "Offer the reason, not the demand" in system_prompt
-    # And not on every turn. Asking twice in a row is what turns the request
-    # into something a patient reads as a script and stops answering.
-    assert "Never ask twice in a row" in system_prompt
-    # Asking must not displace the answer, or the bot reads as a lead-capture
-    # form that ignores what the patient came to ask.
-    assert "never crowds out the answer" in system_prompt
+    assert "Do not ask the patient for their telephone number" in system_prompt
+    assert "reads as a runaround" in system_prompt
+    # The one case that still needs it: they said they cannot ring.
+    assert "they say plainly that they cannot ring" in system_prompt
+    assert "offering the reason rather than the demand" in system_prompt
 
 
 async def test_no_match_response_asks_for_a_phone_number(
@@ -533,7 +528,7 @@ async def test_prompt_forbids_dodging_a_price_with_an_estimate(
     system_prompt = await _capture_system_prompt(db_session, seed, as_tenant, with_faq=with_faq)
 
     assert "do not give a range" in system_prompt
-    assert "do not say a doctor will decide" in system_prompt
+    assert "Do not say a doctor will decide it" in system_prompt
 
 
 # --- clinic details that come from configuration, not the knowledge base ---
