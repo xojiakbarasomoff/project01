@@ -208,7 +208,7 @@
       <div class="row" style="justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <h2 style="margin:0">Suhbatlar</h2>
         <div class="row" style="gap:8px;align-items:center">
-          <span id="chatLiveHint" class="muted" title="Suhbatlar har 5 soniyada o'zi yangilanadi"></span>
+          <span id="chatLiveHint" class="muted"></span>
           <span id="botStatePill" class="pill">—</span>
           <button id="botToggle" class="act" hidden></button>
         </div>
@@ -722,7 +722,9 @@ async function pollChats() {
     await loadChats({ quiet: true });
     if (CURRENT_CHAT !== null) await openThread(CURRENT_CHAT, { quiet: true });
     CHAT_POLL_FAILURES = 0;
-    hint.textContent = "● jonli · " + new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    // Nothing to show while it works -- the list simply stays current. The
+    // hint only speaks when the refresh has stopped getting through.
+    hint.textContent = "";
     hint.style.color = "";
   } catch (err) {
     // Quietly, and slower. A dropped connection is not worth a red toast
