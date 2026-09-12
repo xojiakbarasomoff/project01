@@ -669,6 +669,7 @@ function closeThread() {
   document.getElementById("chatWorkspace").classList.remove("open");
   document.body.classList.remove("chat-open");
   markSelectedRow();
+  if (!document.getElementById("tab-chats").hidden) writeLocation("chats", null);
 }
 
 function renderThread(detail) {
@@ -777,6 +778,7 @@ async function openThread(id, options = {}) {
   }
 
   THREAD_SIGNATURE = JSON.stringify([detail.messages.map((m) => m.id), detail.conversation.is_bot_enabled]);
+  writeLocation("chats", id);
   document.getElementById("threadPanel").hidden = false;
   // The class is what turns the workspace into two columns. Set here rather
   // than in the stylesheet on #threadPanel:not([hidden]), so that a browser
@@ -1147,25 +1149,56 @@ const LOADERS = {
   staff: loadStaff,
 };
 
-document.getElementById("tabs").addEventListener("click", (e) => {
-  const button = e.target.closest("button[data-tab]");
-  if (!button) return;
+// --- where the operator is, kept in the address bar -----------------------
+//
+// "#chats", or "#chats/<conversation id>" with a conversation open. Reloading
+// the page used to drop the operator back on "Bugun" every time, and on the
+// conversations screen -- which the clinic reloads more than any other -- that
+// meant finding the tab and the patient again after every refresh. Kept in the
+// hash rather than in storage so it also survives being bookmarked or pasted
+// to a colleague, and so two tabs can sit on two different screens.
+//
+// replaceState, not a new history entry per click: the back button should
+// leave the dashboard, not walk back through every tab visited.
+function writeLocation(tab, chatId) {
+  const hash = "#" + tab + (chatId ? "/" + chatId : "");
+  if (window.location.hash !== hash) history.replaceState(null, "", hash);
+}
+
+function readLocation() {
+  const [tab, chatId] = window.location.hash.replace(/^#/, "").split("/");
+  return { tab: tab || null, chatId: chatId || null };
+}
+
+// A tab the operator can actually open: it exists, and their role has not hidden it.
+function tabButton(tab) {
+  const button = tab && document.querySelector(`#tabs button[data-tab="${CSS.escape(tab)}"]`);
+  return button && !button.hidden && LOADERS[tab] ? button : null;
+}
+
+function showTab(tab) {
+  const button = tabButton(tab) || tabButton("today");
+  const name = button.dataset.tab;
   for (const b of document.querySelectorAll("#tabs button")) {
     b.setAttribute("aria-selected", String(b === button));
   }
   for (const s of document.querySelectorAll("main section")) {
-    s.hidden = s.id !== "tab-" + button.dataset.tab;
+    s.hidden = s.id !== "tab-" + name;
   }
   // The one-screenful layout belongs to the conversations tab; every other
   // tab is an ordinary scrolling page and wants its bottom padding back.
-  document.body.classList.toggle(
-    "chat-open",
-    button.dataset.tab === "chats" && CURRENT_CHAT !== null,
-  );
-  LOADERS[button.dataset.tab]().catch((err) => toast(err.message, true));
+  document.body.classList.toggle("chat-open", name === "chats" && CURRENT_CHAT !== null);
+  writeLocation(name, name === "chats" ? CURRENT_CHAT : null);
   // Live refresh belongs to the conversations tab alone.
-  if (button.dataset.tab === "chats") scheduleChatPoll();
+  if (name === "chats") scheduleChatPoll();
   else stopChatPolling();
+  return LOADERS[name]();
+}
+
+document.getElementById("tabs").addEventListener("click", (e) => {
+  const button = e.target.closest("button[data-tab]");
+  if (!button) return;
+  showTab(button.dataset.tab).catch((err) => toast(err.message, true));
 });
 
 document.getElementById("staffForm").addEventListener("submit", async (e) => {
@@ -1196,7 +1229,16 @@ document.getElementById("staffForm").addEventListener("submit", async (e) => {
     applyPermissions();
     await loadViews();
     document.getElementById("whoami").textContent = `${me.name} · ${me.role} · ${me.tenant_name}`;
-    await LOADERS.today();
+    // Back where the operator was before the reload. Permissions are applied
+    // first, so a link to a tab this role cannot open lands on "Bugun" rather
+    // than on a screen it would only be refused.
+    const where = readLocation();
+    await showTab(where.tab);
+    if (where.tab === "chats" && where.chatId) {
+      // The conversation may be gone, or belong to another clinic's link. Not
+      // worth an error: the list is on screen, so the operator simply picks.
+      await openThread(where.chatId).catch(() => closeThread());
+    }
   } catch (err) {
     toast(err.message, true);
   }
