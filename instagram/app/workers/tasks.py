@@ -49,6 +49,7 @@ from app.services.debounce import (
     restore_batch,
 )
 from app.services.delivery import send_reply
+from app.services.profile import ensure_instagram_username
 from app.services.reminders import send_due_reminders
 from app.services.sheets import (
     AppointmentRow,
@@ -444,13 +445,48 @@ async def verify_channel_webhooks(
         )
 
 
+async def resolve_username(
+    ctx: dict[str, Any],
+    tenant_id: str,
+    channel_id: str,
+    user_id: str,
+    *,
+    session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]] = db_session,
+) -> None:
+    """ARQ job: put the patient's Instagram handle on their row, once.
+
+    Its own job rather than a step inside process_inbound_message, for two
+    reasons. A patient who writes while the assistant is switched off never
+    reaches that job at all -- and those are exactly the conversations an
+    operator is about to answer by hand, so they are the ones that most need
+    a name on them. And a lookup against Meta has no business sitting on the
+    path that answers a patient: it is slower than the reply is allowed to
+    be, and it is allowed to fail, which the reply is not.
+
+    Enqueued on every inbound message and cheap on all but the first: a
+    patient who already has a handle is one SELECT and nothing else.
+    """
+    token = set_current_tenant(uuid.UUID(tenant_id))
+    try:
+        async with session_factory() as session:
+            resolved = await ensure_instagram_username(
+                session,
+                channel_id=uuid.UUID(channel_id),
+                user_id=uuid.UUID(user_id),
+            )
+            if resolved is not None:
+                await session.commit()
+    finally:
+        reset_current_tenant(token)
+
+
 # The worker is a separate process from the web app, so it needs its own
 # handler installed -- app.main's call never runs here.
 configure_logging()
 
 
 class WorkerSettings:
-    functions = [process_inbound_message, fire_debounce_window]
+    functions = [process_inbound_message, fire_debounce_window, resolve_username]
     # Named here as well as in _MAX_ATTEMPTS so the retry ladder in
     # fire_debounce_window and arq's own limit cannot drift apart.
     max_tries = _MAX_ATTEMPTS

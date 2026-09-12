@@ -163,6 +163,12 @@
           <button id="botToggle" class="act" hidden></button>
         </div>
       </div>
+      <div class="row" style="margin:10px 0;gap:6px;align-items:center">
+        <input id="chatSearch" type="search" placeholder="Username bo'yicha qidirish — masalan asomov"
+               autocomplete="off" style="flex:1;min-width:200px">
+        <button id="chatSearchClear" class="act" hidden>Tozalash</button>
+        <span id="chatSearchHint" class="muted"></span>
+      </div>
       <div class="row" id="views-conversations" style="margin-bottom:10px;gap:6px;flex-wrap:wrap"></div>
       <div class="scroll"><table>
         <thead><tr><th>Bemor</th><th>Kanal</th><th>Oxirgi xabar</th><th>Bot</th><th></th></tr></thead>
@@ -477,6 +483,14 @@ async function loadBotSwitch() {
   renderBotSwitch();
 }
 
+document.getElementById("chatSearch").addEventListener("input", (e) => onChatSearch(e.target.value));
+document.getElementById("chatSearchClear").addEventListener("click", () => {
+  const box = document.getElementById("chatSearch");
+  box.value = "";
+  onChatSearch("");
+  box.focus();
+});
+
 document.getElementById("botToggle").addEventListener("click", async () => {
   const turningOff = BOT_REPLIES_ENABLED;
   // Asked before turning it off, never before turning it back on: leaving
@@ -492,12 +506,43 @@ document.getElementById("botToggle").addEventListener("click", async () => {
   }
 });
 
+// What to call a patient, in the order an operator recognises them by. The
+// platform id is last and is a fallback, not a label: "17841467434701445" is
+// what this column used to show for everybody, and it identified nobody.
+function patientLabel(c) {
+  if (c.patient_username) return "@" + c.patient_username;
+  if (c.patient_name) return c.patient_name;
+  return c.patient_external_id || "—";
+}
+
+// The search runs on the server (see the `q` parameter), because the list is
+// capped: filtering the rows already on screen would search the newest fifty
+// conversations and miss the patient who wrote last week -- the one somebody
+// is actually looking for.
+let CHAT_SEARCH = "";
+let CHAT_SEARCH_TIMER = null;
+
+function onChatSearch(value) {
+  CHAT_SEARCH = value.trim();
+  document.getElementById("chatSearchClear").hidden = !CHAT_SEARCH;
+  // Typed, not submitted: waiting a beat turns "asomov" into one request
+  // instead of six.
+  clearTimeout(CHAT_SEARCH_TIMER);
+  CHAT_SEARCH_TIMER = setTimeout(loadChats, 250);
+}
+
 async function loadChats() {
   await loadBotSwitch();
-  const rows = await api("/conversations?" + new URLSearchParams(LIST_PARAMS.conversations));
+  const params = new URLSearchParams(LIST_PARAMS.conversations);
+  if (CHAT_SEARCH) params.set("q", CHAT_SEARCH);
+  const rows = await api("/conversations?" + params);
+  document.getElementById("chatSearchHint").textContent =
+    CHAT_SEARCH ? `"${CHAT_SEARCH}" bo'yicha ${rows.length} ta suhbat` : "";
   fill("chatRows", rows.map((c) =>
     el("tr", {},
-      el("td", {}, c.patient_name || c.patient_external_id),
+      el("td", {}, patientLabel(c), c.patient_name && c.patient_username
+        ? el("small", { class: "muted" }, el("br"), c.patient_name)
+        : null),
       el("td", {}, el("span", { class: "pill " + c.channel }, c.channel || "—")),
       el("td", {}, c.last_message_preview || "—", el("br"), el("small", { class: "muted" }, c.last_message_at ? localDateTime(c.last_message_at) : "")),
       el("td", {}, el("span", { class: "pill " + (c.is_bot_enabled ? "ok" : "bad") }, c.is_bot_enabled ? "yoqilgan" : "operatorda")),
@@ -508,7 +553,10 @@ async function loadChats() {
           : null))
     )
   ));
-  if (!rows.length) fill("chatRows", [el("tr", {}, el("td", { colspan: "5", class: "muted" }, "Hali suhbat yo'q"))]);
+  if (!rows.length) {
+    fill("chatRows", [el("tr", {}, el("td", { colspan: "5", class: "muted" },
+      CHAT_SEARCH ? `"${CHAT_SEARCH}" bo'yicha hech nima topilmadi` : "Hali suhbat yo'q"))]);
+  }
 }
 
 async function toggleBot(id, enabled) {
@@ -525,7 +573,7 @@ async function openThread(id) {
   const detail = await api(`/conversations/${id}`);
   document.getElementById("threadPanel").hidden = false;
   document.getElementById("threadTitle").textContent =
-    (detail.conversation.patient_name || detail.conversation.patient_external_id) + " — " + detail.conversation.channel;
+    patientLabel(detail.conversation) + " — " + detail.conversation.channel;
   document.getElementById("thread").replaceChildren(
     ...detail.messages.map((m) =>
       el("div", { class: "msg " + m.sender }, m.content, el("small", {}, m.sender + " · " + localDateTime(m.created_at)))

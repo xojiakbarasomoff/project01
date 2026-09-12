@@ -32,6 +32,7 @@ from app.models.channel import Channel
 from app.services.conversation import register_inbound_message
 from app.services.debounce import handle_inbound_message
 from app.services.idempotency import claim_event
+from app.services.profile import remember_username
 from app.services.tenant_resolution import ResolvedChannel, bot_replies_enabled, resolve_channel
 
 logger = logging.getLogger(__name__)
@@ -51,6 +52,11 @@ class TelegramChat(BaseModel):
 class TelegramUser(BaseModel):
     id: int
     is_bot: bool = False
+    # Telegram hands the handle over with the message, so this channel needs
+    # no lookup at all -- unlike Instagram, which has to be asked (see
+    # app.services.profile). Optional because a Telegram account need not
+    # have one.
+    username: str | None = None
 
 
 class TelegramMessage(BaseModel):
@@ -249,6 +255,11 @@ async def _handle_update(
         text=message.text,
         reply_context=reply_context,
     )
+    # Free, and before the early returns for the same reason the Instagram
+    # webhook enqueues its lookup there: a conversation an operator answers
+    # by hand still needs a name on it in the dashboard.
+    if message.from_ is not None:
+        await remember_username(session, user_id=inbound.user_id, username=message.from_.username)
     await session.commit()
 
     if not inbound.is_bot_enabled:

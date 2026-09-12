@@ -10,7 +10,7 @@ import uuid
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.admin.deps import require_patient_access, verify_csrf_header
@@ -103,6 +103,7 @@ async def _summaries(
                 status=conversation.status,
                 is_bot_enabled=conversation.is_bot_enabled,
                 patient_name=user.name if user is not None else None,
+                patient_username=user.username if user is not None else None,
                 patient_external_id=user.external_id if user is not None else "",
                 channel=channel.type if channel is not None else "",
                 last_message_at=last.created_at if last is not None else None,
@@ -122,6 +123,7 @@ async def list_conversations(
     session: AsyncSession = Depends(get_db_session),
     status_filter: str | None = Query(default=None, alias="status"),
     only_taken_over: bool = Query(default=False),
+    q: str | None = Query(default=None, max_length=100),
     limit: int = Query(default=50, ge=1, le=200),
 ) -> list[ConversationSummary]:
     stmt = select(Conversation).where(Conversation.tenant_id == get_current_tenant())
@@ -129,6 +131,25 @@ async def list_conversations(
         stmt = stmt.where(Conversation.status == status_filter)
     if only_taken_over:
         stmt = stmt.where(Conversation.is_bot_enabled.is_(False))
+    if q and q.strip():
+        # Matched in the database rather than in the dashboard, because the
+        # list is capped at `limit`: filtering what was already fetched would
+        # search the most recent 50 conversations and quietly miss the patient
+        # who wrote last week -- which is the one somebody is searching for.
+        #
+        # The handle first, since that is what the operator is typing, then
+        # the display name, then the platform id: an operator who has an id
+        # from somewhere else can still paste it. The leading "@" people type
+        # out of habit is stripped, and matching is case-insensitive because
+        # Instagram handles are lowercase and nobody types them that way.
+        needle = f"%{q.strip().lstrip('@').lower()}%"
+        stmt = stmt.join(User, User.id == Conversation.user_id).where(
+            or_(
+                func.lower(User.username).like(needle),
+                func.lower(User.name).like(needle),
+                func.lower(User.external_id).like(needle),
+            )
+        )
     stmt = stmt.order_by(Conversation.updated_at.desc()).limit(limit)
 
     conversations = list((await session.execute(stmt)).scalars())

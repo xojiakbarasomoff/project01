@@ -51,6 +51,10 @@ class ConversationSummary(BaseModel):
     status: str
     is_bot_enabled: bool
     patient_name: str | None
+    # The handle the dashboard labels this conversation with. None until the
+    # lookup lands (app.services.profile), which is why patient_external_id
+    # is still sent: it is the fallback, not the label.
+    patient_username: str | None
     patient_external_id: str
     channel: str
     last_message_at: datetime | None

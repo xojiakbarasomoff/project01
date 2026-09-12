@@ -77,6 +77,16 @@ class InstagramClient(ABC):
         Raises InstagramSendError on any non-2xx response.
         """
 
+    @abstractmethod
+    async def fetch_username(self, *, access_token: str, igsid: str) -> str | None:
+        """The patient's Instagram handle, or None if it cannot be had.
+
+        None rather than an exception, for every way this fails: the account
+        has no username, the permission was not granted, the id is stale, Meta
+        is having an afternoon. None of those is a reason to drop a patient's
+        message, so the caller carries on without one.
+        """
+
 
 class GraphAPIInstagramClient(InstagramClient):
     """Real implementation: POSTs to the Graph API's /me/messages endpoint."""
@@ -117,6 +127,37 @@ class GraphAPIInstagramClient(InstagramClient):
                 },
             )
             raise InstagramSendError(f"Instagram send failed with status {response.status_code}")
+
+    async def fetch_username(self, *, access_token: str, igsid: str) -> str | None:
+        # The sender's own node, which the messaging permission grants for
+        # anybody who has written to this account. "username" is the handle;
+        # "name" is the display name and is not what an operator searches by,
+        # so it is not asked for.
+        try:
+            response = await self._http.get(
+                f"/{igsid}",
+                params={"fields": "username", "access_token": access_token},
+            )
+        except httpx.HTTPError as exc:
+            logger.warning(
+                "instagram_username_unreachable",
+                extra={"igsid": igsid, "error": type(exc).__name__},
+            )
+            return None
+        if response.is_error:
+            # Logged at warning, not error: a missing username costs the
+            # dashboard a nicer label and costs the patient nothing, so this
+            # must never read as an outage in the logs.
+            logger.warning(
+                "instagram_username_failed",
+                extra={"igsid": igsid, "status_code": response.status_code},
+            )
+            return None
+        with suppress(ValueError):
+            username = response.json().get("username")
+            if isinstance(username, str) and username.strip():
+                return username.strip().lstrip("@")
+        return None
 
 
 @lru_cache

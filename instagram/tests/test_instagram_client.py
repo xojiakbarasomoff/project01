@@ -135,3 +135,73 @@ async def test_send_failure_logs_the_subcode_that_says_what_went_wrong(
     # request params back in the copy.
     assert "a-real-looking-token" not in caplog.text
     assert "fbtrace_id" not in caplog.text
+
+
+# --- fetching the sender's handle ---
+
+
+def _client_over(handler) -> GraphAPIInstagramClient:
+    client = GraphAPIInstagramClient()
+    client._http = httpx.AsyncClient(
+        base_url=client._http.base_url, transport=httpx.MockTransport(handler)
+    )
+    return client
+
+
+async def test_fetch_username_asks_the_senders_node_for_the_handle() -> None:
+    captured: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured.append(request)
+        return httpx.Response(200, json={"username": "asomov", "id": "9900112233445566"})
+
+    client = _client_over(handler)
+
+    username = await client.fetch_username(access_token="secret-token", igsid="9900112233445566")
+
+    assert username == "asomov"
+    [request] = captured
+    assert request.url.path.endswith("/9900112233445566")
+    assert request.url.params["fields"] == "username"
+    assert request.url.params["access_token"] == "secret-token"
+
+
+async def test_fetch_username_strips_an_at_sign_if_meta_sends_one() -> None:
+    client = _client_over(lambda request: httpx.Response(200, json={"username": " @asomov "}))
+
+    assert await client.fetch_username(access_token="t", igsid="1") == "asomov"
+
+
+@pytest.mark.parametrize(
+    "response",
+    [
+        # The permission was not granted, or the id is stale.
+        httpx.Response(400, json={"error": {"message": "Unsupported get request", "code": 100}}),
+        httpx.Response(403, json={"error": {"message": "Permissions error", "code": 10}}),
+        # Meta is having an afternoon.
+        httpx.Response(500, text="upstream"),
+        # A 200 with nothing useful in it: an account with no handle set.
+        httpx.Response(200, json={"id": "9900112233445566"}),
+        httpx.Response(200, json={"username": "   "}),
+        httpx.Response(200, text="not json at all"),
+    ],
+)
+async def test_a_handle_that_cannot_be_had_is_none_rather_than_an_error(
+    response: httpx.Response,
+) -> None:
+    """None, never an exception. This is called on the way to answering a
+    patient, and a nicer label in the dashboard is not worth dropping a
+    message for.
+    """
+    client = _client_over(lambda request: response)
+
+    assert await client.fetch_username(access_token="t", igsid="1") is None
+
+
+async def test_a_network_failure_is_also_just_a_missing_handle() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectError("no route to host")
+
+    client = _client_over(handler)
+
+    assert await client.fetch_username(access_token="t", igsid="1") is None

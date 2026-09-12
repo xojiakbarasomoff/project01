@@ -33,6 +33,15 @@ class User(Base):
     )
     external_id: Mapped[str] = mapped_column(String(255), nullable=False)
     name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    # The handle the patient is known by on their platform -- "asomov" on
+    # Instagram, the @name on Telegram -- without the @.
+    #
+    # The dashboard shows this instead of external_id, which is a number an
+    # operator has never seen and cannot match to a person. Nullable and
+    # staying that way: it is fetched after the fact (app.services.profile),
+    # the lookup can fail, and an Instagram account need not have one at all.
+    # A patient without a username is still a patient the clinic must see.
+    username: Mapped[str | None] = mapped_column(String(255), nullable=True)
     phone: Mapped[str | None] = mapped_column(String(50), nullable=True)
     # Whether this patient may use the bot's own admin commands. From the
     # Telegram side, and a different thing from Operator: an Operator logs

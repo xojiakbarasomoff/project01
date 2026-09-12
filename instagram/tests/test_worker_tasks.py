@@ -53,6 +53,11 @@ class FakeInstagramClient(InstagramClient):
     async def send_text(self, *, access_token: str, recipient_igsid: str, text: str) -> None:
         self.calls.append((access_token, recipient_igsid, text))
 
+    async def fetch_username(self, *, access_token: str, igsid: str) -> str | None:
+        # These tests are about answering a message, not labelling it. None
+        # is also the honest default: most lookups in production return one.
+        return None
+
 
 def _fake_adapter() -> tuple[InstagramAdapter, FakeInstagramClient]:
     """The *real* Instagram adapter over a fake transport.

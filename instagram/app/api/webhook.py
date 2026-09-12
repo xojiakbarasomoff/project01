@@ -191,6 +191,17 @@ async def _handle_event(
     )
     await session.commit()
 
+    # Before every early return below, because the conversations an operator
+    # answers by hand are exactly the ones that most need a name on them in
+    # the dashboard. Fire-and-forget: the job is cheap after the first
+    # message from a patient, and nothing about this request depends on it.
+    await pool.enqueue_job(
+        "resolve_username",
+        str(channel.tenant_id),
+        str(channel.channel_id),
+        str(inbound.user_id),
+    )
+
     if not inbound.is_bot_enabled:
         # An operator has taken this conversation over. The bot must not
         # answer on top of a human — the message is already recorded, which
