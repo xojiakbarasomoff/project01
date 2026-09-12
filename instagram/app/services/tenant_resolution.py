@@ -81,3 +81,26 @@ async def bot_replies_enabled(session: AsyncSession, tenant_id: uuid.UUID) -> bo
     if tenant is None:
         return True
     return bool(tenant.settings.get("bot_replies_enabled", True))
+
+
+async def clinic_rules(session: AsyncSession, tenant_id: uuid.UUID) -> list[str]:
+    """The clinic's own standing instructions, from tenants.settings.
+
+    The dashboard has had a box for these since the settings screen was
+    written, and until now nothing read it: an operator could type a rule,
+    press save, and watch the assistant carry on exactly as before. They are
+    also what an admin's Instagram command writes to, so the two ways of
+    setting one end up in the same place and either can undo the other.
+
+    Strings only, non-empty, in the order the clinic wrote them. A stored
+    value of the wrong shape is ignored rather than raised on -- this is read
+    on the path that answers a patient, and a malformed setting must not cost
+    somebody their reply.
+    """
+    tenant = await session.get(Tenant, tenant_id)
+    if tenant is None:
+        return []
+    raw = tenant.settings.get("strict_rules")
+    if not isinstance(raw, list):
+        return []
+    return [rule.strip() for rule in raw if isinstance(rule, str) and rule.strip()]

@@ -24,6 +24,7 @@ from app.core.db import get_db_session
 from app.core.queue import get_arq_pool
 from app.core.redaction import preview
 from app.core.tenant_context import reset_current_tenant, set_current_tenant
+from app.services.admin_commands import parse_rule
 from app.services.conversation import register_inbound_message
 from app.services.debounce import handle_inbound_message
 from app.services.idempotency import claim_event
@@ -201,6 +202,29 @@ async def _handle_event(
         str(channel.channel_id),
         str(inbound.user_id),
     )
+
+    # A rule the clinic's admin is setting by direct message. Only the cheap
+    # half of the decision happens here -- does the text start with the
+    # keyword -- because knowing *who* wrote it can need a call to Meta, and
+    # a webhook that waits on Meta is a webhook Meta retries. The job checks
+    # the sender and drops the message if they are not a nominated admin.
+    #
+    # Instead of the ordinary reply, not alongside it: a command is not a
+    # question, and answering "Aiadm1in: har doim shanba qabulini eslat" as
+    # though a patient had asked something would put a second message under
+    # every rule the admin sets. The cost is that somebody who is not an
+    # admin and typed the keyword exactly gets no reply -- the cheaper of the
+    # two mistakes, and it takes typing a keyword they have no reason to know.
+    if parse_rule(event.message.text, get_settings().admin_command_keyword) is not None:
+        await pool.enqueue_job(
+            "apply_admin_rule",
+            str(channel.tenant_id),
+            str(channel.channel_id),
+            str(inbound.user_id),
+            event.sender.id,
+            event.message.text,
+        )
+        return
 
     if not inbound.is_bot_enabled:
         # An operator has taken this conversation over. The bot must not

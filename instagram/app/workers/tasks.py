@@ -49,6 +49,8 @@ from app.services.debounce import (
     restore_batch,
 )
 from app.services.delivery import send_reply
+from app.services.admin_commands import add_rule, is_admin, parse_rule
+from app.services.knowledge_base import record_rule_in_knowledge_base
 from app.services.profile import ensure_instagram_username
 from app.services.reminders import send_due_reminders
 from app.services.sheets import (
@@ -445,6 +447,85 @@ async def verify_channel_webhooks(
         )
 
 
+async def apply_admin_rule(
+    ctx: dict[str, Any],
+    tenant_id: str,
+    channel_id: str,
+    user_id: str,
+    sender_external_id: str,
+    message_text: str,
+    *,
+    session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]] = db_session,
+    adapter: ChannelAdapter | None = None,
+) -> None:
+    """ARQ job: store a rule the clinic's admin sent by direct message.
+
+    The webhook decides only that this *looks* like an admin command -- the
+    message starts with the keyword -- and everything that costs anything
+    happens here: the handle is resolved if it is not known yet, the sender is
+    checked against the nominated admins, the rule is stored, and the admin is
+    told what the assistant now believes.
+
+    Verification lives here rather than in the webhook because it may need a
+    call to Meta to learn who is writing, and a webhook that waits on Meta is
+    a webhook Meta retries. A message that turns out not to be from an admin
+    is dropped with a log line and nothing else: whoever sent it already got
+    the ordinary reply, since the webhook queued that too.
+    """
+    settings = get_settings()
+    tenant_uuid = uuid.UUID(tenant_id)
+    rule = parse_rule(message_text, settings.admin_command_keyword)
+    if rule is None:
+        return
+
+    token = set_current_tenant(tenant_uuid)
+    try:
+        async with session_factory() as session:
+            username = await ensure_instagram_username(
+                session, channel_id=uuid.UUID(channel_id), user_id=uuid.UUID(user_id)
+            )
+            await session.commit()
+            if not is_admin(username, settings.admin_usernames):
+                logger.warning(
+                    "admin_rule_refused",
+                    extra={
+                        "tenant_id": tenant_id,
+                        "sender_external_id": sender_external_id,
+                        "username": username,
+                    },
+                )
+                return
+
+            rules = await add_rule(session, tenant_id=tenant_uuid, rule=rule)
+            # The rule is also written into the knowledge base, inactive, so
+            # that it is visible on the screen the clinic reads -- and never
+            # retrieved. An instruction sitting among the answers is an
+            # instruction a patient's question can land on, and "never say we
+            # do IVF" read out to somebody asking about IVF is worse than not
+            # showing it at all.
+            await record_rule_in_knowledge_base(session, rule=rule, position=len(rules))
+            await session.commit()
+
+            await send_reply(
+                session,
+                channel_id=uuid.UUID(channel_id),
+                recipient_external_id=sender_external_id,
+                text=(
+                    f"Qabul qilindi. Endi shu qoidaga amal qilaman:\n«{rule}»\n\n"
+                    f"Jami {len(rules)} ta qoida. Ularni dashboard → Sozlamalar "
+                    f"bo'limida ko'rish, tahrirlash yoki o'chirish mumkin."
+                ),
+                last_user_message_at=datetime.now(UTC),
+                adapter=adapter,
+            )
+            logger.info(
+                "admin_rule_applied",
+                extra={"tenant_id": tenant_id, "username": username, "rule_count": len(rules)},
+            )
+    finally:
+        reset_current_tenant(token)
+
+
 async def resolve_username(
     ctx: dict[str, Any],
     tenant_id: str,
@@ -486,7 +567,12 @@ configure_logging()
 
 
 class WorkerSettings:
-    functions = [process_inbound_message, fire_debounce_window, resolve_username]
+    functions = [
+        process_inbound_message,
+        fire_debounce_window,
+        resolve_username,
+        apply_admin_rule,
+    ]
     # Named here as well as in _MAX_ATTEMPTS so the retry ladder in
     # fire_debounce_window and arq's own limit cannot drift apart.
     max_tries = _MAX_ATTEMPTS

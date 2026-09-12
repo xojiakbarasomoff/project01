@@ -122,3 +122,43 @@ async def ingest_faqs(
             )
         results.append(row)
     return results
+
+
+# What the clinic's own rules are filed under in the knowledge base, so an
+# operator scanning the list can see at a glance that these are instructions
+# to the assistant rather than answers to a patient.
+RULE_CATEGORY = "Klinika qoidasi"
+
+
+async def record_rule_in_knowledge_base(
+    session: AsyncSession,
+    *,
+    rule: str,
+    position: int,
+    embedding_provider: EmbeddingProvider | None = None,
+) -> KnowledgeBase:
+    """Show a rule the admin set on the screen the clinic actually reads.
+
+    Inactive on purpose, and that is the whole design of this function.
+    KnowledgeBaseRepository.search() only ever returns active rows, so an
+    inactive one is visible in the dashboard's list -- marked "o'chirilgan"
+    -- and can never be retrieved for a patient. An instruction filed among
+    the answers is an instruction a question can land on, and "never say we
+    do IVF" read back to somebody asking about IVF is worse than not showing
+    the rule at all.
+
+    It is still embedded rather than stored with a dummy vector: the column
+    is not nullable, an operator may switch a row on from the dashboard, and
+    a row that is live with a meaningless vector would match arbitrary
+    questions -- which is the failure this whole week has been about.
+    """
+    provider = embedding_provider or get_embedding_provider()
+    [vector] = await provider.embed([rule])
+    return await KnowledgeBaseRepository(session).create(
+        question=f"Qoida {position}: {rule[:120]}",
+        answer=rule,
+        category=RULE_CATEGORY,
+        embedding=vector,
+        embedding_model=EMBEDDING_MODEL,
+        is_active=False,
+    )

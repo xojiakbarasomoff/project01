@@ -103,6 +103,25 @@ class Settings(BaseSettings):
     # working week, was not in the prompt at all.
     clinic_work_hours: str | None = Field(default=None, alias="CLINIC_WORK_HOURS")
 
+    # Instagram handles allowed to set the clinic's standing rules by direct
+    # message (see app.services.admin_commands). Comma-separated, "@" optional.
+    #
+    # Empty -- the default -- means nobody can, which is the right default for
+    # a feature whose whole surface is "somebody messages the clinic". A
+    # deployment that wants it names the handles, and a handle that changes
+    # hands is removed here rather than discovered later.
+    admin_instagram_usernames: str = Field(default="", alias="ADMIN_INSTAGRAM_USERNAMES")
+
+    # What an admin types in front of a rule. Configurable so a deployment can
+    # change it without shipping code -- but it is not a secret and must not
+    # be treated as one: it travels in plain text through Instagram, and this
+    # file's default is public. The handle list above is the actual gate.
+    admin_command_keyword: str = Field(default="Aiadm1in:", alias="ADMIN_COMMAND_KEYWORD")
+
+    @property
+    def admin_usernames(self) -> list[str]:
+        return [name.strip() for name in self.admin_instagram_usernames.split(",") if name.strip()]
+
     # How long to wait for a patient to finish typing before answering. The
     # wait exists so a question split across bubbles ("Salom" / "narxi
     # qancha?") gets one answer instead of one per bubble -- but it is dead
@@ -235,6 +254,8 @@ class Settings(BaseSettings):
         "clinic_phone_numbers",
         "clinic_address",
         "clinic_work_hours",
+        "admin_instagram_usernames",
+        "admin_command_keyword",
         "seed_faqs_from",
         "seed_doctors_from",
         "public_base_url",
