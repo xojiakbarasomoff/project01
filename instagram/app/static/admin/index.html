@@ -75,6 +75,26 @@
   #toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 4px; font-size: 14px; z-index: 50; }
   #toast[hidden] { display: none; }
   #toast.bad { background: var(--danger); color: #fff; }
+  /* The conversations screen is two columns: the list, and the thread beside
+     it. The thread used to sit under the table, so opening one meant
+     scrolling past every other conversation to read it and scrolling back to
+     pick the next -- on the screen the clinic keeps open all day. */
+  .chat-workspace { display: grid; gap: 18px; align-items: start; }
+  .chat-workspace.open { grid-template-columns: minmax(0, 1fr) minmax(0, 430px); }
+  /* Sticky, so the thread stays put while the list scrolls behind it, and
+     capped to the viewport so a long transcript scrolls inside its own panel
+     rather than pushing the page down again. */
+  .chat-workspace.open #threadPanel { position: sticky; top: 14px; max-height: calc(100vh - 34px); display: flex; flex-direction: column; }
+  .chat-workspace.open #threadPanel .thread { flex: 1 1 auto; max-height: none; min-height: 120px; }
+  /* Under 1000px there is no room for two columns, so it stacks -- and
+     openThread scrolls it into view, which is the whole of the complaint on
+     a narrow screen. */
+  @media (max-width: 1000px) { .chat-workspace.open { grid-template-columns: minmax(0, 1fr); } }
+  /* Which row is being read. Without it, two clicks in a row look identical. */
+  tr.sel td { background: var(--accent-soft); }
+  tr.sel td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+  tbody tr.clickable { cursor: pointer; }
+  tbody tr.clickable:hover td { background: var(--panel-2); }
   .thread { max-height: 340px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 4px; }
   .msg { max-width: 78%; padding: 8px 11px; border-radius: 8px; font-size: 14px; white-space: pre-wrap; }
   .msg.patient { background: var(--panel-2); align-self: flex-start; }
@@ -155,6 +175,7 @@
   </section>
 
   <section id="tab-chats" hidden>
+    <div class="chat-workspace" id="chatWorkspace">
     <div class="panel">
       <div class="row" style="justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <h2 style="margin:0">Suhbatlar</h2>
@@ -176,13 +197,17 @@
       </table></div>
     </div>
     <div class="panel" id="threadPanel" hidden>
-      <h2 id="threadTitle">Suhbat</h2>
-      <div class="thread" id="thread"></div>
+      <div class="row" style="justify-content:space-between;align-items:flex-start;gap:10px">
+        <h2 id="threadTitle" style="margin:0">Suhbat</h2>
+        <button id="threadClose" class="act" title="Yopish (Esc)" aria-label="Yopish">✕</button>
+      </div>
+      <div class="thread" id="thread" style="margin-top:12px"></div>
       <form id="replyForm" class="row" style="margin-top:14px">
         <input id="replyText" placeholder="Javob yozing…" required style="flex:1">
         <button class="act primary" type="submit">Yuborish</button>
       </form>
       <p class="muted" id="replyHint"></p>
+    </div>
     </div>
   </section>
 
@@ -539,7 +564,14 @@ async function loadChats() {
   document.getElementById("chatSearchHint").textContent =
     CHAT_SEARCH ? `"${CHAT_SEARCH}" bo'yicha ${rows.length} ta suhbat` : "";
   fill("chatRows", rows.map((c) =>
-    el("tr", {},
+    // The whole row opens the conversation, not only the button: the button
+    // is a 60px target in a row an operator is already pointing at. Clicks
+    // that land on a control are left to that control.
+    el("tr", {
+      "data-id": c.id,
+      class: "clickable" + (CURRENT_CHAT === c.id ? " sel" : ""),
+      onclick: (e) => { if (!e.target.closest("button, select, a, input")) openThread(c.id); },
+    },
       el("td", {}, patientLabel(c), c.patient_name && c.patient_username
         ? el("small", { class: "muted" }, el("br"), c.patient_name)
         : null),
@@ -568,10 +600,30 @@ async function toggleBot(id, enabled) {
   } catch (err) { toast(err.message, true); }
 }
 
+// Marks the row being read, so that two clicks in a row are told apart and
+// an operator coming back to the screen can see where they were.
+function markSelectedRow() {
+  for (const tr of document.querySelectorAll("#chatRows tr")) {
+    tr.classList.toggle("sel", CURRENT_CHAT !== null && tr.dataset.id === CURRENT_CHAT);
+  }
+}
+
+function closeThread() {
+  CURRENT_CHAT = null;
+  document.getElementById("threadPanel").hidden = true;
+  document.getElementById("chatWorkspace").classList.remove("open");
+  markSelectedRow();
+}
+
 async function openThread(id) {
   CURRENT_CHAT = id;
   const detail = await api(`/conversations/${id}`);
   document.getElementById("threadPanel").hidden = false;
+  // The class is what turns the workspace into two columns. Set here rather
+  // than in the stylesheet on #threadPanel:not([hidden]), so that a browser
+  // without :has() still collapses the list back to full width on close.
+  document.getElementById("chatWorkspace").classList.add("open");
+  markSelectedRow();
   document.getElementById("threadTitle").textContent =
     patientLabel(detail.conversation) + " — " + detail.conversation.channel;
   document.getElementById("thread").replaceChildren(
@@ -583,7 +635,20 @@ async function openThread(id) {
     ? "Bot hali yoqilgan — javob yozsangiz ham bot javob berishda davom etadi."
     : "";
   document.getElementById("thread").scrollTop = 1e9;
+  // Only where the two columns did not fit and the panel is genuinely below
+  // the list. On a wide screen it is already beside the row, and scrolling
+  // would move the page for no reason.
+  if (window.matchMedia("(max-width: 1000px)").matches) {
+    document.getElementById("threadPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 }
+
+document.getElementById("threadClose").addEventListener("click", closeThread);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && CURRENT_CHAT !== null && !document.getElementById("tab-chats").hidden) {
+    closeThread();
+  }
+});
 
 // --- leads, doctors, faq, settings ---------------------------------------
 
