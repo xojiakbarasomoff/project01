@@ -126,7 +126,31 @@ async def list_conversations(
     q: str | None = Query(default=None, max_length=100),
     limit: int = Query(default=50, ge=1, le=200),
 ) -> list[ConversationSummary]:
-    stmt = select(Conversation).where(Conversation.tenant_id == get_current_tenant())
+    tenant_id = get_current_tenant()
+    # When each conversation last heard anything, from either side. The list
+    # used to be ordered by conversations.updated_at, which nothing touches
+    # when a message arrives -- only toggling the bot or closing a thread
+    # moves it -- so a patient writing right now could sit halfway down the
+    # screen under people who wrote yesterday. The inbox is read top-down;
+    # the newest message is what belongs at the top.
+    #
+    # Scoped to this tenant's conversations inside the aggregate, so the
+    # grouping never walks another clinic's messages.
+    last_activity = (
+        select(
+            Message.conversation_id.label("conversation_id"),
+            func.max(Message.created_at).label("last_at"),
+        )
+        .join(Conversation, Conversation.id == Message.conversation_id)
+        .where(Conversation.tenant_id == tenant_id)
+        .group_by(Message.conversation_id)
+        .subquery()
+    )
+    stmt = (
+        select(Conversation)
+        .outerjoin(last_activity, last_activity.c.conversation_id == Conversation.id)
+        .where(Conversation.tenant_id == tenant_id)
+    )
     if status_filter:
         stmt = stmt.where(Conversation.status == status_filter)
     if only_taken_over:
@@ -150,7 +174,14 @@ async def list_conversations(
                 func.lower(User.external_id).like(needle),
             )
         )
-    stmt = stmt.order_by(Conversation.updated_at.desc()).limit(limit)
+    # A conversation with no messages yet sorts by when it was opened, and
+    # the id breaks exact ties so a refresh never shuffles two rows that
+    # arrived in the same instant -- the dashboard polls this, and rows that
+    # swap places on every poll read as the screen twitching.
+    stmt = stmt.order_by(
+        func.coalesce(last_activity.c.last_at, Conversation.created_at).desc(),
+        Conversation.id.desc(),
+    ).limit(limit)
 
     conversations = list((await session.execute(stmt)).scalars())
     return await _summaries(session, conversations)

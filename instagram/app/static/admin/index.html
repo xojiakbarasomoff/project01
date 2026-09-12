@@ -117,6 +117,10 @@
   /* Which row is being read. Without it, two clicks in a row look identical. */
   tr.sel td { background: var(--accent-soft); }
   tr.sel td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+  /* A row that moved because a patient just wrote. Fades out on its own, so
+     it draws the eye once and then gets out of the way. */
+  @keyframes fresh-row { from { background: var(--accent-soft); } to { background: transparent; } }
+  tr.fresh:not(.sel) td { animation: fresh-row 2.5s ease-out; }
   tbody tr.clickable { cursor: pointer; }
   tbody tr.clickable:hover td { background: var(--panel-2); }
   .thread { max-height: 340px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 4px; }
@@ -204,6 +208,7 @@
       <div class="row" style="justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <h2 style="margin:0">Suhbatlar</h2>
         <div class="row" style="gap:8px;align-items:center">
+          <span id="chatLiveHint" class="muted" title="Suhbatlar har 5 soniyada o'zi yangilanadi"></span>
           <span id="botStatePill" class="pill">—</span>
           <button id="botToggle" class="act" hidden></button>
         </div>
@@ -580,20 +585,46 @@ function onChatSearch(value) {
   CHAT_SEARCH_TIMER = setTimeout(loadChats, 250);
 }
 
-async function loadChats() {
+// Every list request is numbered, and only the newest one may draw. The poll
+// and the search box both call loadChats, so without this a poll that left
+// before the operator typed "asomov" can land after the search and put the
+// unfiltered list back on screen.
+let CHATS_SEQ = 0;
+// What was last drawn, so a poll that brings back the same rows draws
+// nothing. Redrawing identical rows every five seconds is what makes a live
+// list flicker, lose the button under the cursor, and drop a text selection.
+let CHATS_SIGNATURE = "";
+// When each conversation last heard anything, as of the previous draw, so a
+// row that moves because a patient just wrote can be marked as new.
+let CHATS_LAST_SEEN = new Map();
+
+async function loadChats(options = {}) {
+  const seq = ++CHATS_SEQ;
   await loadBotSwitch();
   const params = new URLSearchParams(LIST_PARAMS.conversations);
   if (CHAT_SEARCH) params.set("q", CHAT_SEARCH);
   const rows = await api("/conversations?" + params);
+  if (seq !== CHATS_SEQ) return;
   document.getElementById("chatSearchHint").textContent =
     CHAT_SEARCH ? `"${CHAT_SEARCH}" bo'yicha ${rows.length} ta suhbat` : "";
+
+  const signature = JSON.stringify([rows, CURRENT_CHAT, CHAT_SEARCH]);
+  if (options.quiet && signature === CHATS_SIGNATURE) return;
+  const previouslySeen = CHATS_LAST_SEEN;
+  CHATS_SIGNATURE = signature;
+  CHATS_LAST_SEEN = new Map(rows.map((c) => [c.id, c.last_message_at]));
+  // Only a poll marks rows as new. On the first draw, or after a search,
+  // everything is "new" to the screen and highlighting all of it says nothing.
+  const isFresh = (c) =>
+    options.quiet && c.last_message_at && previouslySeen.get(c.id) !== c.last_message_at;
+
   fill("chatRows", rows.map((c) =>
     // The whole row opens the conversation, not only the button: the button
     // is a 60px target in a row an operator is already pointing at. Clicks
     // that land on a control are left to that control.
     el("tr", {
       "data-id": c.id,
-      class: "clickable" + (CURRENT_CHAT === c.id ? " sel" : ""),
+      class: "clickable" + (CURRENT_CHAT === c.id ? " sel" : "") + (isFresh(c) ? " fresh" : ""),
       onclick: (e) => { if (!e.target.closest("button, select, a, input")) openThread(c.id); },
     },
       el("td", {}, patientLabel(c), c.patient_name && c.patient_username
@@ -640,16 +671,7 @@ function closeThread() {
   markSelectedRow();
 }
 
-async function openThread(id) {
-  CURRENT_CHAT = id;
-  const detail = await api(`/conversations/${id}`);
-  document.getElementById("threadPanel").hidden = false;
-  // The class is what turns the workspace into two columns. Set here rather
-  // than in the stylesheet on #threadPanel:not([hidden]), so that a browser
-  // without :has() still collapses the list back to full width on close.
-  document.getElementById("chatWorkspace").classList.add("open");
-  document.body.classList.add("chat-open");
-  markSelectedRow();
+function renderThread(detail) {
   document.getElementById("threadTitle").textContent =
     patientLabel(detail.conversation) + " — " + detail.conversation.channel;
   document.getElementById("thread").replaceChildren(
@@ -660,7 +682,108 @@ async function openThread(id) {
   document.getElementById("replyHint").textContent = detail.conversation.is_bot_enabled
     ? "Bot hali yoqilgan — javob yozsangiz ham bot javob berishda davom etadi."
     : "";
-  document.getElementById("thread").scrollTop = 1e9;
+}
+
+// --- the conversations tab keeps itself current --------------------------
+//
+// Every five seconds while the tab is open and the browser tab is in front,
+// the list and the open conversation are fetched again; nothing is redrawn
+// unless something changed. It is a chained timeout rather than setInterval,
+// so a slow response delays the next request instead of stacking a second
+// one behind it -- and it stops outright when nobody can see it: a dashboard
+// left open in a background tab overnight should not be asking the server
+// for the inbox 17,000 times.
+const CHAT_POLL_MS = 5000;
+const CHAT_POLL_MAX_MS = 60000;
+let CHAT_POLL_TIMER = null;
+let CHAT_POLL_BUSY = false;
+let CHAT_POLL_FAILURES = 0;
+
+function chatPollingWanted() {
+  return !document.getElementById("tab-chats").hidden && document.visibilityState === "visible";
+}
+
+function stopChatPolling() {
+  clearTimeout(CHAT_POLL_TIMER);
+  CHAT_POLL_TIMER = null;
+}
+
+function scheduleChatPoll(delay = CHAT_POLL_MS) {
+  stopChatPolling();
+  if (chatPollingWanted()) CHAT_POLL_TIMER = setTimeout(pollChats, delay);
+}
+
+async function pollChats() {
+  if (!chatPollingWanted()) return stopChatPolling();
+  if (CHAT_POLL_BUSY) return scheduleChatPoll();
+  CHAT_POLL_BUSY = true;
+  const hint = document.getElementById("chatLiveHint");
+  try {
+    await loadChats({ quiet: true });
+    if (CURRENT_CHAT !== null) await openThread(CURRENT_CHAT, { quiet: true });
+    CHAT_POLL_FAILURES = 0;
+    hint.textContent = "● jonli · " + new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    hint.style.color = "";
+  } catch (err) {
+    // Quietly, and slower. A dropped connection is not worth a red toast
+    // every five seconds, and hammering a server that is already struggling
+    // helps nobody: 10s, 20s, 40s, then once a minute until it answers.
+    CHAT_POLL_FAILURES += 1;
+    hint.textContent = "aloqa uzildi — qayta urinilmoqda";
+    hint.style.color = "var(--danger)";
+  } finally {
+    CHAT_POLL_BUSY = false;
+    scheduleChatPoll(Math.min(CHAT_POLL_MS * 2 ** CHAT_POLL_FAILURES, CHAT_POLL_MAX_MS));
+  }
+}
+
+// Back in front after being hidden: catch up now rather than five seconds
+// from now, since that is exactly when something is likely to have arrived.
+document.addEventListener("visibilitychange", () => {
+  if (chatPollingWanted()) pollChats();
+  else stopChatPolling();
+});
+
+let THREAD_SEQ = 0;
+let THREAD_SIGNATURE = "";
+
+async function openThread(id, options = {}) {
+  const seq = ++THREAD_SEQ;
+  if (!options.quiet) {
+    CURRENT_CHAT = id;
+    THREAD_SIGNATURE = "";
+  }
+  const detail = await api(`/conversations/${id}`);
+  // The operator may have opened another conversation, or closed this one,
+  // while the request was out. A late answer for the old one must not paint
+  // over what they are now looking at.
+  if (seq !== THREAD_SEQ || CURRENT_CHAT !== id) return;
+
+  const thread = document.getElementById("thread");
+  if (options.quiet) {
+    const signature = JSON.stringify([detail.messages.map((m) => m.id), detail.conversation.is_bot_enabled]);
+    if (signature === THREAD_SIGNATURE) return;
+    THREAD_SIGNATURE = signature;
+    // Follow the conversation only if the operator was already at the end of
+    // it. Somebody scrolled up reading an earlier message must not be yanked
+    // back down every time the patient types.
+    const atBottom = thread.scrollHeight - thread.scrollTop - thread.clientHeight < 40;
+    const keepTop = thread.scrollTop;
+    renderThread(detail);
+    thread.scrollTop = atBottom ? thread.scrollHeight : keepTop;
+    return;
+  }
+
+  THREAD_SIGNATURE = JSON.stringify([detail.messages.map((m) => m.id), detail.conversation.is_bot_enabled]);
+  document.getElementById("threadPanel").hidden = false;
+  // The class is what turns the workspace into two columns. Set here rather
+  // than in the stylesheet on #threadPanel:not([hidden]), so that a browser
+  // without :has() still collapses the list back to full width on close.
+  document.getElementById("chatWorkspace").classList.add("open");
+  document.body.classList.add("chat-open");
+  markSelectedRow();
+  renderThread(detail);
+  thread.scrollTop = thread.scrollHeight;
   // Only where the two columns did not fit and the panel is genuinely below
   // the list. On a wide screen it is already beside the row, and scrolling
   // would move the page for no reason.
@@ -1038,6 +1161,9 @@ document.getElementById("tabs").addEventListener("click", (e) => {
     button.dataset.tab === "chats" && CURRENT_CHAT !== null,
   );
   LOADERS[button.dataset.tab]().catch((err) => toast(err.message, true));
+  // Live refresh belongs to the conversations tab alone.
+  if (button.dataset.tab === "chats") scheduleChatPoll();
+  else stopChatPolling();
 });
 
 document.getElementById("staffForm").addEventListener("submit", async (e) => {
