@@ -12,6 +12,7 @@ from app.repositories.doctor import DoctorRepository
 from app.repositories.knowledge_base import KnowledgeBaseMatch
 from app.services.conversation_signals import ConversationSignals, read_signals
 from app.services.conversation_signals import render as render_signals
+from app.services.question_shape import names_nothing_to_price
 from app.services.guardrail import (
     GuardrailCategory,
     GuardrailClassifier,
@@ -56,6 +57,13 @@ Whatever language you open in, stay in it for the whole reply. Never greet \
 a patient in one language and then write the rest of the message in \
 another — a Russian "Здравствуйте!" followed by an Uzbek sentence reads as \
 though the patient was handed to the wrong person.
+
+These instructions are written in English. The reply never is. English \
+words that appear here — "front desk", "reception", "appointment" — are \
+how the instruction is worded, not vocabulary to hand a patient: say \
+"registratura", "qabul", and the rest in the language they wrote in. An \
+English word in the middle of an Uzbek sentence is the clearest sign \
+there is that something automatic wrote it.
 
 When a patient greets you, greet them back — always, however far into the \
 conversation it comes. "Assalom alaykum" is answered "Va alaykum assalom" \
@@ -207,43 +215,20 @@ offers the service they asked about, say plainly that it does — that is a \
 real answer and it is most of what they wanted — and then give them the \
 number for the rest.
 
-7. The clinic's call centre follows these conversations up by phone, so \
-the conversation is worth more to the clinic if it ends with a number. \
-Getting one is a matter of timing, not of repetition, and it never \
-replaces the clinic's own number. A patient who wants an appointment or a \
-price is told to ring (rule 6 and rule 8); asking for theirs on top of \
-that, in the same breath, reads as a runaround and leaves them unsure \
-which of the two is actually going to happen.
+7. Do not ask the patient for their telephone number. The clinic's own \
+number is the answer to a price and to an appointment (rules 6 and 8), and \
+asking for theirs in the same breath leaves them unsure which of the two is \
+actually going to happen — a reply meant to be helpful that reads as a \
+runaround.
 
-Ask for theirs only when the front desk would have to ring them back — \
-they asked something nobody here can answer, or they said plainly that \
-they cannot call right now. Then the number is how they get the thing \
-they came for, and asking is helpful rather than pushy. Offer the \
-reason, not the demand — the idea of "tell me a time that suits you and \
-a colleague will call and sort it out" gets a number far more often \
-than "leave your number".\
-
-Never ask twice in a row, and never close a message with it out of \
-habit. WHERE THIS CONVERSATION STANDS, below, says whether you have \
-asked already. If it says you have, do not ask again in this reply — \
-keep helping, answer well, and let the next natural opening come. A \
-second ask after a patient has passed over the first one reads as a \
-script, and a patient who has decided you are a script stops reading. \
-If they raise booking themselves after that, the moment has come round \
-again and you may ask.\
-
-If they have already given a number, never ask for it again. Say once, \
-warmly, that a colleague will call them on it, and after that do not \
-mention it at all.\
-
-When you do ask, it is one short sentence in the patient's own language \
-and alphabet. The Uzbek "Qulay vaqtingizni ayting, hamkasbim \
-qo'ng'iroq qilib kelishib oladi" is one example of the idea — that is, \
-"tell me a time that suits you and a colleague will call to arrange \
-it" — and it is an example, never text to copy. A Russian speaker is \
-asked in Russian; pasting the Uzbek sentence under a Russian reply is \
-a mistake. It never crowds out the answer to what they actually asked, \
-and it is never the whole message.
+One exception: they say plainly that they cannot ring, or they asked \
+something nobody here can answer. Then ask once, in one short sentence in \
+their own language, offering the reason rather than the demand — the idea \
+of "tell me a time that suits you and a colleague will call and sort it \
+out", never that sentence copied. WHERE THIS CONVERSATION STANDS, below, \
+says whether you have asked already; if it says you have, do not ask again. \
+If they have already given a number, say once that a colleague will call \
+them on it and then do not mention it again.
 
 8. When a patient says they want an appointment, that is the clearest thing \
 they can tell you and it deserves a direct answer -- but the answer is the \
@@ -385,6 +370,21 @@ which one you are making. Say you'll check with the team, and follow rule 7.\
 
 _SYSTEM_PROMPT_TEMPLATE = _PREAMBLE + _FAQ_RULE_BLOCK + _SHARED_RULES
 _NO_FAQ_SYSTEM_PROMPT = _PREAMBLE + _NO_FAQ_RULE_BLOCK + _SHARED_RULES
+
+# Appended when app.services.question_shape decided the message was a price
+# question with no service in it. The rows that would have been retrieved are
+# not here -- they were arbitrary -- so this says what to do with nothing.
+#
+# Written as one short instruction rather than another rule in the numbered
+# list, because it applies to one message and is gone on the next.
+_UNNAMED_SERVICE_REMINDER = """
+
+IMPORTANT: they have asked what something costs without saying what. No clinic information was retrieved for this message, because there was nothing specific enough to retrieve -- so you have no prices, no service list for this question, and nothing to read out.
+
+Ask which service they mean. One short line, in their language and alphabet, warm and ordinary -- the way somebody at a desk asks, not the way a form asks. You may name two or three of the clinic's departments as examples if the clinic information above lists them, and no more than three. Never present a list of services as though it were the answer, and never name a specific test or procedure you were not given.
+
+Give the telephone number at most once here, and only after the question. The question is the reply; the number is not a substitute for asking."""
+
 
 _MEDICAL_ADVICE_REMINDER = """
 
@@ -749,6 +749,7 @@ def _build_system_prompt(
     signals: ConversationSignals,
     doctors: Sequence[Doctor] = (),
     clinic_work_hours: str | None = None,
+    unpriceable: bool = False,
 ) -> str:
     price_contact, price_contact_gloss, price_contact_bare = _price_contact_clause(
         clinic_phone_numbers
@@ -772,6 +773,8 @@ def _build_system_prompt(
     prompt += render_signals(signals)
     if flagged_as_medical_advice:
         prompt += _MEDICAL_ADVICE_REMINDER
+    if unpriceable:
+        prompt += _UNNAMED_SERVICE_REMINDER
     return prompt
 
 
@@ -815,10 +818,21 @@ async def generate_answer(
     if guardrail.fixed_response is not None:
         return guardrail.fixed_response
 
-    matches = await retrieve_relevant_faqs(
-        session, user_message, embedding_provider=embedding_provider
+    # A price question with no service in it is not retrievable (see
+    # app.services.question_shape): the knowledge base is one template
+    # repeated over every service, so the query matches the template and the
+    # rows that come back are arbitrary. Skipping retrieval entirely is
+    # cheaper than filtering afterwards and, more to the point, it is the
+    # only way the model cannot read them out.
+    unpriceable = names_nothing_to_price(user_message)
+    matches = (
+        []
+        if unpriceable
+        else await retrieve_relevant_faqs(
+            session, user_message, embedding_provider=embedding_provider
+        )
     )
-    if not matches and not resolved_settings.answer_without_faq:
+    if not matches and not unpriceable and not resolved_settings.answer_without_faq:
         # Code-level guarantee, not just a prompt instruction: if retrieval
         # found nothing (no rows, or every candidate fell beyond
         # retrieve_relevant_faqs's distance threshold), we don't ask the LLM
@@ -845,6 +859,7 @@ async def generate_answer(
         clinic_phone_numbers=resolved_settings.clinic_phone_numbers,
         clinic_address=resolved_settings.clinic_address,
         clinic_work_hours=resolved_settings.clinic_work_hours,
+        unpriceable=unpriceable,
     )
     provider = llm_provider or get_llm_provider()
     conversation: list[ChatMessage] = [
