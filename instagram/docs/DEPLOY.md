@@ -213,6 +213,68 @@ Redeploy. A channel already seeded without a token has it filled in
 (`provisioned_channel_token_filled`); a channel whose credential you set by
 hand is never overwritten.
 
+## Step 9 — WhatsApp
+
+The WhatsApp bot answers exactly like the Instagram one — the same knowledge
+base, prompt, guardrails, debounce, dashboard switch and operator takeover —
+and lands in the same clinic's inbox. It uses Meta's **WhatsApp Business
+Cloud API**; there is nothing to install.
+
+In the Meta app console, add the **WhatsApp** product, then under
+WhatsApp → API Setup note two things:
+
+- the **Phone number ID** of the business number (a long number labelled
+  "Phone number ID" — the id, **not** the telephone number itself);
+- a **permanent access token**: Business Settings → System users → add a
+  system user with `whatsapp_business_messaging` and
+  `whatsapp_business_management`, generate a token for this app. The
+  temporary 24-hour token on the API Setup page expires and the bot goes
+  silent the next day.
+
+Webhooks → WhatsApp Business Account:
+
+- **Callback URL**: `https://<your domain>/webhook/whatsapp`
+- **Verify Token**: your `WEBHOOK_VERIFY_TOKEN` (or `WHATSAPP_VERIFY_TOKEN`)
+- **Subscribe to**: `messages`
+
+Then set on `web`:
+
+```
+PROVISION_WHATSAPP_PHONE_NUMBER_ID=<the Phone number ID>
+WHATSAPP_ACCESS_TOKEN=<the permanent system-user token>
+```
+
+and, only if the WhatsApp number is on a **different** Meta app from the
+Instagram account (each app signs its webhooks with its own secret):
+
+```
+WHATSAPP_APP_SECRET=<that app's secret>
+WHATSAPP_VERIFY_TOKEN=<the verify token you typed for that app>
+```
+
+Redeploy. Startup logs `provisioned_channel … ig_account_id=<phone number id>`
+(the log field keeps its Instagram name) and the number joins the tenant named
+by `PROVISION_TENANT_NAME`.
+
+What differs from Instagram, on purpose:
+
+- **The patient's number is known without asking.** WhatsApp's sender id is
+  their telephone number, so it is written to the patient's row the moment
+  they write, and the WhatsApp display name is used as their label in the
+  dashboard.
+- **24 hours.** A free-form reply is only allowed within 24 hours of the
+  patient's last message; outside it Meta requires a pre-approved template,
+  which this pipeline does not send. Such replies are skipped with
+  `reply_skipped reason=outside_messaging_window`, exactly as on Instagram.
+- **Text only.** Voice notes, images and locations are recorded as skipped
+  (`whatsapp_non_text_skipped`), as attachments are on Instagram.
+- **Admin rules** (`Aiadm1in: …`) are Instagram-only for now: the admin list
+  is Instagram handles, and WhatsApp senders have no handle.
+
+`whatsapp_unknown_phone_number_id` on every delivery means the id in
+`PROVISION_WHATSAPP_PHONE_NUMBER_ID` is not the one Meta is sending — copy it
+again from API Setup.
+
 ---
 
 ## Costs and what to watch

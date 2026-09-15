@@ -20,9 +20,11 @@ from app.channels.base import (
 )
 from app.channels.instagram.adapter import get_instagram_adapter
 from app.channels.telegram.adapter import get_telegram_adapter
+from app.channels.whatsapp.adapter import get_whatsapp_adapter
 
 register_adapter(get_instagram_adapter())
 register_adapter(get_telegram_adapter())
+register_adapter(get_whatsapp_adapter())
 
 __all__ = [
     "ChannelAdapter",

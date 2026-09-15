@@ -66,6 +66,18 @@ async def resolve_instagram_channel(
     )
 
 
+async def resolve_whatsapp_channel(
+    session: AsyncSession, phone_number_id: str
+) -> ResolvedChannel | None:
+    """resolve_channel() fixed to WhatsApp, keyed on the business number's
+    phone_number_id -- the id every Cloud API payload names in
+    value.metadata, and the one a reply must be sent from.
+    """
+    return await resolve_channel(
+        session, channel_type=ChannelType.WHATSAPP, external_id=phone_number_id
+    )
+
+
 async def bot_replies_enabled(session: AsyncSession, tenant_id: uuid.UUID) -> bool:
     """Whether this clinic's assistant is currently answering patients.
 

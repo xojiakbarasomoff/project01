@@ -60,6 +60,38 @@ async def remember_username(
     await session.flush()
 
 
+async def remember_whatsapp_contact(
+    session: AsyncSession, *, user_id: uuid.UUID, name: str | None, wa_id: str
+) -> None:
+    """Store what WhatsApp hands over with every message: a display name, and
+    the patient's own telephone number.
+
+    WhatsApp has no handle, so there is nothing for the username column --
+    the dashboard labels these conversations by the name instead. The number
+    is the valuable half. On Instagram a patient's number has to be asked for
+    and typed; on WhatsApp the sender *is* their number, so the front desk
+    can ring them back without anybody having asked.
+
+    The name is refreshed when it changes, since people rename themselves;
+    a phone already on the row is left alone, because one typed by the
+    patient or an operator is the one they chose to give.
+    """
+    user = await UserRepository(session).get(user_id)
+    if user is None:
+        return
+    changed = False
+    cleaned_name = (name or "").strip() or None
+    if cleaned_name and user.name != cleaned_name:
+        user.name = cleaned_name[:255]
+        changed = True
+    if not user.phone and wa_id:
+        # wa_id is the full international number without the "+".
+        user.phone = "+" + wa_id.lstrip("+")
+        changed = True
+    if changed:
+        await session.flush()
+
+
 async def ensure_instagram_username(
     session: AsyncSession,
     *,

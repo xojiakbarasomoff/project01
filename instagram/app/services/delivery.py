@@ -23,7 +23,7 @@ from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.channels.base import ChannelAdapter, get_adapter
+from app.channels.base import CHANNEL_ACCOUNT_ID, ChannelAdapter, get_adapter
 from app.core.encryption import decrypt
 from app.repositories.channel import ChannelRepository
 
@@ -95,7 +95,11 @@ async def send_reply(
         credentials=credentials,
         recipient_external_id=recipient_external_id,
         text=text,
-        reply_context=reply_context,
+        # The sending account travels with every reply, so an adapter that
+        # addresses sends by account (WhatsApp) has it on every path --
+        # bot replies, operator replies from the dashboard, reminders --
+        # without each caller having to remember to capture it.
+        reply_context={**(reply_context or {}), CHANNEL_ACCOUNT_ID: channel.external_id},
     )
     logger.info(
         "reply_sent",

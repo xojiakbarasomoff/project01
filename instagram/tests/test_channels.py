@@ -16,6 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import app.channels  # noqa: F401  - registers the built-in adapters
 from app.channels.base import (
+    CHANNEL_ACCOUNT_ID,
     ChannelAdapter,
     ChannelType,
     DeliveryBlocked,
@@ -143,7 +144,17 @@ async def test_send_reply_dispatches_on_the_channels_type(
         )
 
     assert delivered_over == "telegram"
-    assert adapter.calls == [("tg-bot-token", "chat-42", "Assalom alaykum", None)]
+    # The sending account rides along on every send, so an adapter that
+    # addresses messages by account (WhatsApp) never has to be handed it by
+    # each caller separately. Adapters that route by recipient ignore it.
+    assert adapter.calls == [
+        (
+            "tg-bot-token",
+            "chat-42",
+            "Assalom alaykum",
+            {CHANNEL_ACCOUNT_ID: f"tg-{seed.tenant_a.id}"},
+        )
+    ]
 
 
 async def test_send_reply_returns_none_when_the_platform_blocks_it(

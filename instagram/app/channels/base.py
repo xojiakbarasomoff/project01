@@ -36,6 +36,20 @@ class ChannelType(StrEnum):
     # dispatch on it, so the value is part of this contract today even
     # though the implementation lands with the merge.
     TELEGRAM = "telegram"
+    # The WhatsApp Business Cloud API. Channel.external_id holds the business
+    # number's phone_number_id -- Meta's id for the number, not the number
+    # itself -- because that is what every inbound payload names and what
+    # every send is addressed from.
+    WHATSAPP = "whatsapp"
+
+
+# The one key app.services.delivery always puts into reply_context: the
+# platform account the reply goes out from (Channel.external_id). Most
+# platforms route a send by the recipient alone and ignore it. WhatsApp cannot
+# -- a message is POSTed to /<phone_number_id>/messages -- and passing the
+# account this way, rather than widening send_text, leaves every other
+# adapter's signature exactly as it was.
+CHANNEL_ACCOUNT_ID = "channel_external_id"
 
 
 class DeliveryBlocked(StrEnum):

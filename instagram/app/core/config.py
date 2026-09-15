@@ -164,6 +164,25 @@ class Settings(BaseSettings):
         default=None, alias="PROVISION_TELEGRAM_BOT_TOKEN"
     )
 
+    # --- WhatsApp Business Cloud API ---------------------------------------
+    #
+    # The business number's phone_number_id (Meta → WhatsApp → API Setup; the
+    # id, not the number) and a permanent system-user access token for it.
+    # Read only by first-run provisioning, like the Instagram and Telegram
+    # credentials above: once the channel row exists the token lives on it,
+    # encrypted. Set both, together with PROVISION_TENANT_NAME, and the
+    # WhatsApp number joins the same clinic as the Instagram account.
+    provision_whatsapp_phone_number_id: str | None = Field(
+        default=None, alias="PROVISION_WHATSAPP_PHONE_NUMBER_ID"
+    )
+    whatsapp_access_token: str | None = Field(default=None, alias="WHATSAPP_ACCESS_TOKEN")
+    # Only needed when the WhatsApp number sits on a different Meta app from
+    # the Instagram account. Each app signs its webhooks with its own secret
+    # and is registered with its own verify token; unset, the Instagram ones
+    # are used, which is the single-app setup.
+    whatsapp_app_secret: str | None = Field(default=None, alias="WHATSAPP_APP_SECRET")
+    whatsapp_verify_token: str | None = Field(default=None, alias="WHATSAPP_VERIFY_TOKEN")
+
     # The first dashboard login. There is no sign-up page and no admin UI for
     # creating accounts, so without this a deployment on a host whose
     # database is only reachable from inside the cluster has no way in at
@@ -260,6 +279,10 @@ class Settings(BaseSettings):
         "seed_doctors_from",
         "public_base_url",
         "provision_telegram_bot_token",
+        "provision_whatsapp_phone_number_id",
+        "whatsapp_access_token",
+        "whatsapp_app_secret",
+        "whatsapp_verify_token",
         "provision_operator_username",
         "provision_operator_password",
         mode="after",

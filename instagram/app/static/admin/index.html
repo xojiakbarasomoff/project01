@@ -23,6 +23,7 @@
     --warn: #96682a;
     --ig: #b4426e;
     --tg: #2c6e9b;
+    --wa: #1a7f45;
     --font: "Segoe UI", system-ui, -apple-system, sans-serif;
     --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
   }
@@ -32,7 +33,7 @@
       --ink: #e9ebe8; --ink-2: #a3ada7; --ink-3: #7a847e; --rule: #2e3531;
       --accent: #58bca2; --accent-soft: #14302a;
       --danger: #e5897a; --danger-soft: #331f1b; --warn: #dcae64;
-      --ig: #e288ac; --tg: #7fb2d6;
+      --ig: #e288ac; --tg: #7fb2d6; --wa: #6fd49a;
     }
   }
   * { box-sizing: border-box; }
@@ -64,6 +65,7 @@
   .pill.bad { background: var(--danger-soft); color: var(--danger); }
   .pill.instagram { background: var(--accent-soft); color: var(--ig); }
   .pill.telegram { background: var(--accent-soft); color: var(--tg); }
+  .pill.whatsapp { background: var(--accent-soft); color: var(--wa); }
   .stats { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
   .stat { background: var(--panel-2); border-radius: 3px; padding: 12px 14px; }
   .stat b { display: block; font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }

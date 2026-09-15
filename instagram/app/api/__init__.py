@@ -4,6 +4,7 @@ from app.api.dashboard import router as dashboard_router
 from app.api.telegram_webhook import router as telegram_webhook_router
 from app.api.webapp import router as webapp_router
 from app.api.webhook import router as webhook_router
+from app.api.whatsapp_webhook import router as whatsapp_webhook_router
 
 __all__ = [
     "admin_router",
@@ -12,4 +13,5 @@ __all__ = [
     "telegram_webhook_router",
     "webapp_router",
     "webhook_router",
+    "whatsapp_webhook_router",
 ]

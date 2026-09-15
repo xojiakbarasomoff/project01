@@ -124,9 +124,17 @@ async def _provision(
     ig_account_id: str,
     tenant_name: str,
     access_token: str | None,
+    channel_type: ChannelType = CHANNEL_TYPE,
 ) -> None:
+    """Create one Meta channel under the named clinic, or fill its token.
+
+    Instagram and WhatsApp share this: both are "an account id and a token",
+    and both must land under the same tenant so one clinic sees all of its
+    patients in one inbox. ig_account_id is the account's id on whichever
+    platform channel_type names -- a WhatsApp phone_number_id for WhatsApp.
+    """
     result = await session.execute(
-        select(Channel).where(Channel.type == CHANNEL_TYPE, Channel.external_id == ig_account_id)
+        select(Channel).where(Channel.type == channel_type, Channel.external_id == ig_account_id)
     )
     channel = result.scalar_one_or_none()
 
@@ -138,7 +146,7 @@ async def _provision(
         session.add(
             Channel(
                 tenant_id=tenant.id,
-                type=CHANNEL_TYPE,
+                type=channel_type,
                 external_id=ig_account_id,
                 credentials=encrypt(access_token or _PLACEHOLDER),
                 is_active=True,
@@ -372,6 +380,31 @@ async def provision_channel_if_configured(settings: Settings) -> None:
     await _guarded(f"instagram:{ig_account_id}", _run)
 
 
+async def provision_whatsapp_if_configured(settings: Settings) -> None:
+    """Create the configured WhatsApp channel under the clinic when missing.
+
+    Same contract as the Instagram step: a no-op when unconfigured, never
+    fatal, and a later deploy that supplies the token fills in a channel that
+    was created before it existed.
+    """
+    phone_number_id = settings.provision_whatsapp_phone_number_id
+    tenant_name = settings.provision_tenant_name
+    if phone_number_id is None or tenant_name is None:
+        return
+
+    async def _run() -> None:
+        async with db_session() as session:
+            await _provision(
+                session,
+                ig_account_id=phone_number_id,
+                tenant_name=tenant_name,
+                access_token=settings.whatsapp_access_token,
+                channel_type=ChannelType.WHATSAPP,
+            )
+
+    await _guarded(f"whatsapp:{phone_number_id}", _run)
+
+
 async def provision_telegram_if_configured(settings: Settings) -> None:
     """Register the configured Telegram bot and its webhook.
 
@@ -437,5 +470,6 @@ async def provision_if_configured(settings: Settings) -> None:
     for all three ends up with one clinic rather than three.
     """
     await provision_channel_if_configured(settings)
+    await provision_whatsapp_if_configured(settings)
     await provision_telegram_if_configured(settings)
     await provision_operator_if_configured(settings)

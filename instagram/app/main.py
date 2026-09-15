@@ -17,6 +17,7 @@ from app.api import (
     telegram_webhook_router,
     webapp_router,
     webhook_router,
+    whatsapp_webhook_router,
 )
 from app.api.auth import NotAuthenticatedError
 from app.core.config import get_settings
@@ -99,6 +100,7 @@ async def _security_headers(request: Request, call_next: Any) -> Response:
 
 app.include_router(webhook_router)
 app.include_router(telegram_webhook_router)
+app.include_router(whatsapp_webhook_router)
 app.include_router(auth_router)
 app.include_router(dashboard_router)
 app.include_router(admin_router)
