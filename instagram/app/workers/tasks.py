@@ -39,6 +39,7 @@ from app.services.admin_commands import add_rule, is_admin, parse_rule
 from app.services.answer import generate_answer
 from app.services.appointment import CLINIC_TIMEZONE
 from app.services.booking import settle as settle_booking
+from app.services.channel_health import check_instagram_channels
 from app.services.conversation import (
     context_for_reply,
     last_inbound_at,
@@ -549,6 +550,33 @@ async def send_appointment_reminders(
         )
 
 
+async def check_channel_health(
+    ctx: dict[str, Any],
+    *,
+    session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]] = db_session,
+) -> None:
+    """Ask Meta whether the clinic's Instagram token still works.
+
+    Read-only, and its whole output is a log line. It exists because a dead
+    token is indistinguishable from a quiet afternoon: nothing raises, no
+    reply goes out, and once Meta drops the connection no webhook comes in
+    either. The only other check ran once a day, so a token that died in the
+    morning stayed dead, unremarked, until the following night.
+    """
+    async with session_factory() as session:
+        results = await check_instagram_channels(session)
+    broken = [health for health in results if not health.healthy]
+    if broken:
+        logger.error(
+            "channel_health_run channels=%s unhealthy=%s states=%s",
+            len(results),
+            len(broken),
+            ",".join(sorted({health.state for health in broken})),
+        )
+    else:
+        logger.info("channel_health_run channels=%s all_healthy=true", len(results))
+
+
 async def refresh_channel_tokens(
     ctx: dict[str, Any],
     *,
@@ -740,5 +768,9 @@ class WorkerSettings:
         # channel, so the interval is really the worst case a patient
         # waits before the bot can hear them again.
         cron(verify_channel_webhooks, minute=set(range(0, 60, 10))),
+        # Beside the webhook watch and for the same reason: an
+        # Instagram connection that has died is a total outage, and
+        # the daily token refresh is far too slow to notice one.
+        cron(check_channel_health, minute={5, 35}),
     ]
     redis_settings = RedisSettings.from_dsn(get_settings().redis_url)
