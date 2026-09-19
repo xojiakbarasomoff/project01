@@ -109,11 +109,24 @@ class Outcome:
 # produced, because a prompt instruction not to say them is a rule waiting
 # for a wording it does not cover -- and this one has to hold every time.
 _CLAIMS_A_BOOKING = re.compile(
-    r"yozib\s*qo'?y|yozib\s*qo’|yozildingiz|yozib\s*oldim|band\s*qildim"
-    r"|qabulingiz\s+tasdiq|tasdiqlandi|navbatingiz\s+bor"
-    r"|ёзиб\s*қўй|ёзилдингиз|тасдиқланди"
-    r"|записал\s+вас|вы\s+записан|запись\s+подтвержден"
-    r"|\bbooked\b|\byou are booked\b|\bconfirmed\b",
+    # Any inflection of "write [you] in". The first version listed the
+    # completed forms only -- "yozildingiz", "yozib qo'ydim" -- and a live
+    # reply got through saying "qabuliga yozilyapsiz", the progressive. A
+    # patient does not read tense; they read that they have a place.
+    r"yozil(?:ди|di)\w*|yozil(?:yap|yab|moqda|ayotgan)\w*"
+    r"|yozib\s*(?:qo'?y|qo’|ol|berd)\w*|ro'?yxatga\s+ol\w*|band\s*qil\w*"
+    r"|qabulingiz\s+(?:tasdiq|bor)|navbatingiz\s+bor|tasdiqla(?:ndi|dim|yman)"
+    # "the doctor will see you at 15:20" is a booking in everything but the
+    # word, and it is how the assistant phrased one of the three it invented.
+    r"|sizni\s+ko'?r(?:adi|amiz)|kutamiz\s+siz|kutib\s+ol\w*\s+siz"
+    # Inflected tightly on purpose. "тасдиқлайди" -- "the administrator will
+    # confirm it" -- is the clinic's own honest sentence, and a looser
+    # "тасдиқла\w*" swallowed it, turning the assistant mute about the one
+    # thing it is supposed to say.
+    r"|ёзил(?:ди|ган|яп)\w*|ёзиб\s*(?:қўй|ол)\w*|тасдиқла(?:нди|дим|йман)|сизни\s+кўради"
+    r"|запис(?:ал|али|аны|ан)\s*(?:вас|вы)?|вы\s+записан|запись\s+подтвержден"
+    r"|ждём\s+вас|ж[её]м\s+вас|врач\s+вас\s+примет"
+    r"|\bbooked\b|\byou are booked\b|\bconfirmed\b|\bwe(?:'ll| will)\s+see\s+you\b",
     re.IGNORECASE,
 )
 

@@ -422,3 +422,100 @@ def test_a_nonsense_horizon_is_still_refused() -> None:
         clinic_schedule.load(
             _settings(clinic_work_hours=PRODUCTION_WORK_HOURS, booking_horizon_days=0)
         )
+
+
+# What the clinic's admin account saw on 2026-09-20, seven minutes after this
+# work first went live. Each of these is a reply that actually went to a real
+# Instagram thread.
+
+
+@pytest.mark.parametrize(
+    "reply",
+    [
+        # The three the assistant invented in one conversation. Nothing was in
+        # the diary for any of them.
+        "Tasdiqlayman — ertaga 20.09.2026 soat 15:00ga doktor Axmadaliyev "
+        "Temur G'iyosiddin o'g'li qabuliga yozildingiz.",
+        "Dushanba, 21.09.2026 15:20 — doktor Axmadaliyev Temur G'iyosiddin "
+        "o'g'li sizni ko'radi.",
+        "Siz Axmadaliyev Temur G'iyosiddin o'g'li — urolog-androlog qabuliga "
+        "yozilyapsiz.",
+    ],
+)
+def test_every_booking_claim_from_the_live_thread_is_caught(reply: str) -> None:
+    """Two of these three got past the first version of the guard.
+
+    It listed the completed forms -- "yozildingiz", "yozib qo'ydim" -- and the
+    live replies used the progressive ("yozilyapsiz") and a paraphrase ("sizni
+    ko'radi"). A patient reads either as a place they have been given.
+    """
+    assert turn.claims_a_booking(reply)
+
+
+def test_the_clinics_own_honest_sentence_is_not_mistaken_for_a_claim() -> None:
+    """"The administrator will confirm the time" is what the clinic actually
+    says. Widening the guard swallowed it in Cyrillic once; it must not.
+    """
+    for language in ("uz-latn", "uz-cyrl", "ru"):
+        message = booking_request.message_for(
+            booking_request.Outcome.REQUEST_DELIVERED, language
+        )
+        assert not turn.claims_a_booking(message), language
+
+
+@pytest.mark.parametrize(
+    "ordinary",
+    [
+        "Qaysi kun sizga qulay?",
+        "Va alaykum assalom. Sizga qanday yordam bera olaman?",
+        "Klinika dushanbadan shanbagacha 09:00 dan 18:00 gacha ishlaydi.",
+        "Qabulga kelishingiz mumkin.",
+        "Соат нечада келсангиз қулай бўлади?",
+    ],
+)
+def test_an_ordinary_sentence_is_not_swallowed_by_the_guard(ordinary: str) -> None:
+    assert not turn.claims_a_booking(ordinary)
+
+
+def test_a_pleasantry_is_not_a_question_about_the_doctors_health() -> None:
+    """"doktor yasxhimisiz" was answered with "are you asking about the
+    doctor's health, or whether he will be at the appointment?" -- because
+    the word "doktor" was in it. It is the second half of a greeting.
+    """
+    for said in ("doktor yasxhimisiz", "doktor yaxshimisiz", "qalaysiz", "Как дела"):
+        assert classify(said) is Intent.GREETING, said
+
+
+def test_asking_the_clinic_about_itself_is_a_question_about_the_clinic() -> None:
+    """"oziz haqizda malumot beroalsmi" fell through to UNKNOWN, and the model
+    answered it by telling the patient they were being booked in.
+    """
+    assert classify("oziz haqizda malumot beroalsmi") is Intent.CLINIC_INFO
+    assert classify("klinika haqida malumot bering") is Intent.CLINIC_INFO
+    # But a question that names a clinician is still about the clinician.
+    assert classify("doktor haqida malumot bering") is Intent.DOCTOR_QUESTION
+
+
+def test_the_model_is_told_what_kind_of_message_it_is_answering() -> None:
+    """The classifier existed and its answer was thrown away.
+
+    It routed bookings and nothing else, so for every other message the model
+    inferred the question type from the text plus whatever was left in the
+    window -- and with two stale booking confirmations up the transcript, it
+    inferred "this patient is being booked".
+    """
+    from app.services.answer import _intent_block
+
+    for intent in (
+        Intent.GREETING,
+        Intent.CLINIC_INFO,
+        Intent.DOCTOR_QUESTION,
+        Intent.MEDICAL_QUESTION,
+        Intent.THANKS,
+    ):
+        block = _intent_block(str(intent))
+        assert "WHAT THIS MESSAGE IS" in block, intent
+
+    # An intent with no guidance adds nothing rather than an empty heading.
+    assert _intent_block(str(Intent.UNKNOWN)) == ""
+    assert _intent_block(None) == ""

@@ -180,6 +180,7 @@ async def process_inbound_message(
                     history=history,
                     summary=conversation_row.summary,
                     language=profile.language,
+                    intent=str(message_intent),
                 )
                 # Read once more on the way out: a sentence claiming an
                 # appointment that no row backs is replaced rather than sent.

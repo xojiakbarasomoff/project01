@@ -39,6 +39,7 @@ class Intent(StrEnum):
     LOCATION_QUESTION = "location_question"
     HOURS_QUESTION = "hours_question"
     DOCTOR_QUESTION = "doctor_question"
+    CLINIC_INFO = "clinic_info"
     MEDICAL_QUESTION = "medical_question"
     THANKS = "thanks"
     INJECTION_ATTEMPT = "injection_attempt"
@@ -94,6 +95,20 @@ _MEDICAL = re.compile(
     re.IGNORECASE,
 )
 
+# "O'zingiz haqingizda ma'lumot bera olasizmi", "klinika haqida ayting",
+# "qanday xizmatlar bor" -- somebody working out whether this is the right
+# place at all. It had no intent of its own, fell through to UNKNOWN, and the
+# model answered one of these by telling the patient they were being booked
+# in. The question deserves an answer about the clinic.
+_CLINIC_INFO = re.compile(
+    r"haq(?:ida|ingizda|izda|inda)\s+(?:ma'?lumot|malumot|ayt|gapir|bilmoqchi)"
+    r"|(?:o'?zingiz|ozingiz|oziz|klinika\w*|markaz\w*)\s+haq(?:ida|ingizda|izda|inda)"
+    r"|qanday\s+(?:xizmat|klinika)|nima\s+ish\s+qil|qaysi\s+yo'?nalish"
+    r"|о\s+клиник|расскажите\s+о\s+себ|какие\s+услуг"
+    r"|ҳақ(?:ида|ингизда)\s+маълумот",
+    re.IGNORECASE,
+)
+
 _GREETING = re.compile(
     r"^\s*(?:as+alom\w*|salom\w*|vaalaykum|xayrli|hayrli|hello|hi"
     r"|ассалом\w*|салом\w*|здравствуйте|привет)",
@@ -101,6 +116,22 @@ _GREETING = re.compile(
 )
 _THANKS = re.compile(
     r"^\s*(?:katta\s+)?(?:rahmat|raxmat|tashakkur|спасибо|рахмат|thanks)[\s!.,)]*$",
+    re.IGNORECASE,
+)
+
+# "Doktor yaxshimisiz", "qalaysiz", "yaxshimisan" -- the second half of a
+# greeting, not a question about anybody's health.
+#
+# This exists because "doktor yaxshimisiz" was classified as a question about
+# the doctor, purely because the word "doktor" is in it, and the reply asked
+# the patient whether they were enquiring after the doctor's *health*. Nobody
+# has ever meant that. The pleasantry is answered as a pleasantry.
+_PLEASANTRY = re.compile(
+    r"^\s*(?:salom\w*\s+)?(?:doktor|shifokor|aka|opa|ustoz|доктор)?[\s,]*"
+    r"(?:yaxshimi(?:siz|san)?|yaxwimi\w*|yasxhimi\w*|qalay(?:siz|san)?|qandaysiz"
+    r"|tinchmi(?:siz)?|яхшими\w*|қалайсиз"
+    r"|как\s+дела|как\s+вы)"
+    r"[\s?!.,]*$",
     re.IGNORECASE,
 )
 
@@ -170,6 +201,10 @@ def classify(message: str, *, state: ConversationState | None = None) -> Intent:
         return Intent.BOOKING_REQUEST
     if _THANKS.match(text):
         return Intent.THANKS
+    # Before the subjects below, or the bare word "doktor" inside it sends a
+    # pleasantry off to be answered as a question about the clinician.
+    if _PLEASANTRY.match(text):
+        return Intent.GREETING
 
     # 3. A bare time with no flow open is still an answer to something.
     if when_service.read_time(text) is not None and len(text) <= 40:
@@ -185,8 +220,13 @@ def classify(message: str, *, state: ConversationState | None = None) -> Intent:
         return Intent.LOCATION_QUESTION
     if _HOURS.search(text):
         return Intent.HOURS_QUESTION
+    # Doctors first: "doktor haqida ma'lumot bering" names a clinician and is
+    # answered from the roster, while "o'zingiz haqingizda" names nobody and
+    # is a question about the clinic.
     if _DOCTOR.search(text):
         return Intent.DOCTOR_QUESTION
+    if _CLINIC_INFO.search(text):
+        return Intent.CLINIC_INFO
     if _MEDICAL.search(text):
         return Intent.MEDICAL_QUESTION
 
