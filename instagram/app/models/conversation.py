@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Index, String, func, text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String, Text, func, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -36,6 +36,22 @@ class Conversation(Base):
     status: Mapped[str] = mapped_column(String(50), nullable=False)
     is_bot_enabled: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default=text("true")
+    )
+    # A few sentences describing what this conversation has been about, kept
+    # current as it grows past what the context window can carry.
+    #
+    # A summary is a convenience, never a source. Anything the clinic will
+    # act on -- the patient's name, their number, the day they asked for --
+    # is a column on `users` or `conversation_states`, read from there and
+    # not from this text. The rule is the whole reason the summary is safe
+    # to keep: it can be wrong, or stale, or quietly lossy, and nothing
+    # important depends on it.
+    summary: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # How many messages of this conversation the summary already covers, so
+    # the next update summarises what has happened since rather than the
+    # whole transcript again.
+    summarised_message_count: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("now()"), nullable=False

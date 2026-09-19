@@ -103,6 +103,23 @@ class Settings(BaseSettings):
     # working week, was not in the prompt at all.
     clinic_work_hours: str | None = Field(default=None, alias="CLINIC_WORK_HOURS")
 
+    # Which days the clinic opens: "mon-sat", or a list like "mon,tue,wed".
+    #
+    # No default, deliberately. There was no weekday rule in this codebase at
+    # all, so Sunday was bookable and the assistant offered it; the fix for
+    # that is the clinic saying which days it opens, not the code picking the
+    # days that look likely. Unset means app.services.clinic_schedule raises,
+    # and the assistant stops making claims about days -- see that module.
+    clinic_work_days: str | None = Field(default=None, alias="CLINIC_WORK_DAYS")
+
+    # How many days ahead a booking may be taken.
+    #
+    # Also no default. Two different numbers were hard-coded in two modules
+    # (2 in app.services.booking, 14 in app.services.appointment) and neither
+    # had been checked with the clinic, so a patient could be refused a day
+    # the schedule search would have found.
+    booking_horizon_days: int | None = Field(default=None, alias="BOOKING_HORIZON_DAYS")
+
     # Instagram handles allowed to set the clinic's standing rules by direct
     # message (see app.services.admin_commands). Comma-separated, "@" optional.
     #
@@ -273,6 +290,7 @@ class Settings(BaseSettings):
         "clinic_phone_numbers",
         "clinic_address",
         "clinic_work_hours",
+        "clinic_work_days",
         "admin_instagram_usernames",
         "admin_command_keyword",
         "seed_faqs_from",

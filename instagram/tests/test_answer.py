@@ -11,12 +11,12 @@ from app.rag.embeddings import EMBEDDING_DIMENSIONS, EmbeddingProvider
 from app.rag.llm import ChatMessage, LLMProvider
 from app.repositories.knowledge_base import KnowledgeBaseRepository
 from app.services.answer import (
-    _clinic_facts_block,
-    _doctor_roster,
     HELP_RESPONSES,
     NO_MATCH_RESPONSE,
     NO_MATCH_RESPONSES,
     START_RESPONSES,
+    _clinic_facts_block,
+    _doctor_roster,
     client_command_response,
     generate_answer,
     is_client_command,
@@ -489,7 +489,7 @@ async def test_configured_clinic_numbers_are_quoted_in_the_pricing_fallback(
     )
 
     assert "+998 90 123 45 67" in system_prompt
-    assert "ushbu telefon raqamlariga qo'ng'iroq qiling" in system_prompt
+    assert "ushbu telefon raqamiga qo'ng'iroq qiling" in system_prompt
     # The callback offer is not an either/or with the numbers: a patient who
     # is writing rather than calling is the one this whole rule exists for.
     assert "qachon gaplashish siz uchun qulay bo'lgan" in system_prompt
@@ -508,7 +508,7 @@ async def test_pricing_fallback_invents_no_number_when_none_is_configured(
     """
     system_prompt = await _capture_system_prompt(db_session, seed, as_tenant, with_faq=with_faq)
 
-    assert "ushbu telefon raqamlariga qo'ng'iroq qiling" not in system_prompt
+    assert "ushbu telefon raqamiga qo'ng'iroq qiling" not in system_prompt
     assert "You have NOT been given a phone number" in system_prompt
     assert "never invent one" in system_prompt
     # The callback half survives -- it is the part that works without numbers.
@@ -778,7 +778,7 @@ async def test_working_hours_are_not_offered_as_free_appointment_times(
     )
 
     assert "They are not free appointment times" in system_prompt
-    assert "do not promise a patient a particular doctor" in system_prompt
+    assert "never promise a patient a particular doctor" in system_prompt
 
 
 async def test_the_roster_survives_a_clinic_with_no_configured_details(
@@ -809,7 +809,16 @@ async def test_a_clinic_that_has_listed_no_doctors_claims_none(
     """An empty heading is an invitation to fill it in, and an invented
     urologist is worse than a made-up address: the patient arrives asking for
     somebody by name.
+
+    The seed fixture grew a doctor after this test was written, so "a clinic
+    that has listed no doctors" has to be arranged rather than assumed --
+    otherwise the test passes on the strength of a roster it meant to be
+    checking the absence of.
     """
+    with as_tenant(seed.tenant_a.id):
+        seed.a.doctor.is_active = False
+        await db_session.flush()
+
     system_prompt = await _capture_system_prompt(db_session, seed, as_tenant, with_faq=with_faq)
 
     assert "currently seeing patients here" not in system_prompt

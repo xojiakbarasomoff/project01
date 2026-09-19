@@ -11,10 +11,9 @@ from app.rag.llm import ChatMessage, LLMProvider, get_llm_provider
 from app.rag.retrieval import retrieve_relevant_faqs
 from app.repositories.doctor import DoctorRepository
 from app.repositories.knowledge_base import KnowledgeBaseMatch
+from app.services import style
 from app.services.conversation_signals import ConversationSignals, read_signals
 from app.services.conversation_signals import render as render_signals
-from app.services.question_shape import names_nothing_to_price
-from app.services.tenant_resolution import clinic_rules as clinic_rules_for
 from app.services.guardrail import (
     GuardrailCategory,
     GuardrailClassifier,
@@ -22,6 +21,8 @@ from app.services.guardrail import (
     reply_script,
     review_reply,
 )
+from app.services.question_shape import names_nothing_to_price
+from app.services.tenant_resolution import clinic_rules as clinic_rules_for
 
 # Shared opening of both system prompts below: who the assistant is, and how
 # it greets, sounds, and picks a language. Only the rule about where facts may
@@ -181,7 +182,8 @@ believes they are booked is a patient who arrives to find they are not.
 For both, say the same idea as: "Bizda jonli qabul bor — narxlarni bilish \
 va qabulga yozilish uchun {price_contact}" — that is, the clinic sees \
 patients in person, and both the price and the appointment are arranged by \
-ringing {price_contact_bare}. Say it in the patient's own language, not \
+ringing {price_contact_bare}. Concretely: {price_contact_gloss}. Say it in \
+the patient's own language, not \
 this wording. The days and hours go in only when they asked for them — not \
 to round the message off, and not because a reply looks thin without them. \
 Somebody in pain who is told to ring now is not helped by being told the \
@@ -665,16 +667,26 @@ def _price_contact_clause(clinic_phone_numbers: str | None) -> tuple[str, str, s
     anywhere else in the prompt, since a plausible-looking +998 number is
     exactly what a model will happily produce.
     """
-    if clinic_phone_numbers:
-        return (
-            f"ushbu telefon raqamiga qo'ng'iroq qiling: {clinic_phone_numbers}",
-            f"tell them to ring the clinic's front desk on {clinic_phone_numbers}",
-            clinic_phone_numbers,
-        )
     callback = (
         "telefon raqamingizni va qachon gaplashish siz uchun qulay bo'lgan "
         "vaqtni qoldiring, o'sha vaqtda o'zimiz qo'ng'iroq qilamiz"
     )
+    if clinic_phone_numbers:
+        # Both, not one or the other. Somebody who opened a chat rather than
+        # dialling is the patient this rule exists for, and answering them
+        # with a number and nothing else tells them the written channel they
+        # chose is not really answered. The offer to ring them back costs the
+        # clinic a row in the callback list and keeps that patient.
+        return (
+            f"ushbu telefon raqamiga qo'ng'iroq qiling: {clinic_phone_numbers} "
+            f"— yoki {callback}",
+            (
+                f"tell them to ring the clinic's front desk on {clinic_phone_numbers}, "
+                "and offer to take their number and a convenient time instead if "
+                "they would rather be called back"
+            ),
+            clinic_phone_numbers,
+        )
     return (
         callback,
         "ask them to leave their number together with a time that suits them, and "
@@ -716,6 +728,30 @@ def _clinic_rules_block(rules: Sequence[str]) -> str:
     )
 
 
+def _conversation_summary_block(summary: str | None) -> str:
+    """What has already happened in this conversation, for a long one.
+
+    Assembled from database columns by app.services.summary, never written by
+    a model, so every clause in it is a value the clinic recorded. It is here
+    to stop the assistant behaving as though the conversation began at the
+    top of its ten-message window -- above all, to stop it asking again for a
+    name it was given twenty messages ago.
+
+    The last line is not decoration. Everything worth acting on is also in
+    the facts block or on the patient's row, and a model that treats this
+    text as the authority would be trusting a convenience.
+    """
+    if not summary:
+        return ""
+    return (
+        "\n\nWHAT HAS ALREADY HAPPENED IN THIS CONVERSATION\n"
+        f"{summary}\n"
+        "Do not ask again for anything this says the clinic already knows. "
+        "This is a reminder, not a source: quote no detail from it that is "
+        "not also stated elsewhere in this prompt.\n"
+    )
+
+
 def _build_system_prompt(
     matches: Sequence[KnowledgeBaseMatch],
     flagged_as_medical_advice: bool,
@@ -727,6 +763,8 @@ def _build_system_prompt(
     clinic_work_hours: str | None = None,
     unpriceable: bool = False,
     clinic_rules: Sequence[str] = (),
+    summary: str | None = None,
+    style_examples: Sequence[object] = (),
 ) -> str:
     price_contact, price_contact_gloss, price_contact_bare = _price_contact_clause(
         clinic_phone_numbers
@@ -750,6 +788,8 @@ def _build_system_prompt(
     # After the signals, so the last thing the model reads before the
     # patient's message is the clinic's own instruction.
     prompt += _clinic_rules_block(clinic_rules)
+    prompt += _conversation_summary_block(summary)
+    prompt += style.render(list(style_examples))
     prompt += render_signals(signals)
     if flagged_as_medical_advice:
         prompt += _MEDICAL_ADVICE_REMINDER
@@ -766,6 +806,8 @@ async def generate_answer(
     guardrail_classifier: GuardrailClassifier | None = None,
     settings: Settings | None = None,
     history: Sequence[ChatMessage] | None = None,
+    summary: str | None = None,
+    language: str | None = None,
 ) -> str:
     """Turn an incoming patient message into a reply: guardrail check, then
     (unless it's an emergency) retrieve relevant FAQs and ask the LLM to
@@ -835,12 +877,20 @@ async def generate_answer(
         doctors=doctors,
         signals=read_signals(history, user_message),
         flagged_as_medical_advice=guardrail.category is GuardrailCategory.MEDICAL_ADVICE,
-        default_language=resolved_settings.default_reply_language,
+        # The language the patient has been writing in, remembered on their
+        # row, beats the deployment's default. Re-deciding this from whatever
+        # is left in the context window is what let a conversation held in
+        # Russian slide back into Uzbek on a one-word turn.
+        default_language=language or resolved_settings.default_reply_language,
+        summary=summary,
         clinic_phone_numbers=resolved_settings.clinic_phone_numbers,
         clinic_address=resolved_settings.clinic_address,
         clinic_work_hours=resolved_settings.clinic_work_hours,
         unpriceable=unpriceable,
         clinic_rules=await clinic_rules_for(session, get_current_tenant()),
+        # Tone only. app.services.style explains why these can never
+        # stand in for what the clinic remembers about this patient.
+        style_examples=style.choose(user_message),
     )
     provider = llm_provider or get_llm_provider()
     conversation: list[ChatMessage] = [

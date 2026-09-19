@@ -25,6 +25,19 @@ class LLMProvider(ABC):
         """Generate a reply given a system prompt and the conversation so far."""
 
 
+# How long a model call may take before it is given up on.
+#
+# The SDK's own default is ten minutes, and that is far too long here for a
+# reason that is not obvious from this file: app.services.turn holds a
+# per-conversation advisory lock across the completion, so a hung provider
+# would block that patient's next message for the whole of it. The other two
+# calls inside the same lock are already bounded -- the Instagram Send API at
+# 10s, Google Sheets at 20s -- and this was the one that was not.
+#
+# Generous enough for a long completion on a slow day, short enough that the
+# job's own retry/backoff takes over instead of a patient waiting in silence.
+REQUEST_TIMEOUT_SECONDS = 45.0
+
 class OpenAILLMProvider(LLMProvider):
     def __init__(self, settings: Settings | None = None, model: str | None = None) -> None:
         resolved = settings or get_settings()
@@ -36,7 +49,7 @@ class OpenAILLMProvider(LLMProvider):
         # writing badly is something to fix while patients are waiting, not
         # something to ship code for.
         self._model = model or resolved.openai_model
-        self._client = AsyncOpenAI(api_key=api_key)
+        self._client = AsyncOpenAI(api_key=api_key, timeout=REQUEST_TIMEOUT_SECONDS)
 
     async def generate(self, system_prompt: str, messages: list[ChatMessage]) -> str:
         # ChatMessage is deliberately narrower than the SDK's message union
@@ -79,7 +92,11 @@ class QwenLLMProvider(LLMProvider):
         if resolved.hf_token is None:
             raise ValueError("HF_TOKEN is required to use QwenLLMProvider")
         self._model = model or resolved.qwen_model
-        self._client = AsyncOpenAI(api_key=resolved.hf_token, base_url=HF_ROUTER_BASE_URL)
+        self._client = AsyncOpenAI(
+            api_key=resolved.hf_token,
+            base_url=HF_ROUTER_BASE_URL,
+            timeout=REQUEST_TIMEOUT_SECONDS,
+        )
 
     async def generate(self, system_prompt: str, messages: list[ChatMessage]) -> str:
         payload = cast(

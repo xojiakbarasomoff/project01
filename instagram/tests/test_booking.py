@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.appointment import AppointmentStatus
 from app.repositories.appointment import AppointmentRepository
-from app.services.appointment import CLINIC_TIMEZONE, create_appointment
+from app.services.appointment import CLINIC_TIMEZONE, create_appointment, work_days
 from app.services.booking import (
     HORIZON_DAYS,
     MAX_SLOTS,
@@ -27,6 +27,23 @@ from app.services.booking import (
     settle,
 )
 from tests.conftest import Seed
+
+
+def next_open_day(*, days_ahead: int = 1) -> datetime:
+    """A clinic day that is actually open, `days_ahead` days from now.
+
+    These tests used to say "tomorrow" and assume it was bookable. Tomorrow
+    is a Sunday once a week, and the clinic is shut -- which the code did not
+    know until app.services.appointment grew WORK_DAYS, and which is exactly
+    the failure that let a patient be told they were booked for a Sunday.
+    Written this way, the suite exercises the closed-day rule instead of
+    depending on which day it happens to be run.
+    """
+    day = datetime.now(UTC).astimezone(CLINIC_TIMEZONE) + timedelta(days=days_ahead)
+    while day.weekday() not in work_days():
+        day += timedelta(days=1)
+    return day
+
 
 
 def _local(*args: int) -> datetime:
@@ -218,7 +235,7 @@ def test_a_malformed_marker_is_still_stripped_from_what_the_patient_sees() -> No
 async def test_an_accepted_slot_reaches_the_clinics_book(
     db_session: AsyncSession, seed: Seed, as_tenant: Callable[[UUID], AbstractContextManager[None]]
 ) -> None:
-    slot = datetime.now(UTC).astimezone(CLINIC_TIMEZONE) + timedelta(days=1)
+    slot = next_open_day()
     slot = slot.replace(hour=13, minute=0, second=0, microsecond=0)
 
     with as_tenant(seed.tenant_a.id):
@@ -245,7 +262,7 @@ async def test_a_slot_taken_since_it_was_offered_is_admitted_not_confirmed(
     """The one failure that ends with somebody standing in a waiting room:
     being told they are booked when they are not.
     """
-    slot = datetime.now(UTC).astimezone(CLINIC_TIMEZONE) + timedelta(days=1)
+    slot = next_open_day()
     slot = slot.replace(hour=14, minute=0, second=0, microsecond=0)
 
     with as_tenant(seed.tenant_a.id):
@@ -292,7 +309,7 @@ async def test_a_slot_outside_working_hours_is_refused_rather_than_booked(
     enforces this — an appointment at three in the morning must fail on the
     way to the table, not on the way into the prompt.
     """
-    slot = datetime.now(UTC).astimezone(CLINIC_TIMEZONE) + timedelta(days=1)
+    slot = next_open_day()
     slot = slot.replace(hour=3, minute=0, second=0, microsecond=0)
 
     with as_tenant(seed.tenant_a.id):
@@ -314,7 +331,7 @@ async def test_a_booking_failure_never_costs_the_patient_their_reply(
     """A booking that did not happen is recoverable by a human reading the
     dashboard. A message that never arrives is not.
     """
-    slot = datetime.now(UTC).astimezone(CLINIC_TIMEZONE) + timedelta(days=1)
+    slot = next_open_day()
     slot = slot.replace(hour=15, minute=0, second=0, microsecond=0)
 
     with as_tenant(seed.tenant_a.id):
@@ -354,7 +371,7 @@ def test_a_booking_without_a_name_is_still_a_booking() -> None:
 async def test_the_name_reaches_the_clinics_book(
     db_session: AsyncSession, seed: Seed, as_tenant: Callable[[UUID], AbstractContextManager[None]]
 ) -> None:
-    slot = datetime.now(UTC).astimezone(CLINIC_TIMEZONE) + timedelta(days=1)
+    slot = next_open_day()
     slot = slot.replace(hour=16, minute=0, second=0, microsecond=0)
 
     with as_tenant(seed.tenant_a.id):
@@ -390,7 +407,7 @@ async def test_reconfirming_a_booking_does_not_tell_the_patient_they_lost_it(
     confusing sentence this code could produce — and it is the common case,
     not the rare one.
     """
-    slot = datetime.now(UTC).astimezone(CLINIC_TIMEZONE) + timedelta(days=1)
+    slot = next_open_day()
     slot = slot.replace(hour=11, minute=0, second=0, microsecond=0)
     marker = f"[[BOOK:{slot:%Y-%m-%dT%H:%M}]]"
 
@@ -427,7 +444,7 @@ async def test_a_real_name_replaces_a_placeholder_that_slipped_through(
     here". So when one gets past, the real name arriving a turn later must
     be able to overwrite it rather than find the column already full.
     """
-    slot = datetime.now(UTC).astimezone(CLINIC_TIMEZONE) + timedelta(days=1)
+    slot = next_open_day()
     slot = slot.replace(hour=17, minute=0, second=0, microsecond=0)
 
     with as_tenant(seed.tenant_a.id):
@@ -458,7 +475,7 @@ async def test_another_patients_booking_is_still_reported_as_lost(
     """The guard above must not swallow a genuine race — a slot held by
     somebody else is still gone.
     """
-    slot = datetime.now(UTC).astimezone(CLINIC_TIMEZONE) + timedelta(days=1)
+    slot = next_open_day()
     slot = slot.replace(hour=12, minute=0, second=0, microsecond=0)
 
     with as_tenant(seed.tenant_a.id):
@@ -486,7 +503,7 @@ async def test_one_conversation_never_ends_up_with_two_appointments(
     nobody would come to, while the diary disagreed with what they had been
     told. The second marker moves the booking instead of adding one.
     """
-    base = datetime.now(UTC).astimezone(CLINIC_TIMEZONE) + timedelta(days=1)
+    base = next_open_day()
     first_slot = base.replace(hour=14, minute=30, second=0, microsecond=0)
     second_slot = base.replace(hour=15, minute=0, second=0, microsecond=0)
 
@@ -527,7 +544,7 @@ async def test_a_move_onto_somebody_elses_slot_keeps_the_booking_they_have(
     """Losing the appointment they already hold, to a time that was never
     available, is worse than the reply naming a time the diary does not.
     """
-    base = datetime.now(UTC).astimezone(CLINIC_TIMEZONE) + timedelta(days=1)
+    base = next_open_day()
     theirs = base.replace(hour=9, minute=30, second=0, microsecond=0)
     taken = base.replace(hour=10, minute=0, second=0, microsecond=0)
 

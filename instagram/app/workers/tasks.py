@@ -34,6 +34,8 @@ from app.models.conversation import Conversation
 from app.rag.embeddings import EmbeddingProvider
 from app.rag.llm import LLMProvider
 from app.repositories.appointment import AppointmentRepository
+from app.services import summary, turn
+from app.services.admin_commands import add_rule, is_admin, parse_rule
 from app.services.answer import generate_answer
 from app.services.appointment import CLINIC_TIMEZONE
 from app.services.booking import settle as settle_booking
@@ -49,7 +51,12 @@ from app.services.debounce import (
     restore_batch,
 )
 from app.services.delivery import send_reply
-from app.services.admin_commands import add_rule, is_admin, parse_rule
+from app.services.idempotency import (
+    claim_reply_send,
+    record_reply_channel,
+    release_reply_claim,
+    reply_already_sent,
+)
 from app.services.knowledge_base import record_rule_in_knowledge_base
 from app.services.profile import ensure_instagram_username
 from app.services.reminders import send_due_reminders
@@ -132,21 +139,77 @@ async def process_inbound_message(
                     extra={"tenant_id": tenant_id, "conversation_id": conversation_id},
                 )
                 return
-            history = await context_for_reply(session, conversation_uuid)
-            reply = await generate_answer(
+            # Everything the clinic remembers about this patient, and the
+            # lock that stops a second bubble being answered at the same
+            # time. Before the history is read, because `prepare` writes the
+            # name and number this message carried -- and a reply built from
+            # a profile read beforehand would ask for them again.
+            conversation_row = await session.get(Conversation, conversation_uuid)
+            if conversation_row is None:
+                # The conversation the job was queued for is gone. Nothing
+                # can be answered without knowing who asked, and inventing a
+                # patient to answer is worse than staying silent.
+                logger.warning(
+                    "worker_conversation_missing",
+                    extra={"tenant_id": tenant_id, "conversation_id": conversation_id},
+                )
+                return
+            channel = await session.get(Channel, uuid.UUID(channel_id))
+            state, profile, message_intent, settled_reply = await turn.prepare(
                 session,
-                message_text,
-                embedding_provider=embedding_provider,
-                llm_provider=llm_provider,
-                history=history,
+                conversation_id=conversation_uuid,
+                user_id=conversation_row.user_id,
+                message=message_text,
+                source=str(channel.type) if channel is not None else "bot",
+                fallback_phone=get_settings().clinic_phone_numbers,
+            )
+
+            history = await context_for_reply(session, conversation_uuid)
+            if settled_reply is not None:
+                # The flow answered it. These are the fixed questions and
+                # confirmations (app.services.booking_request); handing them
+                # to a model to rephrase is how they drifted into asking two
+                # things at once.
+                reply = settled_reply
+            else:
+                reply = await generate_answer(
+                    session,
+                    message_text,
+                    embedding_provider=embedding_provider,
+                    llm_provider=llm_provider,
+                    history=history,
+                    summary=conversation_row.summary,
+                    language=profile.language,
+                )
+                # Read once more on the way out: a sentence claiming an
+                # appointment that no row backs is replaced rather than sent.
+                reply = turn.no_false_claims(
+                    reply,
+                    an_appointment_exists=state.appointment_id is not None,
+                    language=profile.language,
+                    fallback_phone=get_settings().clinic_phone_numbers,
+                )
+
+            if summary.update(
+                conversation_row, profile, state, message_count=len(history) + 1
+            ):
+                await session.flush()
+
+            logger.info(
+                "turn_handled",
+                extra={
+                    "conversation_id": conversation_id,
+                    "intent": str(message_intent),
+                    "flow_status": state.status,
+                    "handled_in_code": settled_reply is not None,
+                },
             )
 
             # The reply may carry a booking the assistant agreed to. Settled
             # here rather than inside generate_answer: that function reads,
             # and this writes a row the clinic will act on, so it belongs in
             # the same place as the rest of this task's transaction.
-            conversation = await session.get(Conversation, conversation_uuid)
-            channel = await session.get(Channel, uuid.UUID(channel_id))
+            conversation = conversation_row
             # Bound before the branch: the spreadsheet mirror below reads it
             # whether or not a booking happened, and a conversation the job
             # cannot load would otherwise raise NameError there — after the
@@ -164,7 +227,18 @@ async def process_inbound_message(
                     source=str(channel.type) if channel is not None else "bot",
                 )
                 if appointment is not None:
-                    await session.commit()
+                    # Flushed, not committed.
+                    #
+                    # This used to commit here, and a commit releases the
+                    # transaction-scoped advisory lock this job is holding
+                    # (app.services.turn.lock_conversation). Everything after
+                    # this point -- sending the reply, recording it in the
+                    # transcript -- then ran unlocked, so a second message
+                    # from the same patient could overtake it and answer from
+                    # a state this job had already moved past. One commit at
+                    # the end of the job is what makes the lock mean what it
+                    # says.
+                    await session.flush()
 
             # Full reply text stays out of INFO — it is patient-adjacent
             # content that should not sit in logs that may ship to external
@@ -226,30 +300,101 @@ async def process_inbound_message(
                 else None
             )
 
-            try:
-                delivered_over = await send_reply(
-                    session,
-                    channel_id=uuid.UUID(channel_id),
-                    recipient_external_id=sender_external_id,
-                    text=reply,
-                    last_user_message_at=patient_last_wrote or datetime.now(UTC),
-                    reply_context=reply_context,
-                    adapter=adapter,
+            # The send and the commit are two network calls to two different
+            # systems and cannot be one operation. Before this claim the
+            # window was open: the Send API succeeded, the commit failed, arq
+            # retried the job, and the patient received the same answer twice
+            # from a database holding no record of the first.
+            #
+            # The claim is keyed on the patient's message, which is identical
+            # on every attempt, rather than on the reply, which is not.
+            pool = ctx.get("redis") if isinstance(ctx, dict) else None
+            already_sent_over = (
+                await reply_already_sent(
+                    pool, conversation_id=conversation_uuid, message_text=message_text
                 )
-            finally:
-                # In a finally, and after the send rather than before it, for
-                # two different reasons.
-                #
-                # After: writing to Google takes a round trip the patient
-                # would otherwise spend waiting for their answer.
-                #
-                # Regardless: a patient who left a number is a patient the
-                # clinic wants to ring, and a delivery that failed -- a
-                # blocked bot, an expired token, a closed messaging window --
-                # is the case where they want to ring them *most*. Skipping
-                # the row exactly then would lose the lead the reply could
-                # not reach. mirror_lead never raises, so this cannot mask
-                # the delivery error it runs beside.
+                if pool is not None
+                else None
+            )
+
+            if already_sent_over is not None:
+                # A previous attempt reached the patient and then failed to
+                # commit. Redo the database work, send nothing.
+                logger.warning(
+                    "reply_already_delivered_skipping_send",
+                    extra={
+                        "conversation_id": conversation_id,
+                        "channel_type": already_sent_over,
+                    },
+                )
+                delivered_over = already_sent_over
+            elif pool is not None and not await claim_reply_send(
+                pool, conversation_id=conversation_uuid, message_text=message_text
+            ):
+                # Another worker holds the claim and is sending right now.
+                # Silence is the safe side of this race.
+                logger.warning(
+                    "reply_send_claimed_elsewhere",
+                    extra={"conversation_id": conversation_id},
+                )
+                delivered_over = None
+            else:
+                try:
+                    delivered_over = await send_reply(
+                        session,
+                        channel_id=uuid.UUID(channel_id),
+                        recipient_external_id=sender_external_id,
+                        text=reply,
+                        last_user_message_at=patient_last_wrote or datetime.now(UTC),
+                        reply_context=reply_context,
+                        adapter=adapter,
+                    )
+                except BaseException:
+                    # The claim was taken before the call, so it has to be
+                    # given back when the call did not happen -- otherwise a
+                    # transient Meta error would silence every retry.
+                    if pool is not None:
+                        await release_reply_claim(
+                            pool,
+                            conversation_id=conversation_uuid,
+                            message_text=message_text,
+                        )
+                    raise
+                if pool is not None:
+                    if delivered_over is not None:
+                        await record_reply_channel(
+                            pool,
+                            conversation_id=conversation_uuid,
+                            message_text=message_text,
+                            channel_type=str(delivered_over),
+                        )
+                    else:
+                        # Nothing went out (blocked bot, closed window). The
+                        # next attempt should be free to try again.
+                        await release_reply_claim(
+                            pool,
+                            conversation_id=conversation_uuid,
+                            message_text=message_text,
+                        )
+
+            # The clinic's spreadsheet, which is a copy and is treated like
+            # one.
+            #
+            # After the send, because writing to Google is a round trip the
+            # patient would otherwise spend waiting for their answer. And
+            # whatever the send did, because a patient who left a number is a
+            # patient the clinic wants to ring, and a delivery that failed is
+            # exactly when they want to ring them most.
+            #
+            # Nothing here can affect the reply or the transaction. The
+            # authoritative record is the `leads` row written inside this
+            # job's transaction (app.services.booking_request.deliver); the
+            # spreadsheet is a mirror of it for owners who never open the
+            # dashboard. mirror_lead and mirror_appointment swallow their own
+            # errors, and the belt-and-braces try below makes that a property
+            # of this call site rather than of theirs -- a Sheets outage must
+            # never roll back a lead the front desk is going to work from.
+            try:
                 if lead is not None:
                     await mirror_lead(lead)
                 # The booking itself, with the time on it. The lead list
@@ -271,6 +416,12 @@ async def process_inbound_message(
                             note=summarise_problem(patient_said),
                         )
                     )
+            except Exception:
+                # Logged, never raised. The lead is already in the database.
+                logger.exception(
+                    "sheets_mirror_failed",
+                    extra={"conversation_id": conversation_id},
+                )
 
             # Recorded only when it actually went out: a reply in the
             # transcript the patient never received would make the next

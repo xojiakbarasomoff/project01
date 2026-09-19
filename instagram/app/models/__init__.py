@@ -2,6 +2,7 @@ from app.models.appointment import ACTIVE_STATUSES, Appointment, AppointmentStat
 from app.models.base import Base
 from app.models.channel import Channel
 from app.models.conversation import Conversation
+from app.models.conversation_state import ConversationState, FlowStatus
 from app.models.doctor import Doctor
 from app.models.knowledge_base import KnowledgeBase
 from app.models.lead import Lead, LeadStatus
@@ -18,7 +19,9 @@ __all__ = [
     "Base",
     "Channel",
     "Conversation",
+    "ConversationState",
     "Doctor",
+    "FlowStatus",
     "KnowledgeBase",
     "Lead",
     "LeadStatus",

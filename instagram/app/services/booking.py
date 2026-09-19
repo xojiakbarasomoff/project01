@@ -50,6 +50,7 @@ from app.repositories.appointment import AppointmentRepository
 from app.repositories.doctor import DoctorRepository
 from app.services.appointment import (
     CLINIC_TIMEZONE,
+    DEFAULT_SEARCH_HORIZON_DAYS,
     SlotAlreadyBookedError,
     assign_doctor,
     create_appointment,
@@ -61,10 +62,17 @@ logger = logging.getLogger(__name__)
 # A booking still worth honouring: anything not cancelled or completed.
 ACTIVE_STATUSES = (AppointmentStatus.SCHEDULED, AppointmentStatus.CONFIRMED)
 
-# Today plus the next two working days. Far enough that "ertaga" and "u kun"
-# are always answerable, short enough that the list stays something a person
-# would read out rather than a wall of times.
-HORIZON_DAYS = 2
+# How far ahead the clinic will take a booking, in days from today.
+#
+# One definition, imported from app.services.appointment, because there used
+# to be two: this file said 2 and appointment.py said 14, so a patient could
+# be told nothing was free on a day the schedule search would happily have
+# found. Whichever number is right, the two must be the same number.
+#
+# 14 is the value that was already in use by the search, not a fact anybody
+# has confirmed about the clinic. It is a default, overridable per deployment
+# rather than edited here, until the clinic says what its real window is.
+HORIZON_DAYS = DEFAULT_SEARCH_HORIZON_DAYS
 
 # The most slots to write into the prompt. A clinic open 09:00-19:00 on a
 # 30-minute grid has twenty slots a day, so three empty days would be sixty

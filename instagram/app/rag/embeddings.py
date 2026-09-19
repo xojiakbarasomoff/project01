@@ -4,6 +4,7 @@ from functools import lru_cache
 from openai import AsyncOpenAI
 
 from app.core.config import Settings, get_settings
+from app.rag.llm import REQUEST_TIMEOUT_SECONDS
 
 # The model that makes the vectors, and how wide they are.
 #
@@ -53,7 +54,10 @@ class OpenAIEmbeddingProvider(EmbeddingProvider):
         if api_key is None:
             raise ValueError("OPENAI_API_KEY is required to use OpenAIEmbeddingProvider")
         self._model = model
-        self._client = AsyncOpenAI(api_key=api_key)
+        # Bounded for the same reason the completion is: this runs inside
+        # the per-conversation lock (app.services.turn), and the SDK's
+        # ten-minute default would hold it there.
+        self._client = AsyncOpenAI(api_key=api_key, timeout=REQUEST_TIMEOUT_SECONDS)
 
     async def embed(self, texts: list[str]) -> list[list[float]]:
         if not texts:

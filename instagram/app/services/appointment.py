@@ -2,6 +2,7 @@ import uuid
 from collections import Counter
 from collections.abc import Collection, Iterator, Sequence
 from datetime import UTC, date, datetime, time, timedelta
+from typing import TYPE_CHECKING
 from zoneinfo import ZoneInfo
 
 from sqlalchemy.exc import IntegrityError
@@ -9,6 +10,10 @@ from sqlalchemy.exc import IntegrityError
 from app.models.appointment import Appointment, AppointmentStatus
 from app.models.doctor import Doctor
 from app.repositories.appointment import AppointmentRepository
+from app.repositories.doctor import DoctorRepository
+
+if TYPE_CHECKING:  # pragma: no cover - import cycle at runtime only
+    from app.services.clinic_schedule import Schedule
 
 # TODO(IGB-?): move onto Tenant.settings once the admin/dashboard panel
 # exists, so each clinic can tune its own hours/slot length instead of every
@@ -16,14 +21,60 @@ from app.repositories.appointment import AppointmentRepository
 # core.config.Settings.debounce_window_seconds.
 CLINIC_TIMEZONE = ZoneInfo("Asia/Tashkent")
 SLOT_MINUTES = 30
+#
+# LEGACY DEFAULTS. These are what this deployment has been running since the
+# first import, and they are kept unchanged on purpose.
+#
+# They do not come from the clinic. 19:00 contradicts every doctor in
+# data/doctors.json, who work until 18:00, and no weekday rule existed at all
+# -- which is why Sunday was bookable. Both are wrong, and correcting them to
+# the values that *look* right would be swapping one guess for another and
+# then telling patients about it.
+#
+# The real values belong in configuration (CLINIC_WORK_HOURS,
+# CLINIC_WORK_DAYS -- see app.services.clinic_schedule). Where those are set,
+# the functions below use them. Where they are not, these keep the dashboard
+# behaving exactly as it does today, and clinic_schedule logs the gap as a
+# configuration error so somebody fixes it rather than discovering it.
+#
+# Nothing the assistant tells a *patient* about days or hours falls back to
+# these. That path refuses to answer instead -- see booking_request.check_day.
 WORK_START = time(9, 0)
 WORK_END = time(19, 0)
+LEGACY_WORK_DAYS = frozenset({0, 1, 2, 3, 4, 5, 6})
+
+
+def _configured() -> "Schedule | None":
+    # Imported inside the function: clinic_schedule reads settings, and this
+    # module is imported at startup by things that must not depend on the
+    # settings being loadable yet.
+    from app.services import clinic_schedule
+
+    return clinic_schedule.load_or_none()
+
+
+def work_days() -> frozenset[int]:
+    """The days the clinic opens, configured if it has said so."""
+    schedule = _configured()
+    return schedule.days if schedule is not None else LEGACY_WORK_DAYS
+
+
+def work_hours() -> tuple[time, time]:
+    """Opening and closing time, configured if the clinic has said so."""
+    schedule = _configured()
+    return (schedule.opens, schedule.closes) if schedule is not None else (WORK_START, WORK_END)
+
+
 # Used when a booking names no doctor at all. The clinic's real clinicians
 # now live in the doctors table (app.models.doctor), so this is no longer a
 # stand-in for "multi-doctor support does not exist" — it is the fallback for
 # a booking taken before anyone was assigned, which an operator resolves
 # later from the dashboard.
 UNASSIGNED_DOCTOR_NAME = "Tayinlanmagan"
+# Kept as the value this deployment already used for schedule search, so
+# removing it would change behaviour nobody asked to change. The *patient
+# facing* horizon is BOOKING_HORIZON_DAYS and has no default -- see
+# app.services.clinic_schedule.
 DEFAULT_SEARCH_HORIZON_DAYS = 14
 
 
@@ -82,13 +133,14 @@ def is_within_working_hours(scheduled_at: datetime) -> bool:
     wrong.
     """
     local = _to_local(scheduled_at)
-    if not (WORK_START <= local.time() < WORK_END):
+    opens, closes = work_hours()
+    if local.weekday() not in work_days():
+        return False
+    if not (opens <= local.time() < closes):
         return False
     if local.second or local.microsecond:
         return False
-    minutes_since_open = (local.hour * 60 + local.minute) - (
-        WORK_START.hour * 60 + WORK_START.minute
-    )
+    minutes_since_open = (local.hour * 60 + local.minute) - (opens.hour * 60 + opens.minute)
     return minutes_since_open % SLOT_MINUTES == 0
 
 
@@ -100,8 +152,11 @@ def day_slots(local_date: date) -> Iterator[datetime]:
     times a patient is offered cannot drift from the times that can be
     booked.
     """
-    current = datetime.combine(local_date, WORK_START, tzinfo=CLINIC_TIMEZONE)
-    end = datetime.combine(local_date, WORK_END, tzinfo=CLINIC_TIMEZONE)
+    if local_date.weekday() not in work_days():
+        return
+    opens, closes = work_hours()
+    current = datetime.combine(local_date, opens, tzinfo=CLINIC_TIMEZONE)
+    end = datetime.combine(local_date, closes, tzinfo=CLINIC_TIMEZONE)
     step = timedelta(minutes=SLOT_MINUTES)
     while current < end:
         yield current
@@ -115,7 +170,19 @@ def _first_slot_on_or_after(local_dt: datetime) -> datetime:
     for slot in day_slots(local_dt.date()):
         if slot >= local_dt:
             return slot
-    return next(iter(day_slots(local_dt.date() + timedelta(days=1))))
+    # Roll forward to the next day the clinic is actually open. Walking
+    # rather than adding one day, because "tomorrow" is a Sunday once a
+    # week and day_slots now yields nothing for it -- taking the first slot
+    # of an empty day used to be safe only because no day was ever empty.
+    candidate = local_dt.date() + timedelta(days=1)
+    for _ in range(8):
+        first = next(iter(day_slots(candidate)), None)
+        if first is not None:
+            return first
+        candidate += timedelta(days=1)
+    # Eight days with no open one means the configuration says the clinic
+    # never opens, which is a configuration error rather than a full diary.
+    raise NoAvailabilityError(local_dt, 8)
 
 
 def slot_capacity(doctor_count: int) -> int:
@@ -250,6 +317,26 @@ async def create_appointment(
         raise MissingPatientIdentityError()
     if not is_within_working_hours(scheduled_at):
         raise OutsideWorkingHoursError(scheduled_at)
+
+    # Capacity, checked before the insert, because the unique index alone
+    # does not enforce it.
+    #
+    # The index keys on COALESCE(doctor_id, <sentinel>), so a booking with
+    # nobody assigned collides only with other unassigned bookings. An
+    # operator entering a walk-in from the dashboard leaves doctor_id NULL,
+    # and a bot booking that then picks a named doctor gets a different key
+    # and is allowed straight through -- two patients at 14:00 in a clinic
+    # with one clinician, and no error anywhere.
+    #
+    # Counting every live booking at the time against the number of active
+    # doctors closes that. It is a check and not a lock, so it can still lose
+    # a race; the index remains the thing that makes double-booking a *named*
+    # doctor impossible, and this makes over-filling the slot unlikely rather
+    # than merely undetected.
+    doctors = await DoctorRepository(repo.session).list_active()
+    if len(await repo.list_active_at(scheduled_at)) >= slot_capacity(len(doctors)):
+        raise SlotAlreadyBookedError(scheduled_at)
+
     try:
         # A dedicated SAVEPOINT for just this insert attempt: on
         # IntegrityError, SQLAlchemy rolls back to it automatically before
